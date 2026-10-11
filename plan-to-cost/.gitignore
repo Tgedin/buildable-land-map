@@ -5,3 +5,4 @@ __pycache__/
 .ruff_cache/
 # Real plans and price bases may carry client data or licences: keep them out of git.
 data/
+results/

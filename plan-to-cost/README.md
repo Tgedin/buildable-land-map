@@ -2,10 +2,10 @@
 
 Phase 2 of the [Housing AI roadmap](../docs/roadmap.md): a floor plan in, an editable priced estimate out.
 
-> Status: **core only**. BC3 price-base parser and the quantities-to-cost step exist and are tested on a synthetic price base. Plan reading (vision) is not started. Nothing here is validated against real plans or budgets yet.
+> Status: **core + a measured baseline.** BC3 parser and quantities-to-cost are tested (and the parser runs on a real 59k-concept price base). A classical plan-reading baseline exists and was measured on CubiCasa5k: **not usable for pricing** (median shape error +35%, [results](docs/baseline-results.md)). Nothing is validated on real Spanish plans or budgets yet.
 
 ```
-Floor plan (PDF/image) ─► vision: walls, rooms, doors, windows   [not started]
+Floor plan (PDF/image) ─► vision: walls, rooms                      [classical baseline, weak]
                        ─► quantities (m² floor, m wall, units)    [input type exists: Quantity]
                        ─► map to BC3 price items                  [dict mapping; LLM suggestion later]
                        ─► priced estimate + review list           [done, tested]
