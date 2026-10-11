@@ -46,3 +46,16 @@ def test_load_from_files_dedupes(tmp_path):
     assert len(gdf) == 2
     assert gdf.crs.to_epsg() == 25830
     assert {"footprint_m2", "refcat", "floors_above"} <= set(gdf.columns)
+
+
+REAL_FIXTURE = Path(__file__).parent / "fixtures" / "ruzafa_real_sample.gml"
+
+
+def test_real_catastro_response_parses():
+    """A real 30 x 30 m WFS response from Ruzafa: guards against schema drift."""
+    parsed = catastro.parse_building_parts(REAL_FIXTURE.read_bytes())
+    assert parsed.n_features == 28
+    assert all(r["refcat"] and r["geometry"] is not None for r in parsed.records)
+    floors = [r["floors_above"] for r in parsed.records]
+    assert all(f is not None for f in floors)  # M1 target: floors_above present
+    assert max(floors) >= 5  # Eixample blocks are tall

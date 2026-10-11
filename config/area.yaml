@@ -3,13 +3,13 @@
 # Galicia/west is 29N (25829), Catalonia/Balearics east is 31N (25831).
 # Canarias, Navarra and the Basque Country are NOT covered by the national Catastro WFS.
 
-name: example-neighborhood        # slug used in output file names
-label: "Example neighborhood"     # shown in the map title
+name: ruzafa-valencia             # slug used in output file names
+label: "Ruzafa, Valencia"         # shown in the map title
 epsg: 25830
 
 # [xmin, ymin, xmax, ymax] in the EPSG above.
-# PLACEHOLDER: a ~600 m square in central Madrid. Replace with your chosen area.
-bbox: [440200, 4473400, 440800, 4474000]
+# ~800 x 700 m around Mercat de Russafa (Valencia, zone 30N). See docs/decisions/0002-area-choice.md.
+bbox: [725450, 4370950, 726250, 4371650]
 
 catastro:
   # Service limits: 4 km² per request and 5,000 features. We tile well below that
