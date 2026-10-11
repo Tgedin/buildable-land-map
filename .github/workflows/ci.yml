@@ -31,7 +31,8 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - name: Install (CPU-only PyTorch: the default Linux wheel is the multi-GB GPU build)
+      - name: Install with CPU-only PyTorch
+        # the default Linux wheel is the multi-GB GPU build
         run: |
           pip install torch --index-url https://download.pytorch.org/whl/cpu
           pip install -e ".[dev]"
