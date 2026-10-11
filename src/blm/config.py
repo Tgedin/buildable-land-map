@@ -24,6 +24,10 @@ class LidarConfig:
     inner_buffer_m: float = 0.5
     ground_ring_m: float = 10.0
     min_roof_points: int = 20
+    # Optional: WFS (GeoJSON) index of downloadable .laz sheets, so `blm lidar` can fetch
+    # the sheets covering the bbox. None = download the tiles by hand (docs/data-sources.md).
+    sheet_index_url: str | None = None
+    download_timeout_s: int = 300
 
 
 @dataclass(frozen=True)

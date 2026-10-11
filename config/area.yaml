@@ -26,6 +26,8 @@ lidar:
   inner_buffer_m: 0.5        # shrink footprint to avoid wall/edge points
   ground_ring_m: 10.0        # ring outside the footprint used for ground level
   min_roof_points: 20        # below this, the height is flagged as low confidence
+  # Valencia: ICV 2015 LiDAR sheet index, so `blm lidar` / `make run` fetch the .laz themselves.
+  sheet_index_url: https://terramapas.icv.gva.es/0301_2015PVAL0005_hojas?service=wfs&version=2.0.0&request=GetFeature&Typenames=distribucion_descargas&srsName=EPSG:25830&outputformat=geojsonstream
 
 metrics:
   floor_height_m: 3.0        # typical floor-to-floor height for floor estimates
