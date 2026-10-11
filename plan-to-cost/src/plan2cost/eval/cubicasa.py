@@ -89,12 +89,18 @@ def overlap(pred: np.ndarray, gt: np.ndarray) -> dict[str, float]:
     }
 
 
-def evaluate_plan(plan_dir: Path, close_frac: float = 0.0, work_dim: int = WORK_DIM) -> dict:
+def evaluate_plan(
+    plan_dir: Path, close_frac: float = 0.0, work_dim: int = WORK_DIM, predictor=None
+) -> dict:
+    """Score one plan. `predictor(gray) -> (wall mask, interior mask)` replaces the baseline."""
     image, k = read_image(plan_dir / "F1_scaled.png", work_dim)
     gt_wall, gt_interior = label_masks(plan_dir / "model.svg", image.shape[:2], k)
 
-    pred_wall = walls.wall_mask(walls.to_gray(image), close_frac=close_frac)
-    pred_interior = rooms.interior_mask(pred_wall)
+    if predictor is None:
+        pred_wall = walls.wall_mask(walls.to_gray(image), close_frac=close_frac)
+        pred_interior = rooms.interior_mask(pred_wall)
+    else:
+        pred_wall, pred_interior = predictor(walls.to_gray(image))
     w, r = overlap(pred_wall, gt_wall), overlap(pred_interior, gt_interior)
     return {
         "id": plan_dir.name,
@@ -148,15 +154,26 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--split", default="test", choices=["train", "val", "test"])
     ap.add_argument("--limit", type=int, default=0, help="first N plans only (0 = all)")
     ap.add_argument("--close-frac", type=float, default=0.0, help="wall_mask close_frac")
+    ap.add_argument("--model", type=Path, help="score this trained U-Net instead of the baseline")
+    ap.add_argument(
+        "--model-size", type=int, default=256, help="input size the model was trained at"
+    )
     ap.add_argument("--out", type=Path, help="write per-plan results + summary as JSON")
     args = ap.parse_args(argv)
 
     plans = load_split(args.root, args.split)
     plans = plans[: args.limit] if args.limit else plans
+    predictor = None
+    if args.model:  # imported here so the baseline needs no torch
+        from plan2cost.learn import infer
+
+        model = infer.load_model(args.model)
+        predictor = lambda gray: infer.predict_masks(model, gray, args.model_size)  # noqa: E731
+
     results, failed = [], []
     for plan_dir in plans:
         try:
-            results.append(evaluate_plan(plan_dir, args.close_frac))
+            results.append(evaluate_plan(plan_dir, args.close_frac, predictor=predictor))
         except Exception as exc:  # a broken file must not hide the other plans
             failed.append({"id": plan_dir.name, "error": f"{type(exc).__name__}: {exc}"})
     if not results:
