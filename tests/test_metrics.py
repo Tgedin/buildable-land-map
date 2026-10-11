@@ -1,4 +1,5 @@
 import geopandas as gpd
+import pandas as pd
 import pytest
 from shapely.geometry import box
 
@@ -58,3 +59,47 @@ def test_lidar_validation_on_synthetic_truth():
     v = metrics.validate_lidar(parts, MetricsConfig(floor_height_m=3.0))
     assert v["n"] == len(parts)
     assert v["share_within_1"] == 1.0
+
+
+def test_low_annex_in_courtyard_is_not_a_gap():
+    """A 6-floor body with a 1-floor rear annex is at street height: no gap."""
+    body = {"part_id": "A_part1", "refcat": "A", "floors_above": 6, "geometry": box(0, 0, 9.5, 10)}
+    annex = {
+        "part_id": "A_part2",
+        "refcat": "A",
+        "floors_above": 1,
+        "geometry": box(0, 10, 9.5, 20),
+    }
+    others = _row_of_parcels([6, 6, 6, 6])
+    others["geometry"] = others.geometry.translate(yoff=-30)
+    parts = gpd.GeoDataFrame([body, annex], geometry="geometry", crs="EPSG:25830")
+    parts["footprint_m2"] = parts.geometry.area
+    parts = gpd.GeoDataFrame(
+        pd.concat([parts, others], ignore_index=True), geometry="geometry", crs="EPSG:25830"
+    )
+    parcels = metrics.buildable_gap(metrics.aggregate_parcels(parts), MetricsConfig())
+    row = parcels[parcels["refcat"] == "A"].iloc[0]
+    assert row["main_footprint_m2"] == pytest.approx(95)
+    assert row["gap_m2"] == 0
+
+
+def test_gap_uses_main_body_footprint_only():
+    """5-floor body + 1-floor annex on a 7-floor street: 2 extra floors over the body."""
+    body = {"part_id": "A_part1", "refcat": "A", "floors_above": 5, "geometry": box(0, 0, 9.5, 10)}
+    annex = {
+        "part_id": "A_part2",
+        "refcat": "A",
+        "floors_above": 1,
+        "geometry": box(0, 10, 9.5, 20),
+    }
+    others = _row_of_parcels([7, 7, 7, 7])
+    others["geometry"] = others.geometry.translate(yoff=-30)
+    parts = gpd.GeoDataFrame([body, annex], geometry="geometry", crs="EPSG:25830")
+    parts["footprint_m2"] = parts.geometry.area
+    parts = gpd.GeoDataFrame(
+        pd.concat([parts, others], ignore_index=True), geometry="geometry", crs="EPSG:25830"
+    )
+    parcels = metrics.buildable_gap(metrics.aggregate_parcels(parts), MetricsConfig())
+    row = parcels[parcels["refcat"] == "A"].iloc[0]
+    assert row["gap_floors"] == 2
+    assert row["gap_m2"] == pytest.approx(95 * 2)

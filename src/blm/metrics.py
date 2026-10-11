@@ -1,10 +1,15 @@
 """Parcel aggregation, LiDAR validation and the buildable-gap heuristic.
 
-Buildable gap (v0, NOT zoning):
+Buildable gap (v0.2, NOT zoning):
     dominant_floors  = median floors of neighbouring parcels within R metres
-    potential_m2     = parcel footprint × dominant_floors
-    existing_m2      = Σ(part footprint × part floors)
-    gap_m2           = max(0, potential_m2 − existing_m2)
+    gap_floors       = max(0, dominant_floors − parcel floors)   (floors of its tallest part)
+    gap_m2           = main_footprint_m2 × gap_floors
+
+main_footprint_m2 is the footprint of the parts at the parcel's tallest height, i.e. the
+building body. Low rear annexes are ignored on purpose: in Ruzafa, 1-floor workshops fill
+inner courtyards, and v0 counted "5 missing floors" there (687,618 m², 811 of 932 parcels).
+Courtyards are not buildable, so the gap now means "add storeys to the main body"
+(docs/decisions/0003-gap-main-body.md).
 
 It answers "how much floor area is missing compared with the street around it",
 which is a proxy for under-use. Real buildability depends on the municipal plan.
@@ -38,6 +43,9 @@ def aggregate_parcels(parts: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     parcels = p.dissolve(by="refcat", aggfunc=agg).reset_index()
     parcels = parcels.rename(columns={"floors_above": "floors", "part_id": "n_parts"})
     parcels["footprint_m2"] = parcels.geometry.area.round(1)
+    top = p["floors_above"] == p.groupby("refcat")["floors_above"].transform("max")
+    main_fp = p[top].groupby("refcat")["footprint_m2"].sum()
+    parcels["main_footprint_m2"] = parcels["refcat"].map(main_fp).round(1)
     parcels["existing_m2"] = parcels["existing_m2"].round(1)
     if has_lidar:
         conf = p.groupby("refcat")["lidar_confidence"].agg(
@@ -69,13 +77,12 @@ def buildable_gap(parcels: gpd.GeoDataFrame, cfg: MetricsConfig) -> gpd.GeoDataF
 
     valid = n_neighbors >= cfg.min_neighbors
     dominant = np.where(valid, np.round(dominant), np.nan)
-    potential = out["footprint_m2"].to_numpy() * dominant
-    gap = np.clip(potential - out["existing_m2"].to_numpy(), 0, None)
+    gap_floors = np.clip(dominant - floors, 0, None)
 
     out["dominant_floors"] = dominant
     out["n_neighbors"] = n_neighbors
-    out["gap_floors"] = np.clip(dominant - floors, 0, None)
-    out["gap_m2"] = np.round(gap, 0)
+    out["gap_floors"] = gap_floors
+    out["gap_m2"] = np.round(out["main_footprint_m2"].to_numpy() * gap_floors, 0)
     return out
 
 

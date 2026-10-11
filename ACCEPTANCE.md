@@ -49,7 +49,7 @@ M0 Scaffold ─► M1 First real map ─► M2 LiDAR validated ─► M3 Gap + f
 **Notes:**
 - Ruzafa, 0.56 km²: 5,057 parts, 932 parcels. Fetch took ~58 s. 100% of parts have `floors_above` (42 of them are 0: patios and sheds, a real zero, not a missing value).
 - Fixture: `tests/fixtures/ruzafa_real_sample.gml` (real, 30 × 30 m, 28 parts).
-- Surprise: the heuristic reports 687,618 m² of "gap" on 1.49M m² existing, with 811 of 932 parcels flagged. The largest come from big 1-3 floor parcels (probably facilities or industrial). Not courtyards: excluding floor-0 parts barely changes the total. Needs the M3 limitation text and maybe a minimum-parcel or use filter.
+- Surprise: the heuristic reports 687,618 m² of "gap" on 1.49M m² existing, with 811 of 932 parcels flagged. The largest come from big 1-3 floor parcels (probably facilities or industrial). Not courtyards: excluding floor-0 parts barely changes the total. Cause found later: 1-floor rear annexes in courtyards (1,854 parts have 1 floor). Fixed in ADR 0003: 280 parcels, 167,826 m². Footer limitation text is already on the map.
 - Live: https://tgedin.github.io/buildable-land-map/ . Still open: phone screenshot (Target).
 
 ---
