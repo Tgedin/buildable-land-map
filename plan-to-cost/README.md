@@ -2,10 +2,10 @@
 
 Phase 2 of the [Housing AI roadmap](../docs/roadmap.md): a floor plan in, an editable priced estimate out.
 
-> Status: **core + a measured baseline.** BC3 parser and quantities-to-cost are tested (and the parser runs on a real 59k-concept price base). A classical plan-reading baseline exists and was measured on CubiCasa5k: **not usable for pricing** (median shape error +35%, [results](docs/baseline-results.md)). Nothing is validated on real Spanish plans or budgets yet.
+> Status: **core + a learned plan reader.** BC3 parser and quantities-to-cost are tested (the parser also runs on a real 59k-concept price base). Plan reading: a small U-Net trained on CPU reaches room IoU **0.92** and wall IoU **0.71** on CubiCasa5k test plans, versus 0.51 / 0.43 for the classical baseline ([results](docs/model-results.md), [baseline](docs/baseline-results.md)). **Finnish plans only: nothing is validated on real Spanish plans or budgets yet.**
 
 ```
-Floor plan (PDF/image) ─► vision: walls, rooms                      [classical baseline, weak]
+Floor plan (PDF/image) ─► vision: walls, rooms                      [U-Net trained; baseline kept]
                        ─► quantities (m² floor, m wall, units)    [input type exists: Quantity]
                        ─► map to BC3 price items                  [dict mapping; LLM suggestion later]
                        ─► priced estimate + review list           [done, tested]
