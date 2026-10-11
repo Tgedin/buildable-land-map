@@ -25,6 +25,8 @@ Save the response as `.gml` and run `blm fetch --from-files file.gml` if the ser
 3. Select tiles over your bbox (tiles are 2×2 km; one neighbourhood is usually 1–2 tiles).
 4. Put the files in `data/raw/lidar/`, then run `make heights`.
 
+**Valencia province shortcut (no form, no login):** the ICV publishes a 2015 LiDAR cloud as 2×2 km `.laz` sheets. The sheet index is a WFS (`https://terramapas.icv.gva.es/0301_2015PVAL0005_hojas?service=wfs&version=2.0.0&request=GetFeature&Typenames=distribucion_descargas&srsName=EPSG:25830&outputformat=geojsonstream`); each feature has a direct `link_laz`. CNIG's download centre blocks scripted access, so this was used for Ruzafa (sheets `724-4372`, `726-4372`, ~38 MB each).
+
 Check: the tile CRS must match `epsg` in `config/area.yaml`, and the point classes must include 2 (ground) and 6 (building).
 
 ## INE income (Phase 1.5)

@@ -4,11 +4,16 @@
   "total_gap_m2": 167826.0,
   "total_existing_m2": 1490600.6,
   "lidar_validation": {
-    "n": 0
+    "n": 1987,
+    "mae_floors": 0.94,
+    "bias_floors": 0.869,
+    "share_exact": 0.256,
+    "share_within_1": 0.859,
+    "median_m_per_floor": 3.61
   },
   "label": "Ruzafa, Valencia",
   "synthetic": false,
-  "generated_at": "2026-10-11T17:57:53+00:00",
+  "generated_at": "2026-10-11T18:13:09+00:00",
   "bounds_wgs84": [
     -0.383193,
     39.455631,

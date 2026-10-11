@@ -4,7 +4,7 @@
 
 Phase 1 of the [Housing AI roadmap](docs/roadmap.md). Goal: better housing that costs less relative to income. Land is expensive partly because information about what is buildable is scarce. This map makes it visible.
 
-> Status: **M1 in progress**: real Ruzafa data built, waiting for the Pages deploy. See [ACCEPTANCE.md](ACCEPTANCE.md).
+> Status: **M1 done, M2 mostly done** (LiDAR validated; worst-10 inspection and debug drill open). See [ACCEPTANCE.md](ACCEPTANCE.md).
 > Live map: <https://tgedin.github.io/buildable-land-map/>
 
 ---
