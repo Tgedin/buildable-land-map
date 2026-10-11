@@ -1,0 +1,36 @@
+# Area of interest. Start with ONE neighborhood (~0.5–1 km²), then grow to a city.
+# Coordinates are ETRS89 / UTM. Most of mainland Spain is zone 30N (EPSG:25830);
+# Galicia/west is 29N (25829), Catalonia/Balearics east is 31N (25831).
+# Canarias, Navarra and the Basque Country are NOT covered by the national Catastro WFS.
+
+name: example-neighborhood        # slug used in output file names
+label: "Example neighborhood"     # shown in the map title
+epsg: 25830
+
+# [xmin, ymin, xmax, ymax] in the EPSG above.
+# PLACEHOLDER: a ~600 m square in central Madrid. Replace with your chosen area.
+bbox: [440200, 4473400, 440800, 4474000]
+
+catastro:
+  # Service limits: 4 km² per request and 5,000 features. We tile well below that
+  # and split a tile again if it comes back full.
+  tile_size_m: 500
+  max_features_per_request: 5000
+  timeout_s: 60
+
+lidar:
+  # PNOA LiDAR .laz tiles, downloaded manually from the CNIG download centre
+  # into data/raw/lidar/. ASPRS classes: 2 = ground, 6 = building.
+  ground_class: 2
+  building_class: 6
+  inner_buffer_m: 0.5        # shrink footprint to avoid wall/edge points
+  ground_ring_m: 10.0        # ring outside the footprint used for ground level
+  min_roof_points: 20        # below this, the height is flagged as low confidence
+
+metrics:
+  floor_height_m: 3.0        # typical floor-to-floor height for floor estimates
+  neighbor_radius_m: 50.0    # radius used for the "dominant height" of the surroundings
+  min_neighbors: 3           # below this, no gap is computed
+
+export:
+  coordinate_precision: 6    # decimals in the WGS84 GeoJSON

@@ -1,0 +1,23 @@
+{
+  "n_parcels": 120,
+  "n_parcels_with_gap": 46,
+  "total_gap_m2": 21428.0,
+  "total_existing_m2": 139203.2,
+  "lidar_validation": {
+    "n": 120,
+    "mae_floors": 0.0,
+    "bias_floors": 0.0,
+    "share_exact": 1.0,
+    "share_within_1": 1.0,
+    "median_m_per_floor": 3.09
+  },
+  "label": "Synthetic sample (not real data)",
+  "synthetic": true,
+  "generated_at": "2026-10-11T13:21:10+00:00",
+  "bounds_wgs84": [
+    -3.703625,
+    40.40998,
+    -3.699895,
+    40.41108
+  ]
+}

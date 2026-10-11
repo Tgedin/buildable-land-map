@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Data: raw downloads and intermediates never go in Git (LiDAR tiles are hundreds of MB).
+data/raw/**
+data/interim/**
+data/processed/**
+!data/**/.gitkeep
+
+# web/data IS committed: it is the small, published output the static site serves.
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

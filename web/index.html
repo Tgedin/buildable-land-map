@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buildable Land Map</title>
+  <meta name="description" content="Underused buildable floor area, parcel by parcel, from Spanish open data (Catastro + PNOA LiDAR)." />
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Analytics (acceptance M3): privacy-friendly, no cookies. Create a free GoatCounter
+       site, then uncomment and replace YOURCODE.
+  <script data-goatcounter="https://YOURCODE.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+  -->
+</head>
+<body>
+  <aside id="panel">
+    <header>
+      <h1>Buildable Land Map</h1>
+      <p id="area-label" class="muted">Loading…</p>
+    </header>
+
+    <div id="synthetic-banner" hidden>
+      Synthetic sample data. Not a real place. Run the pipeline to load real Catastro data.
+    </div>
+
+    <section class="stats">
+      <div><span id="stat-gap">–</span><label>m² missing floor area</label></div>
+      <div><span id="stat-parcels">–</span><label>parcels below street height</label></div>
+    </section>
+
+    <section id="detail" hidden>
+      <h2>Parcel <span id="d-refcat"></span></h2>
+      <dl>
+        <dt>Floors (Catastro)</dt><dd id="d-floors"></dd>
+        <dt>Street height (median)</dt><dd id="d-dominant"></dd>
+        <dt>Missing floors</dt><dd id="d-gapf"></dd>
+        <dt>Missing floor area</dt><dd id="d-gapm2"></dd>
+        <dt>Measured height (LiDAR)</dt><dd id="d-lidar"></dd>
+      </dl>
+      <div class="actions">
+        <a id="d-catastro" target="_blank" rel="noopener">Open in Catastro ↗</a>
+        <button id="d-share" type="button">Copy link</button>
+      </div>
+    </section>
+
+    <section class="legend">
+      <h3>Missing floors vs. street</h3>
+      <div class="ramp"><span>0</span><span>1</span><span>2</span><span>3</span><span>4+</span></div>
+      <label class="toggle"><input id="toggle-ortho" type="checkbox" /> Aerial photo (IGN PNOA)</label>
+    </section>
+
+    <footer class="muted">
+      Heuristic, not zoning: compares each parcel with the median height of its neighbours.
+      Data © <a href="https://www.sedecatastro.gob.es/" target="_blank" rel="noopener">Dirección General del Catastro</a>,
+      LiDAR © <a href="https://pnoa.ign.es/" target="_blank" rel="noopener">IGN PNOA</a>.
+      <span id="generated"></span>
+    </footer>
+  </aside>
+
+  <main id="map" aria-label="Map of parcels"></main>
+
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
