@@ -117,9 +117,12 @@ def load_bc3(path: Path) -> PriceBase:
 
     UTF-8 is tried first on purpose: cp1252 accepts almost any bytes, so it would silently
     turn a UTF-8 file into mojibake, whereas strict UTF-8 rejects real cp1252 accents.
+    The last resort replaces undefined bytes instead of failing: a real 17 MB base (Junta de
+    Extremadura 2025) contains a stray 0x81 that strict cp1252 refuses, and one bad character
+    in a description must not stop the whole price base from loading.
     """
     raw = path.read_bytes()
     try:
         return parse_bc3(raw.decode("utf-8"))
     except UnicodeDecodeError:
-        return parse_bc3(raw.decode("cp1252"))
+        return parse_bc3(raw.decode("cp1252", errors="replace"))

@@ -44,3 +44,11 @@ def test_utf8_file_is_not_turned_into_mojibake(tmp_path):
     p = tmp_path / "u.bc3"
     p.write_bytes("~C|A1|m2|Albañilería|1.0||0|\n".encode())
     assert bc3.load_bc3(p).get("A1").summary == "Albañilería"
+
+
+def test_stray_undefined_byte_does_not_stop_the_load(tmp_path):
+    p = tmp_path / "s.bc3"
+    p.write_bytes(b"~C|A1|m2|Bad \x81 byte|1.0||0|\n~C|A2|m2|Fine|2.0||0|\n")
+    base = bc3.load_bc3(p)
+    assert base.get("A2").price == 2.0  # the rest of the file still loads
+    assert base.get("A1").price == 1.0
