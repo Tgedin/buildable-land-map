@@ -41,7 +41,7 @@ M0 Scaffold ─► M1 First real map ─► M2 LiDAR validated ─► M3 Gap + f
 | Must | ☑ Map live on GitHub Pages, and the `synthetic` banner is gone | public URL in README |
 | Must | ☑ At least 1 real Catastro WFS response saved as a test fixture (small) | `tests/fixtures/` |
 | Target | ☑ ≥ 95% of building parts have `floors_above` | `summary.json` / Notes |
-| Target | ☐ Map usable on a phone (loads, clickable, readable) | screenshot |
+| Target | ☑ Map usable on a phone (loads, clickable, readable) | `docs/evidence/m1-phone.png`, `m1-phone-parcel.png` |
 | Target | ☑ Fetch for the neighborhood finishes in < 5 min | log line |
 
 **Out of scope:** LiDAR, analytics, city scale.
@@ -50,7 +50,7 @@ M0 Scaffold ─► M1 First real map ─► M2 LiDAR validated ─► M3 Gap + f
 - Ruzafa, 0.56 km²: 5,057 parts, 932 parcels. Fetch took ~58 s. 100% of parts have `floors_above` (42 of them are 0: patios and sheds, a real zero, not a missing value).
 - Fixture: `tests/fixtures/ruzafa_real_sample.gml` (real, 30 × 30 m, 28 parts).
 - Surprise: the heuristic reports 687,618 m² of "gap" on 1.49M m² existing, with 811 of 932 parcels flagged. The largest come from big 1-3 floor parcels (probably facilities or industrial). Not courtyards: excluding floor-0 parts barely changes the total. Cause found later: 1-floor rear annexes in courtyards (1,854 parts have 1 floor). Fixed in ADR 0003: 280 parcels, 167,826 m². Footer limitation text is already on the map.
-- Live: https://tgedin.github.io/buildable-land-map/ . Still open: phone screenshot (Target).
+- Live: https://tgedin.github.io/buildable-land-map/ . Phone check done headlessly (390×844, touch): loads, tap opens parcel detail, no console errors. Not tested on a real device.
 
 ---
 
