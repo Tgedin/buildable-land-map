@@ -16,6 +16,10 @@ Floor plan (PDF/image) ─► vision: walls, rooms                      [classic
 - `plan2cost.bc3`: parse FIEBDC-3 price bases (concepts, decompositions, texts), search by summary.
 - `plan2cost.estimate`: price quantities against a base. Lines that cannot be trusted (unmapped, unit mismatch, no price, low detection confidence) are listed under `needs_review` and excluded from the total. `cost_per_m2` is only given for a complete estimate.
 
+## Train on a free GPU
+
+[Open the notebook in Colab](https://colab.research.google.com/github/Tgedin/buildable-land-map/blob/main/plan-to-cost/notebooks/train_on_colab.ipynb): downloads CubiCasa5k, trains the U-Net and scores it on the test split. The GPU path has not been run on a GPU yet.
+
 ## Rule that shapes the design
 
 A number we cannot stand behind is withheld, not guessed (ADR 0001).

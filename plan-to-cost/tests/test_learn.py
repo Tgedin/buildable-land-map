@@ -75,3 +75,24 @@ def test_training_reduces_loss_on_a_learnable_toy_problem(tmp_path):
         tmp_path, tmp_path / "m.pt", epochs=12, batch=4, base=4, lr=1e-2, threads=2, seed=0
     )
     assert log[-1]["loss"] < log[0]["loss"]
+
+
+def test_pick_device_auto_falls_back_to_cpu_without_a_gpu(monkeypatch):
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: False)
+    assert train.pick_device("auto").type == "cpu"
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: True)
+    assert train.pick_device("auto").type == "cuda"
+    assert train.pick_device("cpu").type == "cpu"
+
+
+def test_autocast_uses_bf16_on_cpu_and_fp16_on_gpu():
+    assert train.autocast(torch.device("cpu")).fast_dtype == torch.bfloat16
+    # building the context does not need a GPU: only entering it would
+    assert train.autocast(torch.device("cuda")).fast_dtype == torch.float16
+
+
+def test_checkpoint_is_saved_on_cpu_so_it_loads_anywhere(tmp_path):
+    _tiny_cache(tmp_path)
+    train.train(tmp_path, tmp_path / "m.pt", epochs=1, batch=2, base=4, lr=1e-2, threads=2, seed=0)
+    ckpt = torch.load(tmp_path / "m.pt", map_location="cpu", weights_only=True)
+    assert all(v.device.type == "cpu" for v in ckpt["state"].values())
