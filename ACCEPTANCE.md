@@ -86,7 +86,7 @@ M0 Scaffold ─► M1 First real map ─► M2 LiDAR validated ─► M3 Gap + f
 | Must | ☐ 5 discovery conversations done and logged (cooperatives, small developers, architects, journalists) | `docs/discovery/` (no personal data, just role + learnings) |
 | Must | ☐ At least 1 change to the map driven by a discovery conversation | commit message references the note |
 | Must | ☐ Analytics live (privacy-friendly, no cookies) | GoatCounter dashboard |
-| Must | ☐ Limitation stated clearly on the map: heuristic, not zoning | footer text |
+| Must | ☑ Limitation stated clearly on the map: heuristic, not zoning | footer text |
 | Must | ☐ Write-up #1 published: "X m² of missing floor area in [area]", with method + limits | post link |
 | Target | ☐ 25 unique visitors from outside your own network | analytics |
 | Target | ☐ 3-min demo video | link |
@@ -94,6 +94,7 @@ M0 Scaffold ─► M1 First real map ─► M2 LiDAR validated ─► M3 Gap + f
 **Out of scope:** Real zoning (PGOU) parsing. Note which data would be needed for it.
 
 **Notes:**
+- Prepared: `docs/discovery/call-script.md`, `docs/discovery/outreach-message.md`, `docs/writeup-1-draft.md` (numbers filled, user-learnings section empty). Footer limitation is live. Analytics and calls need the owner.
 
 ---
 
