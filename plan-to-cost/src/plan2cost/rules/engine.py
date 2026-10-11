@@ -11,6 +11,7 @@ parameter appears in that quote, so a number cannot drift away from the law it c
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import StrEnum
@@ -103,9 +104,13 @@ def _spanish_forms(value: float) -> set[str]:
 
 
 def params_appear_in_quote(rule: Rule) -> list[str]:
-    """Parameters whose value does not appear in the rule's quote (empty = all good)."""
+    """Parameters whose value does not appear in the rule's quote (empty = all good).
+
+    Whole numbers only: 6 must not be "found" inside 36 or 0,60, and 0,90 not inside 10,90.
+    """
     missing = []
     for name, value in rule.params.items():
-        if not any(form in rule.source.quote for form in _spanish_forms(value)):
+        pattern = "|".join(re.escape(form) for form in sorted(_spanish_forms(value)))
+        if not re.search(rf"(?<![\d,.])(?:{pattern})(?![\d,])", rule.source.quote):
             missing.append(name)
     return missing

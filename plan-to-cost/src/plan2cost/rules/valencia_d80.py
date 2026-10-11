@@ -27,6 +27,8 @@ from plan2cost.plan import (
     Use,
     rectangle_dims,
 )
+from plan2cost.rules import valencia_d80_areas as areas
+from plan2cost.rules import valencia_d80_tables as tables
 from plan2cost.rules.engine import Finding, Rule, Source, Status
 
 DOC = "Decreto 80/2023, de 26 de mayo, del Consell (Comunitat Valenciana)"
@@ -59,17 +61,6 @@ def _min_total_area(d: Dwelling, p: dict[str, float]) -> list[Finding]:
             f"useful interior area {area:.2f} m² vs minimum {need:g} m²",
             area,
             need,
-        )
-    ]
-
-
-def _table_7(d: Dwelling, p: dict[str, float]) -> list[Finding]:
-    return [
-        _f(
-            "VAL-D80-54.2",
-            Status.NEEDS_REVIEW,
-            f"minimum area per space for {d.occupants} occupants comes from table 7, which is "
-            "not available in the text we could read; check it against the official DOGV",
         )
     ]
 
@@ -505,14 +496,34 @@ def rules() -> list[Rule]:
             "VAL-D80-54.2",
             "Minimum area per space by occupants (table 7)",
             _src(
-                "art. 54.2",
+                "art. 54.2 and table 7",
                 "En función del número de ocupantes de la vivienda, los recintos que la componen "
                 "contarán con la superficie mínima que se indica en la tabla 7. En estas "
-                "superficies mínimas no se incluye el espacio para almacenamiento.",
+                "superficies mínimas no se incluye el espacio para almacenamiento.\n"
+                + tables.TABLE_7_QUOTE,
             ),
-            {},
-            _table_7,
-            "Table 7 is missing from the text we could read: always sent to review.",
+            {
+                "other_bath_min_m2": tables.OTHER_BATH_MIN_M2,
+                "compartmented_wc_min_m2": tables.COMPARTMENTED_WC_MIN_M2,
+                "integrated_laundry_extra_m2": tables.INTEGRATED_LAUNDRY_EXTRA_M2,
+            },
+            areas.table_7,
+            "Note 1 (up to 20% less for bedrooms next to circulation) is only flagged for review, its conditions (1,80 m width, natural light) are not checked; the compartmented-WC minimum of 1,50 m² is not applied (a WC inside a bathroom is not modelled); storage is excluded by construction (storage is a separate space). Table transcribed from the official DOGV and checked against the page image: a person should confirm it.",
+        ),
+        Rule(
+            "VAL-D80-56",
+            "Inscribed figures (table 8): free circles and furniture rectangles",
+            _src(
+                "art. 56 and table 8",
+                "En los recintos o espacios deberán poder inscribirse dos tipos de figuras mínimas:\n"
+                "a) Las figuras libres de obstáculos que permitan la circulación por la vivienda. Estas figuras se pueden superponer entre sí, si los usos se agrupan en el mismo recinto.\n"
+                "b) Las figuras para mobiliario que permitan la ubicación de muebles en la vivienda. Estas figuras no se pueden superponer entre sí.\n"
+                "2. Las figuras inscribibles mínimas son las que se indican en la tabla 8.\n"
+                + tables.TABLE_8_QUOTE,
+            ),
+            {"free_circle_m": tables.FREE_CIRCLE_DIAMETER_M},
+            areas.figures,
+            "Each furniture figure is tested on its own: non-overlap between figures of one space (art. 56.1.b), the kitchen counter figure (1,00 m clear), the access-zone circle (note 1) and tables 9 to 11 are not checked. Non-rectangular rooms go to review for rectangle figures.",
         ),
         Rule(
             "VAL-D80-55.1",
