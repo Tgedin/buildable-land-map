@@ -103,3 +103,72 @@ def test_gap_uses_main_body_footprint_only():
     row = parcels[parcels["refcat"] == "A"].iloc[0]
     assert row["gap_floors"] == 2
     assert row["gap_m2"] == pytest.approx(95 * 2)
+
+
+def _planned(rows):
+    """rows: (status, allowed_floors, floors, use) -> parcels as match_parcels would return."""
+    recs = [
+        {
+            "refcat": f"P{i}",
+            "plan_status": st,
+            "plan_allowed_floors": al,
+            "floors": fl,
+            "main_footprint_m2": 100.0,
+            "current_use": use,
+            "geometry": box(i * 10, 0, i * 10 + 9, 10),
+        }
+        for i, (st, al, fl, use) in enumerate(rows)
+    ]
+    return gpd.GeoDataFrame(recs, geometry="geometry", crs="EPSG:25830")
+
+
+def test_plan_gap_classes_and_area():
+    nan = float("nan")
+    out = metrics.plan_gap(
+        _planned(
+            [
+                ("floors", 6.0, 4, "1_residential"),  # 2 floors below the plan
+                ("floors", 6.0, 7, "1_residential"),  # above the plan: at the limit
+                ("protected", nan, 3, "1_residential"),
+                ("open", nan, 1, "1_residential"),
+                ("unknown", nan, 2, "1_residential"),
+                ("floors", 8.0, 1, "4_3_publicServices"),  # a school under a tall plan
+            ]
+        )
+    ).set_index("refcat")
+    assert out["gap_class"].to_dict() == {
+        "P0": "plan_gap",
+        "P1": "at_limit",
+        "P2": "protected",
+        "P3": "open",
+        "P4": "no_plan",
+        "P5": "public_use",
+    }
+    assert out.loc["P0", "plan_gap_floors"] == 2
+    assert out.loc["P0", "plan_gap_m2"] == 200
+    assert out.loc["P1", "plan_gap_floors"] == 0  # computed, and zero
+    # Not computed is NaN, never 0.
+    assert out[["plan_gap_floors", "plan_gap_m2"]].loc[["P2", "P3", "P4", "P5"]].isna().all().all()
+
+
+def test_plan_gap_unknown_use_is_not_excluded():
+    out = metrics.plan_gap(_planned([("floors", 6.0, 3, None)]))
+    assert out.iloc[0]["gap_class"] == "plan_gap"  # missing use must not hide a parcel
+
+
+def test_summarize_reports_plan_classes():
+    parcels = metrics.plan_gap(
+        _planned([("floors", 6.0, 4, "1_residential"), ("open", None, 1, None)])
+    )
+    parcels["gap_m2"] = 0.0
+    parcels["existing_m2"] = 0.0
+    s = metrics.summarize(parcels, {"n": 0})
+    assert s["plan_by_class"] == {"plan_gap": 1, "open": 1}
+    assert s["total_plan_gap_m2"] == 200
+    assert s["n_parcels_with_plan_gap"] == 1
+
+
+def test_aggregate_keeps_current_use():
+    parts = _row_of_parcels([4])
+    parts["current_use"] = "1_residential"
+    assert metrics.aggregate_parcels(parts).iloc[0]["current_use"] == "1_residential"

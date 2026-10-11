@@ -39,6 +39,8 @@ def aggregate_parcels(parts: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     }
     if has_lidar:
         agg["lidar_height_m"] = "max"
+    if "current_use" in p.columns:
+        agg["current_use"] = "first"  # one building per refcat, so every part has the same use
 
     parcels = p.dissolve(by="refcat", aggfunc=agg).reset_index()
     parcels = parcels.rename(columns={"floors_above": "floors", "part_id": "n_parts"})
@@ -86,6 +88,47 @@ def buildable_gap(parcels: gpd.GeoDataFrame, cfg: MetricsConfig) -> gpd.GeoDataF
     return out
 
 
+NOT_BUILDABLE_USES = {"4_3_publicServices"}  # schools, markets, stations, churches…
+
+
+def plan_gap(parcels: gpd.GeoDataFrame, excluded_uses: set[str] = NOT_BUILDABLE_USES):
+    """Gap against the municipal plan: allowed floors minus the parcel's floors.
+
+    Needs plan_status / plan_allowed_floors from planning.match_parcels. Each parcel gets a
+    `gap_class` saying why it has, or has not, a plan gap:
+        plan_gap     allowed floors > current floors
+        at_limit     already at or above the allowed floors
+        protected    plan protects the building
+        open         plan says no building here (open space)
+        public_use   Catastro says public services (not a redevelopment target)
+        no_plan      no numeric plan height over the parcel
+    Excluded parcels get NaN, not 0: "not computed" differs from "nothing missing".
+    """
+    out = parcels.copy()
+    use = out["current_use"] if "current_use" in out.columns else pd.Series(None, index=out.index)
+    status = out["plan_status"]
+
+    allowed = out["plan_allowed_floors"]
+    raw_gap = (allowed - out["floors"]).clip(lower=0)
+    computable = (status == "floors") & ~use.isin(excluded_uses)
+
+    out["plan_gap_floors"] = raw_gap.where(computable)
+    out["plan_gap_m2"] = (out["main_footprint_m2"] * out["plan_gap_floors"]).round(0)
+
+    out["gap_class"] = np.select(
+        [
+            status == "protected",
+            use.isin(excluded_uses),
+            status == "open",
+            status == "unknown",
+            out["plan_gap_floors"] > 0,
+        ],
+        ["protected", "public_use", "open", "no_plan", "plan_gap"],
+        default="at_limit",
+    )
+    return out
+
+
 def validate_lidar(parts: gpd.GeoDataFrame, cfg: MetricsConfig) -> dict:
     """Compare LiDAR-derived floors with Catastro floors (high-confidence parts only)."""
     if "lidar_height_m" not in parts.columns:
@@ -111,7 +154,15 @@ def validate_lidar(parts: gpd.GeoDataFrame, cfg: MetricsConfig) -> dict:
 
 def summarize(parcels: gpd.GeoDataFrame, validation: dict) -> dict:
     with_gap = parcels[parcels["gap_m2"] > 0]
+    plan: dict = {}
+    if "gap_class" in parcels.columns:
+        plan = {
+            "plan_by_class": {k: int(v) for k, v in parcels["gap_class"].value_counts().items()},
+            "total_plan_gap_m2": float(parcels["plan_gap_m2"].fillna(0).sum()),
+            "n_parcels_with_plan_gap": int((parcels["plan_gap_floors"] > 0).sum()),
+        }
     return {
+        **plan,
         "n_parcels": int(len(parcels)),
         "n_parcels_with_gap": int(len(with_gap)),
         "total_gap_m2": float(parcels["gap_m2"].fillna(0).sum()),

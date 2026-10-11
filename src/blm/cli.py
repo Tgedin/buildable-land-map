@@ -95,6 +95,12 @@ def cmd_heights(cfg: AreaConfig, args: argparse.Namespace) -> None:
 def _build(cfg: AreaConfig, parts: gpd.GeoDataFrame, synthetic_data: bool = False) -> dict:
     parcels = metrics.aggregate_parcels(parts)
     parcels = metrics.buildable_gap(parcels, cfg.metrics)
+    if not synthetic_data and _pgou_path(cfg).exists():
+        alignments = gpd.read_parquet(_pgou_path(cfg))
+        parcels = planning.match_parcels(parcels, alignments, cfg.planning)
+        parcels = metrics.plan_gap(parcels)
+    else:
+        log.warning("No plan data (run `blm plan`): building the neighbour comparison only.")
     validation = metrics.validate_lidar(parts, cfg.metrics)
     summary = metrics.summarize(parcels, validation)
 
