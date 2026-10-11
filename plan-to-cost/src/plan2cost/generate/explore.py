@@ -120,9 +120,7 @@ def main(argv: list[str] | None = None) -> None:
         print(_line(c))
     loose = ranked(cands)
     if loose and (not clean or loose[0].area < clean[0].area):
-        print(
-            "Smallest if the review items (e.g. table 7 note 1, 20% bedroom reduction) are accepted:"
-        )
+        print("Smallest if review items are accepted (table 7 note 1):")
         print(_line(loose[0]))
 
 
