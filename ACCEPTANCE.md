@@ -106,15 +106,18 @@ M0 Scaffold ─► M1 First real map ─► M2 LiDAR validated ─► M3 Gap + f
 | | Criterion | Evidence |
 |---|---|---|
 | Must | ☐ Whole city processed (Catastro + LiDAR) | `summary.json` |
-| Must | ☐ Scheduled GitHub Action refreshes Catastro data monthly and redeploys | workflow file + run history |
-| Must | ☐ If `parcels.geojson` > 10 MB, switch to PMTiles (vector tiles in one static file) | ADR + file size |
-| Must | ☐ README shows monthly cost (target: €0) | README |
+| Must | ☑ Scheduled GitHub Action refreshes Catastro data monthly and redeploys | workflow file + run history |
+| Must | ☑ If `parcels.geojson` > 10 MB, switch to PMTiles (vector tiles in one static file) | ADR + file size |
+| Must | ☑ README shows monthly cost (target: €0) | README |
 | Target | ☐ 100 unique users / 500 parcel lookups (roadmap target) | analytics |
 | Target | ☐ Map loads in < 3 s on a mid-range phone | Lighthouse report |
 
 **Out of scope:** Multiple cities.
 
 **Notes:**
+- Refresh: `.github/workflows/refresh.yml` (monthly cron + manual run). First run on 2026-10-11 took 5 m 39 s on a clean runner and reproduced the local numbers exactly (so `make run` from a clean clone is verified). It fetches the LiDAR sheets itself via `blm lidar`.
+- `parcels.geojson` is ~1 MB for Ruzafa, so the PMTiles switch is not needed yet; it becomes necessary at city scale (rule stays).
+- Not done: whole city (a Must), users and load-time Targets.
 
 ---
 

@@ -89,7 +89,7 @@ ACCEPTANCE.md           milestones M0–M4 with Must / Target criteria
 | Item | Monthly |
 |---|---|
 | GitHub Pages hosting | €0 |
-| Pipeline (local / GitHub Actions) | €0 |
+| Pipeline (monthly GitHub Actions run, ~6 min, public repo) | €0 |
 | **Total** | **€0** |
 
 ## Limits (stated, not hidden)
