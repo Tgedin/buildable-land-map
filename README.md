@@ -4,7 +4,7 @@
 
 Phase 1 of the [Housing AI roadmap](docs/roadmap.md). Goal: better housing that costs less relative to income. Land is expensive partly because information about what is buildable is scarce. This map makes it visible.
 
-> Status: **M1 done, M2 done except the debug drill**. See [ACCEPTANCE.md](ACCEPTANCE.md).
+> Status: **M1 done, M2 done except the debug drill, plan-based gap added (ADR 0004)**. See [ACCEPTANCE.md](ACCEPTANCE.md).
 > Live map: <https://tgedin.github.io/buildable-land-map/>
 
 ---
@@ -17,6 +17,7 @@ Catastro WFS (BU.BUILDINGPART)        PNOA LiDAR (.laz, manual download)
             │                                      │
             ▼                                      ▼
    blm fetch ──► parts.parquet ──► blm heights ──► parts_lidar.parquet
+   blm plan  ──► pgou.parquet (municipal plan heights + protection)
                                                    │
                                                    ▼
                                      blm build: parcels + buildable gap + validation
@@ -28,7 +29,9 @@ Catastro WFS (BU.BUILDINGPART)        PNOA LiDAR (.laz, manual download)
                               web/ (MapLibre, static) ──► GitHub Pages ($0, never sleeps)
 ```
 
-**Buildable gap (v0 heuristic, not zoning):**
+**Gap against the plan (default view, Valencia):** `blm plan` downloads the municipal plan's height polygons (PGOU, CC BY 4.0). Room under the plan = allowed floors − Catastro floors, over the building's main footprint. Protected buildings, open space and public-services use are set aside, each with a reason on the map. The plan's `altura` is assumed to exclude the ground floor (+1); this is unverified and the total moves 3× either way (ADR 0004). Without a `planning:` section in `config/area.yaml`, only the neighbour view is built.
+
+**Gap against the street (second view, a heuristic, not zoning):**
 
 ```
 dominant_floors = median floors of neighbouring parcels within 50 m
@@ -64,7 +67,8 @@ config/area.yaml        the only knob: area, CRS, thresholds
 src/blm/
   catastro.py           WFS tiling (4 km² / 5,000-feature limits), GML parsing
   lidar.py              LAZ reading, grid index, per-footprint heights
-  metrics.py            parcel aggregation, buildable gap, LiDAR validation
+  planning.py           municipal plan (PGOU) heights, protection, parcel matching
+  metrics.py            parcel aggregation, street gap, plan gap, LiDAR validation
   export.py             WGS84 GeoJSON + summary for the web
   synthetic.py          fake neighbourhood with known truth (tests + demo)
   cli.py                blm fetch | heights | build | run | sample

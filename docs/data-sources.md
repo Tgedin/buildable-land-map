@@ -18,6 +18,17 @@ https://ovc.catastro.meh.es/INSPIRE/wfsBU.aspx?service=wfs&version=2.0.0&request
 
 Save the response as `.gml` and run `blm fetch --from-files file.gml` if the service is unreachable from your machine. Save one small real response into `tests/fixtures/` (M1).
 
+## Municipal plan (PGOU): Valencia (automatic)
+
+- **Layer:** "PGOU - Alineaciones", CC BY 4.0, from the Ajuntament de València open data portal (`opendata.vlci.valencia.es`), served as an ArcGIS REST layer: `https://geoportal.valencia.es/server/rest/services/OPENDATA/UrbanismoEInfraestructuras/MapServer/212` (set as `planning.alignments_url`).
+- **Fields used:** `altura` (text: `6`, `B+5`, `0`, `PROTEGIDO`…) and `protec` (protection code).
+- **Not verified:** what `altura` counts. The pipeline assumes floors above the ground floor (+1). See ADR 0004.
+- **Other cities:** leave out the `planning:` section; the map falls back to the street comparison.
+
+## Catastro: building use (automatic)
+
+`BU.BUILDING` is fetched with the same tiling to read `currentUse` (`1_residential`, `4_3_publicServices`…).
+
 ## PNOA LiDAR: heights (manual download)
 
 1. Go to the CNIG download centre (`centrodedescargas.cnig.es`) → *Modelos digitales de elevaciones* → *LiDAR*.

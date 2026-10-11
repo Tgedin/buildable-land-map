@@ -95,6 +95,7 @@ M0 Scaffold ─► M1 First real map ─► M2 LiDAR validated ─► M3 Gap + f
 
 **Notes:**
 - Prepared: `docs/discovery/call-script.md`, `docs/discovery/outreach-message.md`, `docs/writeup-1-draft.md` (numbers filled, user-learnings section empty). Footer limitation is live. Analytics and calls need the owner.
+- Added after M2 (ADR 0004): plan-based gap with protection and use exclusions. Ruzafa: 154 parcels / 38,880 m² room under the plan (was 280 / 167,826 m² for the neighbour comparison). Unverified: the `altura` + 1 offset; total is 12k–83k m² for offsets 0–2.
 
 ---
 
