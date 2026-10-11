@@ -34,3 +34,11 @@ metrics:
 
 export:
   coordinate_precision: 6    # decimals in the WGS84 GeoJSON
+
+planning:
+  # Municipal plan heights. Valencia: PGOU - Alineaciones (CC BY 4.0). Remove this section
+  # for a city without plan data; the map then falls back to the neighbour comparison only.
+  alignments_url: https://geoportal.valencia.es/server/rest/services/OPENDATA/UrbanismoEInfraestructuras/MapServer/212
+  ground_floor_offset: 1     # ASSUMPTION: plan `altura` excludes the ground floor (ADR 0004)
+  protected_min_share: 0.5   # parcel counts as protected if >= this share is under protected polygons
+  min_coverage: 0.5          # parcel needs a numeric plan height over >= this share of its footprint

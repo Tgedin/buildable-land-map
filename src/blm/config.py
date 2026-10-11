@@ -27,6 +27,17 @@ class LidarConfig:
 
 
 @dataclass(frozen=True)
+class PlanningConfig:
+    """Municipal plan (PGOU) layer. `alignments_url` None = no plan data for this area."""
+
+    alignments_url: str | None = None  # ArcGIS REST layer URL (…/MapServer/<id>)
+    ground_floor_offset: int = 1  # allowed floors = plan `altura` + this (ASSUMPTION, ADR 0004)
+    protected_min_share: float = 0.5  # share of parcel under protected polygons => protected
+    min_coverage: float = 0.5  # share of parcel that must carry a numeric height
+    timeout_s: int = 60
+
+
+@dataclass(frozen=True)
 class MetricsConfig:
     floor_height_m: float = 3.0
     neighbor_radius_m: float = 50.0
@@ -47,6 +58,7 @@ class AreaConfig:
     catastro: CatastroConfig = field(default_factory=CatastroConfig)
     lidar: LidarConfig = field(default_factory=LidarConfig)
     metrics: MetricsConfig = field(default_factory=MetricsConfig)
+    planning: PlanningConfig = field(default_factory=PlanningConfig)
     export: ExportConfig = field(default_factory=ExportConfig)
 
     @property
@@ -84,5 +96,6 @@ def load_config(path: str | Path = REPO_ROOT / "config" / "area.yaml") -> AreaCo
         catastro=CatastroConfig(**raw.get("catastro", {})),
         lidar=LidarConfig(**raw.get("lidar", {})),
         metrics=MetricsConfig(**raw.get("metrics", {})),
+        planning=PlanningConfig(**raw.get("planning", {})),
         export=ExportConfig(**raw.get("export", {})),
     )

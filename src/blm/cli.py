@@ -2,6 +2,7 @@
 
 blm fetch     Catastro WFS            -> data/interim/<area>/parts.parquet
 blm heights   + PNOA LiDAR .laz       -> data/interim/<area>/parts_lidar.parquet
+blm plan      municipal plan (PGOU)   -> data/interim/<area>/pgou.parquet
 blm build     parcels + gap + checks  -> data/processed/<area>/ + web/data/
 blm run       fetch -> heights (if .laz present) -> build
 blm sample    synthetic data end-to-end, so the map works offline
@@ -17,7 +18,7 @@ from pathlib import Path
 
 import geopandas as gpd
 
-from blm import catastro, export, lidar, metrics, synthetic
+from blm import catastro, export, lidar, metrics, planning, synthetic
 from blm.config import REPO_ROOT, AreaConfig, load_config
 
 log = logging.getLogger("blm")
@@ -43,6 +44,22 @@ def cmd_fetch(cfg: AreaConfig, args: argparse.Namespace) -> None:
         len(parts),
         parts["refcat"].nunique(),
         _parts_path(cfg),
+    )
+
+
+def _pgou_path(cfg: AreaConfig) -> Path:
+    return cfg.interim_dir / "pgou.parquet"
+
+
+def cmd_plan(cfg: AreaConfig, args: argparse.Namespace) -> None:
+    alignments = planning.fetch_alignments(cfg)
+    cfg.interim_dir.mkdir(parents=True, exist_ok=True)
+    alignments.to_parquet(_pgou_path(cfg))
+    log.info(
+        "Saved %d plan polygons (%s) -> %s",
+        len(alignments),
+        alignments["kind"].value_counts().to_dict(),
+        _pgou_path(cfg),
     )
 
 
@@ -105,6 +122,8 @@ def cmd_build(cfg: AreaConfig, args: argparse.Namespace) -> None:
 
 def cmd_run(cfg: AreaConfig, args: argparse.Namespace) -> None:
     cmd_fetch(cfg, args)
+    if cfg.planning.alignments_url:
+        cmd_plan(cfg, args)
     if _laz_files(cfg):
         cmd_heights(cfg, args)
     else:
@@ -145,6 +164,7 @@ def main(argv: list[str] | None = None) -> None:
         help="parse saved WFS responses instead of calling the service",
     )
     sub.add_parser("heights", help="compute LiDAR heights per building part")
+    sub.add_parser("plan", help="download municipal plan (PGOU) heights")
     sub.add_parser("build", help="parcels, buildable gap, validation, web export")
     p_run = sub.add_parser("run", help="fetch -> heights -> build")
     p_run.add_argument("--from-files", nargs="+", metavar="GML")
@@ -160,6 +180,7 @@ def main(argv: list[str] | None = None) -> None:
     {
         "fetch": cmd_fetch,
         "heights": cmd_heights,
+        "plan": cmd_plan,
         "build": cmd_build,
         "run": cmd_run,
         "sample": cmd_sample,
