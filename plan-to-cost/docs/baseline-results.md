@@ -1,67 +1,65 @@
 # Plan-reading baseline: results on CubiCasa5k
 
-**Short version: the classical baseline is not usable for pricing.** It finds *some* enclosed rooms in almost every plan (98.5%), but its measure of plan shape is off by a median of **+35%**, and only **29%** of plans are within 20%. It is a floor for a learned model to beat, not a product.
+**Short version: the classical baseline reads rooms moderately well and walls poorly.** On the 400-plan test split, its room (interior) mask overlaps the labels with a mean IoU of **0.51** (66% of plans at IoU ≥ 0.5). Its wall mask has IoU **0.43**: it finds most wall pixels (recall 0.87) but marks many non-wall pixels as wall too (precision 0.47). It is a floor for a learned model to beat, not something to price from.
+
+> **Correction.** An earlier version of this file reported a "+35% shape error" measured with a scale-free proxy, because I believed the SVG labels were not aligned with the images. That was my mistake: I had tested only scaling conventions, while the dataset's loader uses the SVG coordinates directly as pixel positions in `F1_scaled.png`. With the right mapping the labels line up (checked by overlay). The old numbers and the closing setting chosen from them (0.10) were wrong and are discarded. See ADR 0002.
 
 ## What was measured
 
 - Data: CubiCasa5k test split, 400 plans (270 `high_quality_architectural`, 67 `colorful`, 63 `high_quality`), Finnish residential plans. **CC BY-NC-SA 4.0: never committed, and a model trained on it may not be usable commercially without checking the terms.**
-- Method: `vision/walls.py` (dark thick strokes, optional closing to merge parallel lines) -> `vision/rooms.py` (enclosed free space) -> `vision/quantities.py`.
-- Measures (ADR 0002 explains why these and not pixel IoU):
-  - **detected**: at least one enclosed room found.
-  - **wall ratio**: wall centre-line length / sqrt(interior area), compared with the same ratio computed from the SVG labels. Dimensionless, so independent of scale and pixel frame.
+- Method: `vision/walls.py` (dark strokes, thin ones dropped, optional closing to merge parallel lines) -> `vision/rooms.py` (enclosed free space).
+- Metrics: pixel IoU, precision and recall of the wall mask; IoU of the interior mask (rooms = class `Space` except `Outdoor`). Image and labels are scaled together to a 1000 px longest side.
+- `close_frac` was chosen on the validation split (first 150 plans) and the test split was run once.
 
-## Results
+## Results (test split, 400 plans, close_frac 0.02)
 
-### Test split (400 plans), `close_frac` chosen on the validation split
+| | Value |
+|---|---|
+| Plans with an enclosed room found | 92.7% |
+| Wall IoU (mean / median) | 0.431 / 0.428 |
+| Wall precision / recall (mean) | 0.471 / 0.865 |
+| Interior IoU (mean / median) | **0.514 / 0.641** |
+| Plans with interior IoU ≥ 0.5 | **66.0%** |
 
-| | close_frac 0.10 (chosen) | close_frac 0 (no closing) |
-|---|---|---|
-| Rooms detected | 98.5% | 24.7% |
-| Wall ratio, median abs. error | **35.3%** | 542.6% |
-| Within 20% | **28.8%** | 2.0% |
-| Within 50% | **62.2%** | 6.1% |
-| Median signed error | +35.3% (overestimates wall per area) | +542.6% |
+| Style | n | wall IoU | interior IoU |
+|---|---|---|---|
+| high_quality_architectural | 270 | 0.387 | 0.556 |
+| colorful | 67 | 0.517 | 0.471 |
+| high_quality | 63 | 0.531 | 0.378 |
 
-Per style, detection at 0.10: colorful 100%, high_quality 98.4%, high_quality_architectural 98.1%.
+Without closing (`close_frac 0`): rooms found in only 24.7% of plans, interior IoU 0.043, wall IoU 0.349 (wall precision 0.65, recall 0.41).
 
-### How the setting was chosen (validation split, first 120 plans)
+### How the setting was chosen (validation, first 150 plans)
 
-| close_frac | detected | median abs. error | within 20% | within 50% |
-|---|---|---|---|---|
-| 0 | 18.3% | 728% | 4.5% | 9.1% |
-| 0.01 | 89.2% | 207% | 0.9% | 8.4% |
-| 0.02 | 98.3% | 107% | 0.8% | 12.7% |
-| 0.03 | 99.2% | 83% | 0.8% | 14.3% |
-| 0.05 | 100% | 66% | 3.3% | 25.8% |
-| 0.07 | 100% | 52% | 5.0% | 47.5% |
-| **0.10** | 97.5% | 37.5% | 19.7% | 65.8% |
-| 0.14 | 86.7% | 21.7% | 48.1% | 75.0% |
+| close_frac | detected | wall IoU | wall precision | wall recall | interior IoU | interior IoU ≥ 0.5 |
+|---|---|---|---|---|---|---|
+| 0 | 18.0% | 0.193 | 0.547 | 0.228 | 0.036 | 4.0% |
+| 0.01 | 87.3% | 0.410 | 0.508 | 0.712 | 0.352 | 40.0% |
+| **0.02** | 98.0% | 0.378 | 0.410 | 0.860 | 0.534 | 65.3% |
+| 0.04 | 100% | 0.291 | 0.300 | 0.930 | 0.539 | 63.3% |
+| 0.07 | 100% | 0.219 | 0.222 | 0.964 | 0.465 | 48.0% |
+| 0.10 | 97.3% | 0.182 | 0.183 | 0.977 | 0.352 | 26.0% |
 
-I stopped at 0.10 deliberately. The error keeps shrinking at 0.14, but detection falls to 87% and the setting is large enough (14% of the image) to fill small real rooms and turn them into wall, which can make the ratio look right by accident. 0.10 is the largest value that still finds rooms in at least 95% of plans. The test split was run once with that value.
+Interior IoU peaks at 0.02-0.04; I took 0.02 because it ties on rooms and has clearly better wall overlap. Larger values merge more and more non-wall pixels into wall (precision falls to 0.18), which is the opposite of what the earlier flawed measure suggested.
 
-## Why it fails (looked at on 4 plans, not systematically)
+## Why it is wrong where it is wrong (4 plans looked at, not systematic)
 
-Many CubiCasa5k plans are scans where a wall is drawn as **two thin parallel lines or hatching**, not a solid black bar. A "thick dark stroke" detector throws those away. Closing merges them, at the price of also merging furniture, text and door arcs into wall, which is where the positive bias comes from. Door openings are never closed, so rooms joined by a doorway read as one.
+Many CubiCasa5k plans draw a wall as **two thin parallel lines or hatching**, not a solid bar. Without closing those are discarded and rooms never close. Closing merges them but also merges furniture outlines, text and door arcs into wall: that is the low precision. Door openings are never closed, so rooms joined by a doorway can leak into the outside.
 
-## Caveats (important)
+## Caveats
 
-1. **Labels are not pixel-aligned with the images.** On 60 test plans, every simple scaling convention put only ~10% of labelled wall pixels on dark pixels. So pixel overlap (IoU) could not be used, and these results say nothing about absolute areas.
-2. **The wall ratio is a weak proxy.** It can be satisfied by accident (see the 0.14 row). A good score on it would not prove good area or length estimates.
-3. **"Detected" is a low bar.** It means an enclosed region exists, not that it is a real room.
-4. **Not Spanish plans.** Different drawing conventions, languages and scales. Nothing here transfers automatically to your real plans.
-5. **No scale detection.** Absolute quantities need metres per pixel from the user.
-6. Failure inspection was on 4 plans only.
+1. Finnish plans, not Spanish: different drawing conventions and scales. Nothing here transfers automatically.
+2. No scale detection: absolute m² and metres need a scale from the user.
+3. Interior IoU is a good proxy for floor area share but not an area error in m².
+4. Failure inspection was on 4 plans only.
 
 ## What a learned model needs to fix
 
-- Read walls drawn as double lines and hatching (segmentation, e.g. a model trained on CubiCasa5k, which has wall masks).
-- Close door openings so rooms separate.
-- Separate text, furniture and dimension lines from structure.
-- Be evaluated on Spanish plans with real measured areas, which only you can provide.
+Read double-line and hatched walls as walls, ignore text and furniture, and separate rooms across door openings. The dataset has wall and room masks to train on, now known to be aligned. The real accuracy claim still needs Spanish plans with measured areas.
 
 ## Reproduce
 
 ```bash
 # data: Zenodo record 2613548 (md5 0ce0b203d1e3c125b51087b219bd23b9), extract to data/cubicasa5k/extracted/
-python -m plan2cost.eval.cubicasa --root data/cubicasa5k/extracted/cubicasa5k --split test --close-frac 0.10
+python -m plan2cost.eval.cubicasa --root data/cubicasa5k/extracted/cubicasa5k --split test --close-frac 0.02
 ```

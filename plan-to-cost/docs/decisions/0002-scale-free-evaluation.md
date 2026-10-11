@@ -1,22 +1,26 @@
-# ADR 0002: Evaluate with scale-free measures, not pixel IoU
+# ADR 0002: Label frame and evaluation (corrected)
 
-- **Status:** accepted
+- **Status:** accepted, **supersedes the first version of this ADR, which was wrong**
 - **Date:** 2026-10-11
 
-## Context
+## What the first version said, and why it was wrong
 
-The obvious way to score a wall detector is pixel IoU against the labels. In CubiCasa5k the SVG labels are not aligned with the images: on 60 test plans, four conventions (stretch, isotropic by width, by height, by the smaller ratio) each put only ~9-10% of labelled wall pixels on dark pixels. The label coordinate frame does not map onto the image by scaling alone.
+It claimed the CubiCasa5k SVG labels are not aligned with the images, and chose scale-free measures instead of pixel IoU. The claim came from testing four *scaling* conventions (stretch to the image size, isotropic by width, by height, by the smaller ratio); each put only ~10% of labelled wall pixels on dark pixels. I took that as proof of misalignment. It was a wrong test twice over: none of the conventions was the right one, and "dark pixel" is a poor check for walls drawn as hatching.
+
+## Evidence for the correct mapping
+
+The dataset's own loader (`floortrans/loaders/house.py`, CubiCasa5k repo) allocates the label grid from the image shape and uses the SVG polygon coordinates directly as pixel indices: no scaling, no offset, and the SVG `width`/`height` attributes are never read. An overlay of the wall polygons on `F1_scaled.png` with identity mapping lines up with the walls.
 
 ## Decision
 
-Compare quantities that do not depend on the pixel frame: whether a room is found, and wall length / sqrt(interior area), computed independently from the labels and from the prediction. Choose any tunable setting on the validation split and run the test split once.
+Label polygons are pixel coordinates of `F1_scaled.png`. Image and labels are resized together by one factor. Evaluation is pixel IoU / precision / recall of the wall mask and IoU of the interior mask. Any tunable setting is chosen on the validation split; the test split is run once.
 
 ## Consequences
 
-✅ Measures the plan's shape, not the annotation offset.
-⚠️ Weak: it can be matched by accident and says nothing about absolute area. It is a smoke test for the baseline, not the accuracy claim for the product.
-⚠️ The real accuracy claim needs real Spanish plans with measured areas (roadmap P2 done-criteria).
+✅ A proper segmentation metric, and valid training labels.
+⚠️ The first set of baseline results and the setting derived from them (0.10) were discarded; `docs/baseline-results.md` states the correction.
+⚠️ Lesson recorded: check a convention against the source (loader code, an overlay) before building an evaluation on top of it.
 
 ## Revisit when
 
-A per-plan alignment of labels to images is available, or real plans with known areas arrive: then measure area and length error directly.
+Real Spanish plans with measured areas exist: then measure area and length error in m² directly.

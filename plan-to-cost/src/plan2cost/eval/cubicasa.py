@@ -1,17 +1,17 @@
 """Evaluate the vision baseline on CubiCasa5k (CC BY-NC-SA 4.0, never committed).
 
-Why scale-free measures: in CubiCasa5k the SVG labels are NOT pixel-aligned with the images
-(checked on 60 test plans: every simple scaling convention puts only ~10% of labelled wall
-pixels on dark pixels). A pixel IoU would measure the annotation offset, not our detector.
-So we compare quantities that do not depend on the pixel frame:
+Label frame: the SVG polygon coordinates are pixel coordinates of `F1_scaled.png`, with no
+scaling or offset (this is how the dataset's own loader uses them, floortrans/loaders/
+house.py). The SVG's width/height attributes are NOT the image size. An earlier version of
+this module scaled the polygons by those attributes and wrongly concluded the labels were
+unaligned (corrected in ADR 0002).
 
-    detected      did the baseline find at least one enclosed room?
-    wall_ratio    wall centre-line length / sqrt(interior area)   (dimensionless)
+Both image and labels are then scaled together by one factor so the longest side is
+`work_dim` pixels. Walls = SVG polygons of class "Wall" (direct children only, so nested
+windows and doors are excluded); interior = class "Space" except "Outdoor".
 
-The label side comes from the SVG polygons (class "Wall" and class "Space", except
-"Outdoor"); the prediction side from the image, resized to the same working size.
-This says how well the *shape* of the plan is read. It says nothing yet about absolute
-areas, which also need a scale (see vision/quantities.py).
+Metrics per plan: intersection-over-union (IoU), precision and recall of the wall mask, and
+IoU of the interior (room) mask.
 """
 
 from __future__ import annotations
@@ -24,9 +24,9 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from plan2cost.vision import quantities, rooms, walls
+from plan2cost.vision import rooms, walls
 
-WORK_DIM = 1000  # longest side, in pixels, for both label and image
+WORK_DIM = 1000  # longest side, in pixels, for both image and labels
 
 
 def _local(tag: str) -> str:
@@ -44,12 +44,14 @@ def _polygons(group: ET.Element) -> list[np.ndarray]:
     return out
 
 
-def label_masks(svg_path: Path, work_dim: int = WORK_DIM) -> tuple[np.ndarray, np.ndarray]:
-    """(wall mask, interior mask) rasterised from the SVG at the working size."""
+def label_masks(
+    svg_path: Path, shape: tuple[int, int], scale: float = 1.0
+) -> tuple[np.ndarray, np.ndarray]:
+    """(wall mask, interior mask) of size `shape` = (height, width) of the scaled image.
+
+    `scale` is the factor the image was resized by (the polygons live in the unscaled frame).
+    """
     root = ET.parse(svg_path).getroot()
-    width, height = float(root.get("width")), float(root.get("height"))
-    k = work_dim / max(width, height)
-    shape = (max(1, round(height * k)), max(1, round(width * k)))
     wall = np.zeros(shape, np.uint8)
     interior = np.zeros(shape, np.uint8)
     for g in root.iter():
@@ -63,46 +65,45 @@ def label_masks(svg_path: Path, work_dim: int = WORK_DIM) -> tuple[np.ndarray, n
         else:
             continue
         for poly in _polygons(g):
-            cv2.fillPoly(target, [np.round(poly * k).astype(np.int32)], 1)
+            cv2.fillPoly(target, [np.round(poly * scale).astype(np.int32)], 1)
     return wall.astype(bool), interior.astype(bool)
 
 
-def read_image(path: Path, work_dim: int = WORK_DIM) -> np.ndarray:
+def read_image(path: Path, work_dim: int = WORK_DIM) -> tuple[np.ndarray, float]:
+    """Image resized so its longest side is work_dim, and the factor used."""
     img = cv2.imread(str(path), cv2.IMREAD_UNCHANGED)
     if img is None:
         raise ValueError(f"cannot read image {path}")
     k = work_dim / max(img.shape[:2])
-    return cv2.resize(img, None, fx=k, fy=k, interpolation=cv2.INTER_AREA)
+    return cv2.resize(img, None, fx=k, fy=k, interpolation=cv2.INTER_AREA), k
 
 
-def wall_ratio(wall: np.ndarray, interior_px: float) -> float | None:
-    """Wall length / sqrt(interior area). None when there is no interior to divide by."""
-    if interior_px <= 0:
-        return None
-    return quantities.wall_length_px(wall) / float(np.sqrt(interior_px))
+def overlap(pred: np.ndarray, gt: np.ndarray) -> dict[str, float]:
+    """IoU, precision and recall of two boolean masks. Empty cases give 0.0, not NaN."""
+    inter = float((pred & gt).sum())
+    union = float((pred | gt).sum())
+    return {
+        "iou": inter / union if union else 0.0,
+        "precision": inter / pred.sum() if pred.any() else 0.0,
+        "recall": inter / gt.sum() if gt.any() else 0.0,
+    }
 
 
-def evaluate_plan(plan_dir: Path, close_frac: float = 0.0) -> dict:
-    gt_wall, gt_interior = label_masks(plan_dir / "model.svg")
-    gt_ratio = wall_ratio(gt_wall, float(gt_interior.sum()))
+def evaluate_plan(plan_dir: Path, close_frac: float = 0.0, work_dim: int = WORK_DIM) -> dict:
+    image, k = read_image(plan_dir / "F1_scaled.png", work_dim)
+    gt_wall, gt_interior = label_masks(plan_dir / "model.svg", image.shape[:2], k)
 
-    pred_wall = walls.wall_mask(
-        walls.to_gray(read_image(plan_dir / "F1_scaled.png")), close_frac=close_frac
-    )
-    found = rooms.find_rooms(pred_wall)
-    pred_ratio = wall_ratio(pred_wall, rooms.interior_area_px(found))
-
-    rel = None
-    if gt_ratio and pred_ratio is not None:
-        rel = (pred_ratio - gt_ratio) / gt_ratio
+    pred_wall = walls.wall_mask(walls.to_gray(image), close_frac=close_frac)
+    pred_interior = rooms.interior_mask(pred_wall)
+    w, r = overlap(pred_wall, gt_wall), overlap(pred_interior, gt_interior)
     return {
         "id": plan_dir.name,
         "style": plan_dir.parent.name,
-        "detected": bool(found),
-        "n_rooms": len(found),
-        "gt_wall_ratio": gt_ratio,
-        "pred_wall_ratio": pred_ratio,
-        "wall_ratio_rel_error": rel,
+        "detected": bool(pred_interior.any()),
+        "wall_iou": w["iou"],
+        "wall_precision": w["precision"],
+        "wall_recall": w["recall"],
+        "interior_iou": r["iou"],
     }
 
 
@@ -114,30 +115,30 @@ def load_split(root: Path, split: str) -> list[Path]:
 def summarize(results: list[dict]) -> dict:
     if not results:
         return {"n_plans": 0}  # nothing evaluated: say so rather than report NaN statistics
-    errs = np.array(
-        [r["wall_ratio_rel_error"] for r in results if r["wall_ratio_rel_error"] is not None]
-    )
-    abs_err = np.abs(errs)
+
+    def col(key: str) -> np.ndarray:
+        return np.array([r[key] for r in results])
+
     out = {
         "n_plans": len(results),
-        "detected_share": round(float(np.mean([r["detected"] for r in results])), 3),
-        "n_with_ratio": int(len(errs)),
+        "detected_share": round(float(col("detected").mean()), 3),
+        "wall_iou_median": round(float(np.median(col("wall_iou"))), 3),
+        "wall_iou_mean": round(float(col("wall_iou").mean()), 3),
+        "wall_precision_mean": round(float(col("wall_precision").mean()), 3),
+        "wall_recall_mean": round(float(col("wall_recall").mean()), 3),
+        "interior_iou_median": round(float(np.median(col("interior_iou"))), 3),
+        "interior_iou_mean": round(float(col("interior_iou").mean()), 3),
+        "interior_iou_ge_0.5_share": round(float((col("interior_iou") >= 0.5).mean()), 3),
     }
-    if len(errs):
-        out |= {
-            "median_abs_rel_error": round(float(np.median(abs_err)), 3),
-            "share_within_20pct": round(float((abs_err <= 0.2).mean()), 3),
-            "share_within_50pct": round(float((abs_err <= 0.5).mean()), 3),
-            "median_signed_rel_error": round(float(np.median(errs)), 3),
-        }
-    by_style = {}
-    for style in sorted({r["style"] for r in results}):
-        group = [r for r in results if r["style"] == style]
-        by_style[style] = {
+    out["by_style"] = {
+        style: {
             "n": len(group),
-            "detected_share": round(float(np.mean([r["detected"] for r in group])), 3),
+            "wall_iou_mean": round(float(np.mean([r["wall_iou"] for r in group])), 3),
+            "interior_iou_mean": round(float(np.mean([r["interior_iou"] for r in group])), 3),
         }
-    out["by_style"] = by_style
+        for style in sorted({r["style"] for r in results})
+        for group in [[r for r in results if r["style"] == style]]
+    }
     return out
 
 
@@ -146,12 +147,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--root", type=Path, required=True, help="…/extracted/cubicasa5k")
     ap.add_argument("--split", default="test", choices=["train", "val", "test"])
     ap.add_argument("--limit", type=int, default=0, help="first N plans only (0 = all)")
-    ap.add_argument(
-        "--close-frac",
-        type=float,
-        default=0.10,
-        help="wall_mask close_frac (0.10 chosen on the val split, see docs/baseline-results.md)",
-    )
+    ap.add_argument("--close-frac", type=float, default=0.0, help="wall_mask close_frac")
     ap.add_argument("--out", type=Path, help="write per-plan results + summary as JSON")
     args = ap.parse_args(argv)
 

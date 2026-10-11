@@ -70,3 +70,12 @@ def test_wall_length_is_about_the_centreline():
 def test_scale_must_be_positive():
     with pytest.raises(ValueError):
         quantities.quantities_from_plan(np.zeros((5, 5), bool), [], 0)
+
+
+def test_interior_mask_matches_find_rooms():
+    m = walls.wall_mask(walls.to_gray(_plan()))
+    mask = rooms.interior_mask(m)
+    assert mask.sum() == rooms.interior_area_px(rooms.find_rooms(m))
+    assert not mask[150, 200]  # on the inner wall
+    assert mask[150, 100] and mask[150, 300]  # both rooms
+    assert not mask[5, 5]  # outside

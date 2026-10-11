@@ -34,5 +34,16 @@ def find_rooms(walls: np.ndarray, min_area_frac: float = 0.002) -> list[Room]:
     return rooms
 
 
+def interior_mask(walls: np.ndarray, min_area_frac: float = 0.002) -> np.ndarray:
+    """Boolean mask of the enclosed rooms (the same regions `find_rooms` counts)."""
+    free = (~walls).astype(np.uint8)
+    n, labels, stats, _ = cv2.connectedComponentsWithStats(free, connectivity=4)
+    outside = set(np.unique(np.concatenate([labels[0], labels[-1], labels[:, 0], labels[:, -1]])))
+    keep = np.zeros(n, dtype=bool)
+    keep[1:] = stats[1:, cv2.CC_STAT_AREA] >= walls.size * min_area_frac
+    keep[list(outside)] = False
+    return keep[labels]
+
+
 def interior_area_px(rooms: list[Room]) -> int:
     return sum(r.area_px for r in rooms)
