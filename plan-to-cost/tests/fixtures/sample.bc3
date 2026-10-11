@@ -1,0 +1,11 @@
+~V|SYNTHETIC SAMPLE FOR TESTS, NOT A REAL PRICE BASE|FIEBDC-3/2016|test|ANSI|
+~C|ROOT##||Obra de prueba|0|240101|0|
+~C|CAP01#||Albañilería y acabados|0|240101|1|
+~C|EFS010|m2|Tabique de ladrillo hueco doble de 7 cm|18,50\18.20|240101|0|
+~C|EPT010|m2|Pintura plástica lisa en paramentos verticales|4.30|240101|0|
+~C|EFP020|m2|Solado de baldosa cerámica 30x30|32.10|240101|0|
+~C|CARP010|ud|Puerta de paso ciega lisa|120.00|240101|0|
+~C|NOPRICE|m|Concepto sin precio|||0|
+~D|ROOT##|CAP01#\1\1\|
+~D|CAP01#|EFS010\1\1\EPT010\1\1\EFP020\1\1\|
+~T|EFS010|Tabique de ladrillo hueco doble, recibido con mortero.|

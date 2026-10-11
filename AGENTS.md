@@ -1,6 +1,7 @@
 # Working notes for AI assistants
 
 Project: Buildable Land Map (Phase 1 of docs/roadmap.md). Milestones and gates: ACCEPTANCE.md.
+Phase 2 lives in `plan-to-cost/` (own package, tests and AGENTS.md); run `make check-p2` for it. One repo for the whole roadmap, tagged release per phase.
 
 ## Rules
 

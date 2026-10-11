@@ -19,3 +19,18 @@ jobs:
       - run: make test
       - name: Synthetic end-to-end run
         run: python -m blm sample
+
+  check-plan-to-cost:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plan-to-cost
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: make lint
+      - run: make test

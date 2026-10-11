@@ -1,4 +1,4 @@
-.PHONY: setup test lint format sample fetch heights build run serve check clean
+.PHONY: setup test lint format sample fetch heights build run serve check check-p2 clean
 
 PY ?= python3
 
@@ -16,7 +16,10 @@ format:           ## auto-format
 	ruff format src tests
 	ruff check --fix src tests
 
-check: lint test  ## everything CI runs
+check: lint test  ## everything CI runs for Phase 1
+
+check-p2:         ## Phase 2 (plan-to-cost/) lint + tests
+	$(MAKE) -C plan-to-cost check PY=$(PY)
 
 sample:           ## synthetic end-to-end run -> web/data (works offline)
 	$(PY) -m blm sample
