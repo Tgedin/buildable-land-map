@@ -62,7 +62,7 @@ M0 Scaffold ─► M1 First real map ─► M2 LiDAR validated ─► M3 Gap + f
 |---|---|---|
 | Must | ☑ LiDAR tiles for the area downloaded and processed with `make heights` | log + `parts_lidar.parquet` |
 | Must | ☑ Validation reported on ≥ 50 buildings: MAE in floors, share exact, share within ±1 | `summary.json → lidar_validation` |
-| Must | ☐ Worst 10 disagreements inspected by hand and explained (e.g. attic, terrace, wrong class, recent works) | `docs/validation-m2.md` |
+| Must | ☑ Worst 10 disagreements inspected by hand and explained (e.g. attic, terrace, wrong class, recent works) | `docs/validation-m2.md` |
 | Must | ☐ One debug drill done (see `docs/debug-drills.md`) | drill log |
 | Target | ☐ ≥ 80% of parts have `lidar_confidence = high` | `summary.json` |
 | Target | ☑ ≥ 80% of validated parts within ±1 floor | `summary.json` |
@@ -73,7 +73,7 @@ M0 Scaffold ─► M1 First real map ─► M2 LiDAR validated ─► M3 Gap + f
 - Source: ICV 2015 cloud (CNIG download was not possible), 11 years older than Catastro. Details in `docs/validation-m2.md`.
 - n = 1,987: MAE 0.94 floors, bias +0.87, exact 25.6%, within ±1 85.9%. Median 3.61 m per floor, so `floor_height_m: 3.0` is too low here.
 - Target missed: only 49% of parts are `lidar_confidence = high` (0.5 pts/m² is sparse for small parts).
-- Open Musts: hand inspection of the worst 10 (hypotheses written, not verified) and the debug drill (yours to do).
+- Worst 10 inspected on the aerial (3 patterns: courtyard parts, non-residential volumes, slivers), see `docs/validation-m2.md`; the owner should re-check. Open Must: the debug drill (yours to do).
 
 ---
 

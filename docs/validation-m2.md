@@ -36,14 +36,20 @@ Method: `lidar_floors = round(lidar_height_m / 3.0)`, compared with `floors_abov
 | 5714107YJ2751D_part1 | 6 | 3.1 m | −5 |
 | 6115912YJ2761E_part16 | 7 | 5.4 m | −5 |
 
-**Hypotheses, not yet verified by eye** (the Must says "inspected by hand", so this stays open until someone looks at each part on the PNOA aerial / street view):
+**Inspected on the current PNOA aerial photo** (`docs/evidence/m2-worst10.jpg`, red = Catastro part outline; 8 images, the other 2 are siblings of parts shown: `6212322YJ2761C_part4` next to part1, `6116404YJ2761E_part2` next to part1). The aerial is newer than the 2015 LiDAR, so a building built after 2015 would show as built here and not be visible as an error cause. I looked at them, but this is one reader's reading of one image each.
 
-- **Catastro tall, LiDAR ≈ 2–7 m (−5 to −8):** the building probably did not exist in 2015 (built after the flight; the two worst are parts 1 and 4 of the same parcel), or the roof points were not class 6.
-- **Catastro 1 floor, LiDAR 17–25 m (+5 to +7):** probably a 1-floor part that sits under or beside a taller part, so the median of "roof" points inside its footprint picks up the taller building. Parts of one parcel can overlap or touch; this is a method limit.
-- 5411701YJ2751A_part38 has a footprint of 8,952 m²: a large part, likely mixed heights inside one footprint, where a single median is a poor summary.
+| Pattern | Parts | What the image shows | Verdict |
+|---|---|---|---|
+| **Small part in an inner courtyard / light well**, Catastro floors high, LiDAR low (−5 to −8) | `6212322…_part1` (and part4), `5714107…_part1`, `6115912…_part16`, `6312056…_part18` (narrow strip) | The outline sits on open or low ground inside the block, surrounded by tall roofs. LiDAR measures the courtyard level, Catastro records the floors of the building it belongs to. | Method limit: a part's footprint is not always its roof. Not a Catastro error. |
+| **Non-residential volumes**, Catastro floors not comparable | `5411701…_part38` (Estación del Norte hall, 8,952 m²), `5913115…_part1` (church, 1 "floor", 17.6 m), `6116404…_part1` and part2 (round tower/dome of the church, 5 floors vs 34.2 m) | Large single-volume or monumental buildings. | Floors are not a meaningful unit here. These should be excluded from validation and flagged on the map. |
+| **Thin sliver beside a tall building**, Catastro 1 floor, LiDAR 24.8 m (+7) | `5911205…_part4` | A narrow strip at the edge of a tall block, next to a park. The roof points are the neighbouring wall and roof. | Method limit: the 0.5 m inner buffer does not protect slivers this thin. |
+
+Nothing in these 10 suggests Catastro is wrong. All 10 are explained by how the part geometry meets the point cloud, or by non-residential use. That is a result worth stating: **the worst disagreements are mostly measurement artefacts**, so the 86% within ±1 is, if anything, a conservative view of how often Catastro floors agree with reality.
+
+Suggested follow-ups (not done, M2 scope is reporting): drop parts under ~30 m² or thinner than ~4 m from validation, and exclude non-residential `currentUse` once that field is parsed.
 
 ## Not done / open
 
-- Hand inspection of the 10 cases above.
+- A second pair of eyes on the worst 10 (the inspection above was done by the assistant on the current aerial; the owner should re-check, ideally on 2015 imagery).
 - Decision on `floor_height_m` (3.0 vs ~3.6).
 - A newer LiDAR coverage would remove the 2015-vs-2026 mismatch; the CNIG 3rd-coverage point cloud could not be downloaded.
