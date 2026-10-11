@@ -24,6 +24,8 @@
       Synthetic sample data. Not a real place. Run the pipeline to load real Catastro data.
     </div>
 
+    <p id="screen-note" class="muted note" hidden></p>
+
     <div id="view-toggle" class="views" hidden>
       <label><input type="radio" name="view" value="plan" checked /> Vs. the plan (PGOU)</label>
       <label><input type="radio" name="view" value="street" /> Vs. the street</label>
@@ -43,6 +45,7 @@
         <dt>Plan height (allowed floors)</dt><dd id="d-plan"></dd>
         <dt>Room under the plan</dt><dd id="d-plangap"></dd>
         <dt>Street height (median)</dt><dd id="d-dominant"></dd>
+        <dt>Added homes (screening)</dt><dd id="d-screen"></dd>
         <dt>Missing floors vs. street</dt><dd id="d-gapf"></dd>
         <dt>Missing floor area vs. street</dt><dd id="d-gapm2"></dd>
         <dt>Measured height (LiDAR)</dt><dd id="d-lidar"></dd>

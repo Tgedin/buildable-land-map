@@ -24,6 +24,10 @@ jobs:
       - run: pip install -e .
       - name: Fetch Catastro, plan and LiDAR, then build
         run: python -m blm run
+      - name: Screening of added homes (plan-to-cost)
+        run: |
+          pip install -e ./plan-to-cost
+          python -m plan2cost.screen_map --parcels data/processed/*/parcels.parquet --out web/data/screening.json
       - name: Commit and redeploy
         env:
           GH_TOKEN: ${{ github.token }}

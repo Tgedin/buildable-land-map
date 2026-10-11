@@ -1,0 +1,2956 @@
+{
+ "generated_at": "2026-10-11T21:20:23+00:00",
+ "kind": "screening",
+ "meaning": "Homes that could be added on the extra floors the plan allows, limited by floor area and by free facade. A first filter, not a design and not a permit.",
+ "assumptions": {
+  "net_to_gross": 0.85,
+  "core_m2": 18.0,
+  "party_tol_m": 0.35,
+  "min_patio_m2": 30.0
+ },
+ "not_checked": [
+  "structure of the existing building and its capacity for extra floors",
+  "whether the existing stair can be extended, and lift requirements",
+  "fire safety (DB-SI), accessibility of common areas (DB-SUA 9), energy (DB-HE), acoustics",
+  "owners' consent (propiedad horizontal), permits, party-wall and neighbour-light conditions",
+  "urban parameters other than the plan's height (occupation, setbacks, courtyards)",
+  "only Decreto 80/2023 arts. 9-10 and 51-56 are applied to the dwelling"
+ ],
+ "summary": {
+  "parcels_screened": 154,
+  "parcels_with_homes_1bed": 108,
+  "parcels_with_homes_2bed": 90,
+  "total_homes_1bed": 348,
+  "total_homes_2bed": 213,
+  "limited_by_facade_2bed": 26,
+  "limited_by_area_2bed": 40
+ },
+ "parcels": {
+  "5713430YJ2751D": {
+   "plate_m2": 1377.5,
+   "free_facade_m": 23.2,
+   "added_floors": 1,
+   "homes_1bed": 3,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5714108YJ2751D": {
+   "plate_m2": 124.5,
+   "free_facade_m": 17.1,
+   "added_floors": 2,
+   "homes_1bed": 4,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5714110YJ2751D": {
+   "plate_m2": 18.4,
+   "free_facade_m": 23.2,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5714111YJ2751D": {
+   "plate_m2": 30.0,
+   "free_facade_m": 23.6,
+   "added_floors": 2,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5714118YJ2751D": {
+   "plate_m2": 167.3,
+   "free_facade_m": 30.4,
+   "added_floors": 2,
+   "homes_1bed": 6,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 4,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5714119YJ2751D": {
+   "plate_m2": 24.8,
+   "free_facade_m": 40.4,
+   "added_floors": 2,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5714121YJ2751D": {
+   "plate_m2": 159.5,
+   "free_facade_m": 42.4,
+   "added_floors": 4,
+   "homes_1bed": 12,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 8,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5714122YJ2751D": {
+   "plate_m2": 188.6,
+   "free_facade_m": 19.2,
+   "added_floors": 4,
+   "homes_1bed": 12,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 8,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5714123YJ2751D": {
+   "plate_m2": 56.2,
+   "free_facade_m": 13.8,
+   "added_floors": 4,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5714124YJ2751D": {
+   "plate_m2": 134.4,
+   "free_facade_m": 20.5,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5714125YJ2751D": {
+   "plate_m2": 130.9,
+   "free_facade_m": 20.7,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5714126YJ2751D": {
+   "plate_m2": 147.3,
+   "free_facade_m": 10.0,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5714127YJ2751D": {
+   "plate_m2": 131.2,
+   "free_facade_m": 23.5,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5714132YJ2751F": {
+   "plate_m2": 118.2,
+   "free_facade_m": 26.2,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5714133YJ2751F": {
+   "plate_m2": 162.3,
+   "free_facade_m": 13.1,
+   "added_floors": 3,
+   "homes_1bed": 6,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 3,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5714604YJ2751D": {
+   "plate_m2": 80.1,
+   "free_facade_m": 7.4,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5714618YJ2751D": {
+   "plate_m2": 209.2,
+   "free_facade_m": 11.3,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5714625YJ2751D": {
+   "plate_m2": 5.1,
+   "free_facade_m": 18.6,
+   "added_floors": 2,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5715126YJ2751F": {
+   "plate_m2": 44.1,
+   "free_facade_m": 20.1,
+   "added_floors": 3,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5715135YJ2751F": {
+   "plate_m2": 75.8,
+   "free_facade_m": 82.8,
+   "added_floors": 5,
+   "homes_1bed": 5,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5716501YJ2751F": {
+   "plate_m2": 160.8,
+   "free_facade_m": 45.7,
+   "added_floors": 1,
+   "homes_1bed": 3,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5716517YJ2751F": {
+   "plate_m2": 64.1,
+   "free_facade_m": 35.3,
+   "added_floors": 2,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5716518YJ2751F": {
+   "plate_m2": 62.6,
+   "free_facade_m": 12.8,
+   "added_floors": 3,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5812105YJ2751D": {
+   "plate_m2": 54.8,
+   "free_facade_m": 11.3,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5812107YJ2751D": {
+   "plate_m2": 202.7,
+   "free_facade_m": 18.5,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5812120YJ2751D": {
+   "plate_m2": 174.5,
+   "free_facade_m": 50.2,
+   "added_floors": 2,
+   "homes_1bed": 6,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 4,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5812402YJ2751D": {
+   "plate_m2": 60.9,
+   "free_facade_m": 27.6,
+   "added_floors": 3,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5812403YJ2751D": {
+   "plate_m2": 34.5,
+   "free_facade_m": 63.5,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5812404YJ2751D": {
+   "plate_m2": 15.4,
+   "free_facade_m": 37.4,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5812405YJ2751B": {
+   "plate_m2": 12.4,
+   "free_facade_m": 22.4,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5812416YJ2751D": {
+   "plate_m2": 36.5,
+   "free_facade_m": 14.6,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5814216YJ2751D": {
+   "plate_m2": 73.1,
+   "free_facade_m": 47.6,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5814217YJ2751D": {
+   "plate_m2": 9.2,
+   "free_facade_m": 7.7,
+   "added_floors": 3,
+   "homes_1bed": 0,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5814219YJ2751F": {
+   "plate_m2": 138.9,
+   "free_facade_m": 9.1,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5815802YJ2751F": {
+   "plate_m2": 98.5,
+   "free_facade_m": 18.3,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5815807YJ2751F": {
+   "plate_m2": 165.0,
+   "free_facade_m": 11.2,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5815808YJ2751F": {
+   "plate_m2": 111.8,
+   "free_facade_m": 10.5,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5815809YJ2751F": {
+   "plate_m2": 45.1,
+   "free_facade_m": 20.9,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5815823YJ2751F": {
+   "plate_m2": 306.5,
+   "free_facade_m": 17.8,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5816309YJ2751F": {
+   "plate_m2": 103.6,
+   "free_facade_m": 29.5,
+   "added_floors": 3,
+   "homes_1bed": 3,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 3,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5816310YJ2751F": {
+   "plate_m2": 112.1,
+   "free_facade_m": 31.5,
+   "added_floors": 3,
+   "homes_1bed": 3,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 3,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5816315YJ2751F": {
+   "plate_m2": 161.1,
+   "free_facade_m": 24.1,
+   "added_floors": 2,
+   "homes_1bed": 4,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5911202YJ2751B": {
+   "plate_m2": 11.9,
+   "free_facade_m": 30.2,
+   "added_floors": 2,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5911203YJ2751B": {
+   "plate_m2": 70.2,
+   "free_facade_m": 38.1,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5912331YJ2751D": {
+   "plate_m2": 852.8,
+   "free_facade_m": 0.0,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5912332YJ2761C": {
+   "plate_m2": 146.5,
+   "free_facade_m": 26.7,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5912336YJ2751D": {
+   "plate_m2": 903.5,
+   "free_facade_m": 1.0,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5913101YJ2751D": {
+   "plate_m2": 184.8,
+   "free_facade_m": 31.5,
+   "added_floors": 2,
+   "homes_1bed": 6,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 4,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5913102YJ2751D": {
+   "plate_m2": 167.9,
+   "free_facade_m": 30.4,
+   "added_floors": 1,
+   "homes_1bed": 3,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5913108YJ2751D": {
+   "plate_m2": 3704.4,
+   "free_facade_m": 25.7,
+   "added_floors": 1,
+   "homes_1bed": 4,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5913120YJ2751D": {
+   "plate_m2": 160.3,
+   "free_facade_m": 24.9,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5913121YJ2751D": {
+   "plate_m2": 99.4,
+   "free_facade_m": 12.4,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5913123YJ2751D": {
+   "plate_m2": 118.1,
+   "free_facade_m": 21.5,
+   "added_floors": 3,
+   "homes_1bed": 6,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 3,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5913124YJ2751D": {
+   "plate_m2": 5.7,
+   "free_facade_m": 16.7,
+   "added_floors": 2,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5913127YJ2751D": {
+   "plate_m2": 161.7,
+   "free_facade_m": 13.2,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5913129YJ2751D": {
+   "plate_m2": 102.7,
+   "free_facade_m": 25.0,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5913130YJ2751D": {
+   "plate_m2": 109.6,
+   "free_facade_m": 14.4,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5913132YJ2751D": {
+   "plate_m2": 194.8,
+   "free_facade_m": 30.1,
+   "added_floors": 4,
+   "homes_1bed": 12,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 8,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5915201YJ2751F": {
+   "plate_m2": 36.9,
+   "free_facade_m": 22.9,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5915202YJ2751F": {
+   "plate_m2": 64.7,
+   "free_facade_m": 6.5,
+   "added_floors": 2,
+   "homes_1bed": 0,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5915214YJ2761E": {
+   "plate_m2": 100.0,
+   "free_facade_m": 17.7,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5915219YJ2751F": {
+   "plate_m2": 154.9,
+   "free_facade_m": 18.4,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5915235YJ2751F": {
+   "plate_m2": 106.4,
+   "free_facade_m": 12.9,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5917309YJ2751F": {
+   "plate_m2": 68.1,
+   "free_facade_m": 9.3,
+   "added_floors": 4,
+   "homes_1bed": 0,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5917310YJ2751F": {
+   "plate_m2": 34.0,
+   "free_facade_m": 2.0,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5917311YJ2751F": {
+   "plate_m2": 37.7,
+   "free_facade_m": 2.8,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5917312YJ2751F": {
+   "plate_m2": 48.1,
+   "free_facade_m": 5.5,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5917313YJ2751F": {
+   "plate_m2": 38.4,
+   "free_facade_m": 5.5,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5917326YJ2751F": {
+   "plate_m2": 83.7,
+   "free_facade_m": 14.6,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5917327YJ2751F": {
+   "plate_m2": 105.0,
+   "free_facade_m": 15.0,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "5917328YJ2751F": {
+   "plate_m2": 105.4,
+   "free_facade_m": 8.5,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5917329YJ2751F": {
+   "plate_m2": 127.0,
+   "free_facade_m": 26.6,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5917329YJ2751H": {
+   "plate_m2": 107.1,
+   "free_facade_m": 8.6,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "5917333YJ2751H": {
+   "plate_m2": 120.9,
+   "free_facade_m": 9.5,
+   "added_floors": 4,
+   "homes_1bed": 4,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 4,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6011402YJ2761A": {
+   "plate_m2": 265.2,
+   "free_facade_m": 15.2,
+   "added_floors": 6,
+   "homes_1bed": 12,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 6,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6013601YJ2761C": {
+   "plate_m2": 145.6,
+   "free_facade_m": 26.6,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6013602YJ2761C": {
+   "plate_m2": 134.8,
+   "free_facade_m": 12.8,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6013603YJ2761C": {
+   "plate_m2": 141.3,
+   "free_facade_m": 15.6,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6013605YJ2761C": {
+   "plate_m2": 157.6,
+   "free_facade_m": 32.8,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6013610YJ2761C": {
+   "plate_m2": 151.3,
+   "free_facade_m": 14.6,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6013613YJ2761C": {
+   "plate_m2": 26.7,
+   "free_facade_m": 18.4,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6013632YJ2761C": {
+   "plate_m2": 2417.5,
+   "free_facade_m": 102.4,
+   "added_floors": 1,
+   "homes_1bed": 16,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 11,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6014903YJ2761E": {
+   "plate_m2": 240.3,
+   "free_facade_m": 53.3,
+   "added_floors": 2,
+   "homes_1bed": 8,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 6,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6014908YJ2761C": {
+   "plate_m2": 184.8,
+   "free_facade_m": 24.4,
+   "added_floors": 1,
+   "homes_1bed": 3,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6014909YJ2761C": {
+   "plate_m2": 186.9,
+   "free_facade_m": 13.3,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6014919YJ2761C": {
+   "plate_m2": 180.2,
+   "free_facade_m": 22.0,
+   "added_floors": 1,
+   "homes_1bed": 3,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6014925YJ2751D": {
+   "plate_m2": 94.8,
+   "free_facade_m": 30.3,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6014926YJ2751D": {
+   "plate_m2": 213.0,
+   "free_facade_m": 40.3,
+   "added_floors": 1,
+   "homes_1bed": 4,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6014930YJ2761E": {
+   "plate_m2": 399.8,
+   "free_facade_m": 46.2,
+   "added_floors": 1,
+   "homes_1bed": 7,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 4,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6016401YJ2761E": {
+   "plate_m2": 78.3,
+   "free_facade_m": 17.7,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6016405YJ2761E": {
+   "plate_m2": 97.7,
+   "free_facade_m": 8.3,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6016420YJ2761E": {
+   "plate_m2": 167.9,
+   "free_facade_m": 0.0,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6016808YJ2761E": {
+   "plate_m2": 128.5,
+   "free_facade_m": 21.4,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6017404YJ2761G": {
+   "plate_m2": 73.1,
+   "free_facade_m": 12.9,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6017408YJ2761G": {
+   "plate_m2": 176.7,
+   "free_facade_m": 21.0,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6017410YJ2761E": {
+   "plate_m2": 117.8,
+   "free_facade_m": 19.3,
+   "added_floors": 3,
+   "homes_1bed": 3,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 3,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6017411YJ2761E": {
+   "plate_m2": 120.5,
+   "free_facade_m": 14.0,
+   "added_floors": 3,
+   "homes_1bed": 3,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 3,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6017418YJ2761E": {
+   "plate_m2": 39.8,
+   "free_facade_m": 7.3,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6017424YJ2761G": {
+   "plate_m2": 122.3,
+   "free_facade_m": 23.0,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6017427YJ2761G": {
+   "plate_m2": 67.7,
+   "free_facade_m": 6.4,
+   "added_floors": 2,
+   "homes_1bed": 0,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6017429YJ2761G": {
+   "plate_m2": 73.1,
+   "free_facade_m": 6.6,
+   "added_floors": 3,
+   "homes_1bed": 3,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6017430YJ2761G": {
+   "plate_m2": 117.0,
+   "free_facade_m": 15.9,
+   "added_floors": 3,
+   "homes_1bed": 3,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 3,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6017433YJ2761G": {
+   "plate_m2": 328.7,
+   "free_facade_m": 1.6,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6112504YJ2761A": {
+   "plate_m2": 60.0,
+   "free_facade_m": 25.5,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6112505YJ2761A": {
+   "plate_m2": 28.3,
+   "free_facade_m": 14.2,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6112512YJ2761A": {
+   "plate_m2": 17.2,
+   "free_facade_m": 21.3,
+   "added_floors": 6,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6112521YJ2761A": {
+   "plate_m2": 132.6,
+   "free_facade_m": 20.9,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6112522YJ2761A": {
+   "plate_m2": 129.5,
+   "free_facade_m": 23.7,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6112523YJ2761A": {
+   "plate_m2": 130.2,
+   "free_facade_m": 14.5,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6112524YJ2761C": {
+   "plate_m2": 127.4,
+   "free_facade_m": 11.5,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6112527YJ2761A": {
+   "plate_m2": 68.3,
+   "free_facade_m": 0.0,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6113303YJ2761C": {
+   "plate_m2": 103.9,
+   "free_facade_m": 19.1,
+   "added_floors": 3,
+   "homes_1bed": 3,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 3,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6113306YJ2761C": {
+   "plate_m2": 115.7,
+   "free_facade_m": 29.9,
+   "added_floors": 2,
+   "homes_1bed": 4,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6113307YJ2761C": {
+   "plate_m2": 105.3,
+   "free_facade_m": 16.8,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6113311YJ2761C": {
+   "plate_m2": 115.8,
+   "free_facade_m": 21.5,
+   "added_floors": 2,
+   "homes_1bed": 4,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6113313YJ2761C": {
+   "plate_m2": 34.2,
+   "free_facade_m": 39.7,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6113314YJ2761C": {
+   "plate_m2": 90.6,
+   "free_facade_m": 21.0,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6113315YJ2761C": {
+   "plate_m2": 104.4,
+   "free_facade_m": 35.2,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6113316YJ2761C": {
+   "plate_m2": 184.0,
+   "free_facade_m": 16.8,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6113317YJ2761C": {
+   "plate_m2": 157.7,
+   "free_facade_m": 14.9,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6113320YJ2761C": {
+   "plate_m2": 155.9,
+   "free_facade_m": 22.1,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6114103YJ2761E": {
+   "plate_m2": 133.2,
+   "free_facade_m": 11.7,
+   "added_floors": 3,
+   "homes_1bed": 3,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 3,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6114108YJ2761C": {
+   "plate_m2": 104.0,
+   "free_facade_m": 18.2,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6114109YJ2761C": {
+   "plate_m2": 106.0,
+   "free_facade_m": 14.2,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6114110YJ2761C": {
+   "plate_m2": 115.0,
+   "free_facade_m": 26.2,
+   "added_floors": 3,
+   "homes_1bed": 6,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 3,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6115202YJ2761E": {
+   "plate_m2": 92.4,
+   "free_facade_m": 13.0,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6115903YJ2761E": {
+   "plate_m2": 150.8,
+   "free_facade_m": 13.5,
+   "added_floors": 2,
+   "homes_1bed": 4,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6116202YJ2761E": {
+   "plate_m2": 34.5,
+   "free_facade_m": 23.4,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6116203YJ2761E": {
+   "plate_m2": 81.2,
+   "free_facade_m": 13.7,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6116212YJ2761E": {
+   "plate_m2": 74.5,
+   "free_facade_m": 6.3,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6116213YJ2761E": {
+   "plate_m2": 79.3,
+   "free_facade_m": 7.0,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6116403YJ2761E": {
+   "plate_m2": 152.4,
+   "free_facade_m": 10.1,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6117217YJ2761G": {
+   "plate_m2": 104.4,
+   "free_facade_m": 11.4,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6212309YJ2761A": {
+   "plate_m2": 32.5,
+   "free_facade_m": 41.1,
+   "added_floors": 2,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6212316YJ2761C": {
+   "plate_m2": 138.6,
+   "free_facade_m": 22.6,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6212317YJ2761C": {
+   "plate_m2": 136.9,
+   "free_facade_m": 23.7,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6212318YJ2761C": {
+   "plate_m2": 494.8,
+   "free_facade_m": 5.1,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6212319YJ2761C": {
+   "plate_m2": 126.6,
+   "free_facade_m": 14.5,
+   "added_floors": 1,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6213306YJ2761C": {
+   "plate_m2": 26.7,
+   "free_facade_m": 42.3,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6213307YJ2761C": {
+   "plate_m2": 405.8,
+   "free_facade_m": 0.0,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "facade",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6215901YJ2761E": {
+   "plate_m2": 223.6,
+   "free_facade_m": 319.2,
+   "added_floors": 3,
+   "homes_1bed": 12,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 9,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6216405YJ2761E": {
+   "plate_m2": 261.0,
+   "free_facade_m": 64.3,
+   "added_floors": 3,
+   "homes_1bed": 15,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 9,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6312022YJ2761A": {
+   "plate_m2": 103.1,
+   "free_facade_m": 17.9,
+   "added_floors": 2,
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6312024YJ2761A": {
+   "plate_m2": 63.7,
+   "free_facade_m": 28.3,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6312038YJ2761A": {
+   "plate_m2": 109.1,
+   "free_facade_m": 18.7,
+   "added_floors": 4,
+   "homes_1bed": 4,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 4,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6312039YJ2761A": {
+   "plate_m2": 108.6,
+   "free_facade_m": 30.7,
+   "added_floors": 4,
+   "homes_1bed": 4,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 4,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6313618YJ2761C": {
+   "plate_m2": 349.2,
+   "free_facade_m": 37.5,
+   "added_floors": 1,
+   "homes_1bed": 6,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "single-aspect",
+    "useful_m2": 45.0,
+    "facade_m": 6.25
+   },
+   "homes_2bed": 4,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   }
+  },
+  "6315210YJ2761E": {
+   "plate_m2": 76.3,
+   "free_facade_m": 22.1,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6315211YJ2761E": {
+   "plate_m2": 86.1,
+   "free_facade_m": 40.5,
+   "added_floors": 1,
+   "homes_1bed": 1,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 1,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6315515YJ2761E": {
+   "plate_m2": 66.7,
+   "free_facade_m": 12.1,
+   "added_floors": 3,
+   "homes_1bed": 3,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6315516YJ2761E": {
+   "plate_m2": 78.8,
+   "free_facade_m": 22.4,
+   "added_floors": 3,
+   "homes_1bed": 3,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6315703YJ2761C": {
+   "plate_m2": 48.2,
+   "free_facade_m": 42.0,
+   "added_floors": 3,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6315708YJ2761E": {
+   "plate_m2": 26.6,
+   "free_facade_m": 16.8,
+   "added_floors": 4,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  },
+  "6316701YJ2761E": {
+   "plate_m2": 20.6,
+   "free_facade_m": 19.7,
+   "added_floors": 1,
+   "homes_1bed": 0,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   }
+  }
+ }
+}

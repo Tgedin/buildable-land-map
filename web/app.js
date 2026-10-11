@@ -40,6 +40,7 @@ map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-
 
 let selected = null;
 let summary = null;
+let screening = null; // optional: data/screening.json, from plan-to-cost
 let view = "street"; // "plan" when the data has plan columns
 
 // Parcel colour for the current view. The selected parcel is always blue.
@@ -81,11 +82,13 @@ async function load() {
     fetch("data/parcels.geojson").then((r) => r.json()),
   ]);
   summary = summ;
+  screening = await fetch("data/screening.json").then((r) => (r.ok ? r.json() : null)).catch(() => null);
   if (summary.plan_by_class) {
     view = "plan";
     $("view-toggle").hidden = false;
   }
   renderSummary();
+  renderScreeningNote();
   await new Promise((res) => (map.loaded() ? res() : map.once("load", res)));
 
   map.addSource("ortho", { type: "raster", tiles: [ORTHO_TILES], tileSize: 256,
@@ -131,6 +134,24 @@ function renderSummary() {
   $("generated").textContent = `Updated ${s.generated_at.slice(0, 10)}.`;
 }
 
+function renderScreeningNote() {
+  if (!screening) return;
+  const s = screening.summary;
+  $("screen-note").hidden = false;
+  $("screen-note").textContent =
+    `Screening: up to ${fmt(s.total_homes_2bed)} two-bedroom homes (or ${fmt(s.total_homes_1bed)} ` +
+    `one-bedroom) could be added on ${fmt(s.parcels_with_homes_1bed)} parcels. A first filter limited ` +
+    `by floor area and free facade; structure, lifts, fire safety, owners' consent and permits are not checked.`;
+}
+
+function screeningText(refcat) {
+  const r = screening?.parcels?.[refcat];
+  if (!r) return "–";
+  const lim = (l) => (l === "facade" ? "limited by facade" : l === "area" ? "limited by area" : "");
+  return `${fmt(r.homes_2bed)} two-bed ${lim(r.limit_2bed)} · ${fmt(r.homes_1bed)} one-bed ` +
+    `(${fmt(r.added_floors)} added floor${r.added_floors > 1 ? "s" : ""}, ${fmt(r.free_facade_m)} m free facade)`;
+}
+
 function select(f) {
   if (selected) map.setFeatureState({ source: "parcels", id: selected }, { selected: false });
   const p = f.properties;
@@ -140,6 +161,8 @@ function select(f) {
   $("detail").hidden = false;
   $("d-refcat").textContent = p.refcat;
   $("d-floors").textContent = fmt(p.floors);
+  $("d-screen").textContent = screeningText(p.refcat);
+  $("d-screen").previousElementSibling.hidden = $("d-screen").hidden = !screening;
   $("d-use").textContent = USES[p.current_use] ?? "–";
   $("d-class").textContent = CLASSES[p.gap_class]?.label ?? "–";
   $("d-plan").textContent =

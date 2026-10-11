@@ -2,19 +2,31 @@
 
 Phase 2 of the [Housing AI roadmap](../docs/roadmap.md): a floor plan in, an editable priced estimate out.
 
-> Status: **core + a learned plan reader.** BC3 parser and quantities-to-cost are tested (the parser also runs on a real 59k-concept price base). Plan reading: a small U-Net trained on CPU reaches room IoU **0.92** and wall IoU **0.71** on CubiCasa5k test plans, versus 0.51 / 0.43 for the classical baseline ([results](docs/model-results.md), [baseline](docs/baseline-results.md)). **Finnish plans only: nothing is validated on real Spanish plans or budgets yet.**
+> Status: **a working toolkit with narrow, honestly-stated coverage.** Plans are code, rules are code, results say what they do not check. Read [docs/rule-sources.md](docs/rule-sources.md) before trusting any output.
 
 ```
-Floor plan (PDF/image) ─► vision: walls, rooms                      [U-Net trained; baseline kept]
-                       ─► quantities (m² floor, m wall, units)    [input type exists: Quantity]
-                       ─► map to BC3 price items                  [dict mapping; LLM suggestion later]
-                       ─► priced estimate + review list           [done, tested]
+Parcel (Phase 1 map: footprint, allowed floors, party walls)
+        │                                    existing plan image ─► vision U-Net (reads walls, rooms)
+        ▼                                                │
+Generator (code: parameters -> plan) ─────────────┐      │
+                                                  ▼      ▼
+                                         Plan model: spaces, uses, openings, heights
+                                                  │
+              ┌───────────────────────────────────┼──────────────────────────┐
+              ▼                                   ▼                          ▼
+   Rule engine: Decreto 80/2023          Quantities ─► BC3 prices      Screening: homes that fit
+   (each rule quotes its clause;         (parser done; mapping         by area and free facade
+   violation / needs review / none)       by hand so far)              (shown on the map)
 ```
 
 ## What exists
 
-- `plan2cost.bc3`: parse FIEBDC-3 price bases (concepts, decompositions, texts), search by summary.
-- `plan2cost.estimate`: price quantities against a base. Lines that cannot be trusted (unmapped, unit mismatch, no price, low detection confidence) are listed under `needs_review` and excluded from the total. `cost_per_m2` is only given for a complete estimate.
+- `plan2cost.plan`: the plan model (a dwelling as spaces hosting basic uses, openings, clear heights). Unknown is `None`, never zero.
+- `plan2cost.rules`: a deterministic rule engine and 17 rules from Decreto 80/2023 (Comunitat Valenciana, new dwellings), including tables 7 and 8, each quoting its clause. Verdicts are `violation_found`, `needs_review` or `no_violation_found_in_checked_rules`: never "complies". See [rule-sources.md](docs/rule-sources.md) and [ADR 0003](docs/decisions/0003-rules-as-code.md).
+- `plan2cost.generate`: two parametric dwelling generators (double-aspect, single-aspect) and a search that keeps the plans the engine does not reject. `python -m plan2cost.generate.explore --bedrooms 2`.
+- `plan2cost.feasibility` and `screen_map`: how many homes could be added on a parcel, limited by floor area and free facade ([ADR 0004](docs/decisions/0004-screening.md)). Written to `web/data/screening.json` and shown in the map's parcel panel.
+- `plan2cost.vision`, `learn`, `eval`: a classical baseline and a CPU-trained U-Net that read walls and rooms from images (room IoU 0.92, wall IoU 0.71 on CubiCasa5k, Finnish plans only: [model results](docs/model-results.md)).
+- `plan2cost.bc3`, `estimate`, `quantify`: price-base parser (runs on a real 59k-concept base), quantities from the plan model, and an estimator that withholds what it cannot trust (ADR 0001).
 
 ## Train on a free GPU
 

@@ -12,6 +12,7 @@ dependencies = ["shapely>=2.0"]
 
 [project.optional-dependencies]
 vision = ["numpy>=1.26", "opencv-python-headless>=4.9", "scikit-image>=0.22"]
+map = ["geopandas>=1.0", "pyarrow>=15"]
 learn = ["torch>=2.2", "numpy>=1.26", "opencv-python-headless>=4.9"]
 dev = ["pytest>=8", "ruff>=0.5", "numpy>=1.26", "opencv-python-headless>=4.9", "scikit-image>=0.22", "torch>=2.2"]
 

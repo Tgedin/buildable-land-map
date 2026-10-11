@@ -73,7 +73,7 @@ src/blm/
   synthetic.py          fake neighbourhood with known truth (tests + demo)
   cli.py                blm fetch | heights | build | run | sample
 web/                    static map (index.html, app.js, style.css, data/)
-plan-to-cost/           Phase 2: floor plan -> quantities -> priced estimate (own package + tests)
+plan-to-cost/           Phase 2/4 toolkit: plan model, cited rules, generators, screening of added homes (own package + tests)
 tests/                  unit tests + small real/fixture data
 docs/                   architecture, data sources, decisions (ADRs), drills
 ACCEPTANCE.md           milestones M0–M4 with Must / Target criteria

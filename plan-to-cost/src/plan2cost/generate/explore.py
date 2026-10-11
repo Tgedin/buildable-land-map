@@ -16,6 +16,7 @@ import itertools
 from dataclasses import dataclass
 
 from plan2cost.generate.dwelling import DwellingParams, generate
+from plan2cost.generate.single_aspect import SingleAspectParams, generate_single_aspect
 from plan2cost.plan import Dwelling
 from plan2cost.quantify import Measures, measure
 from plan2cost.rules import engine
@@ -25,10 +26,24 @@ from plan2cost.rules.valencia_d80 import rules
 
 @dataclass(frozen=True)
 class Candidate:
-    params: DwellingParams
+    params: DwellingParams | SingleAspectParams
     dwelling: Dwelling
     report: Report
     measures: Measures
+
+    @property
+    def typology(self) -> str:
+        return "single-aspect" if isinstance(self.params, SingleAspectParams) else "double-aspect"
+
+    @property
+    def facade_needed_m(self) -> float:
+        """Free facade the dwelling needs: its width once, or twice for two opposite facades."""
+        w = self.params.width_m
+        return w if isinstance(self.params, SingleAspectParams) else 2 * w
+
+    @property
+    def depth_m(self) -> float:
+        return self.params.depth_m
 
     @property
     def area(self) -> float:
@@ -74,6 +89,30 @@ def explore(
     return kept, tried
 
 
+def explore_single_aspect(
+    n_bedrooms: int,
+    widths: list[float],
+    facade_depths: list[float] = (3.5, 4.0, 4.5, 5.0, 5.5),
+    corridor_widths: list[float] = (0.9, 1.0),
+    rear_depths: list[float] = (2.0, 2.4, 2.8),
+    deep_living: tuple[bool, ...] = (False, True),
+) -> tuple[list[Candidate], int]:
+    """Same search as `explore`, for the single-aspect layout (both living-room variants)."""
+    rule_set = rules()
+    kept, tried = [], 0
+    grid = itertools.product(widths, facade_depths, corridor_widths, rear_depths, deep_living)
+    for w, fd, c, rd, deep in grid:
+        params = SingleAspectParams(w, n_bedrooms, fd, c, rd, deep_living=deep)
+        dwelling = generate_single_aspect(params)
+        if dwelling is None:
+            continue
+        tried += 1
+        report = engine.check(dwelling, rule_set)
+        if not report.by_status(Status.FAIL):
+            kept.append(Candidate(params, dwelling, report, measure(dwelling)))
+    return kept, tried
+
+
 def ranked(cands: list[Candidate], clean_only: bool = False) -> list[Candidate]:
     """Smallest useful area first, then least circulation, then least partition wall.
 
@@ -93,11 +132,11 @@ def ranked(cands: list[Candidate], clean_only: bool = False) -> list[Candidate]:
 
 def _line(c: Candidate) -> str:
     p, m = c.params, c.measures
-    kitchen = "closed" if p.closed_kitchen else "open"
+    kitchen = "closed kitchen" if getattr(p, "closed_kitchen", False) else "open kitchen"
     return (
-        f"  {c.area:6.2f} m²  {p.width_m:g} x {p.depth_m:g} m  corridor {p.corridor_w_m:g} m  "
-        f"{kitchen} kitchen  circulation {m.circulation_share:4.0%}  "
-        f"partitions {m.partition_length_m:5.1f} m  review items {c.review_items}"
+        f"  {c.area:6.2f} m²  {c.typology}  {p.width_m:g} x {p.depth_m:g} m  "
+        f"{kitchen}  circulation {m.circulation_share:4.0%}  "
+        f"facade needed {c.facade_needed_m:g} m  review items {c.review_items}"
     )
 
 
