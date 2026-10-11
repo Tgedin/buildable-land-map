@@ -59,3 +59,55 @@ def test_real_catastro_response_parses():
     floors = [r["floors_above"] for r in parsed.records]
     assert all(f is not None for f in floors)  # M1 target: floors_above present
     assert max(floors) >= 5  # Eixample blocks are tall
+
+
+BUILDINGS_FIXTURE = Path(__file__).parent / "fixtures" / "ruzafa_real_buildings_sample.gml"
+
+
+def test_parse_building_uses_real_response():
+    parsed = catastro.parse_building_uses(BUILDINGS_FIXTURE.read_bytes())
+    assert parsed.n_features >= 1
+    uses = {r["refcat"]: r["current_use"] for r in parsed.records}
+    assert "1_residential" in uses.values()
+    assert all(len(k) == 14 for k in uses)
+
+
+def test_parse_building_uses_missing_use_is_none():
+    xml = b"""<root xmlns:bu-ext2d="x" xmlns:base="y"><bu-ext2d:Building>
+      <base:localId>5915207YJ2751F</base:localId></bu-ext2d:Building></root>"""
+    (rec,) = catastro.parse_building_uses(xml).records
+    assert rec == {"refcat": "5915207YJ2751F", "current_use": None}
+
+
+def test_building_uses_exception_report_raises():
+    xml = b"""<ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1">
+      <ows:Exception><ows:ExceptionText>boom</ows:ExceptionText></ows:Exception>
+    </ows:ExceptionReport>"""
+    with pytest.raises(catastro.WfsError, match="boom"):
+        catastro.parse_building_uses(xml)
+
+
+def test_fetch_building_uses_maps_refcat_to_use(monkeypatch):
+    from blm.config import AreaConfig
+
+    monkeypatch.setattr(catastro, "_get", lambda *a, **k: BUILDINGS_FIXTURE.read_bytes())
+    cfg = AreaConfig(name="t", label="t", epsg=25830, bbox=(0, 0, 400, 400))
+    uses = catastro.fetch_building_uses(cfg)  # 1 tile; the same fixture is just deduplicated
+    assert uses["5915207YJ2751F"] == "1_residential"
+
+
+def test_fetch_building_uses_tiles_and_dedupes(monkeypatch):
+    from blm.config import AreaConfig
+
+    xml = BUILDINGS_FIXTURE.read_bytes()
+    calls = []
+
+    def fake_get(session, b, cfg, typename="x"):
+        calls.append(typename)
+        return xml
+
+    monkeypatch.setattr(catastro, "_get", fake_get)
+    cfg = AreaConfig(name="t", label="t", epsg=25830, bbox=(0, 0, 1000, 500))  # 2 tiles
+    uses = catastro.fetch_building_uses(cfg)
+    assert calls == ["BU.BUILDING", "BU.BUILDING"]
+    assert "1_residential" in uses.values()  # same buildings in both tiles, deduped by refcat

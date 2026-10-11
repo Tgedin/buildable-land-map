@@ -37,6 +37,7 @@ def cmd_fetch(cfg: AreaConfig, args: argparse.Namespace) -> None:
         parts = catastro.load_from_files([Path(p) for p in args.from_files], cfg.crs)
     else:
         parts = catastro.fetch_building_parts(cfg)
+        parts["current_use"] = parts["refcat"].map(catastro.fetch_building_uses(cfg))
     cfg.interim_dir.mkdir(parents=True, exist_ok=True)
     parts.to_parquet(_parts_path(cfg))
     log.info(

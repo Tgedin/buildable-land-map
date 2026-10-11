@@ -5,6 +5,7 @@ Limits (official docs): 4 km² bbox and 5,000 features per request.
 
 We fetch BU.BUILDINGPART because it carries `numberOfFloorsAboveGround`;
 BU.BUILDING does not. A parcel (refcat, 14 chars) has one or more parts.
+BU.BUILDING is fetched too, only for `currentUse` (residential, industrial, public services…).
 """
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ log = logging.getLogger(__name__)
 
 WFS_URL = "https://ovc.catastro.meh.es/INSPIRE/wfsBU.aspx"
 TYPENAME = "BU.BUILDINGPART"
+BUILDING_TYPENAME = "BU.BUILDING"
 
 BBox = tuple[float, float, float, float]
 
@@ -146,15 +148,36 @@ def parse_building_parts(xml_bytes: bytes) -> ParsedParts:
     return ParsedParts(records=records, n_features=len(records))
 
 
+def parse_building_uses(xml_bytes: bytes) -> ParsedParts:
+    """Parse a BU.BUILDING response into {refcat, current_use} records (no geometry)."""
+    root = ET.fromstring(xml_bytes)
+    if _local(root.tag) == "ExceptionReport":
+        text = " ".join(t.strip() for t in root.itertext() if t.strip())
+        raise WfsError(f"WFS exception: {text}")
+
+    records: list[dict] = []
+    for el in root.iter():
+        if _local(el.tag) != "Building":
+            continue
+        local_id_el = _find(el, "localId")
+        use_el = _find(el, "currentUse")
+        if local_id_el is None or not local_id_el.text:
+            continue
+        use = use_el.text.strip() if use_el is not None and use_el.text else ""
+        # Missing use stays None: "unknown" is not the same fact as "residential".
+        records.append({"refcat": local_id_el.text.strip()[:14], "current_use": use or None})
+    return ParsedParts(records=records, n_features=len(records))
+
+
 # ---------------------------------------------------------------- fetching
 
 
-def _get(session: requests.Session, b: BBox, cfg: AreaConfig) -> bytes:
+def _get(session: requests.Session, b: BBox, cfg: AreaConfig, typename: str = TYPENAME) -> bytes:
     params = {
         "service": "wfs",
         "version": "2.0.0",
         "request": "getfeature",
-        "typenames": TYPENAME,
+        "typenames": typename,
         "bbox": ",".join(f"{v:.2f}" for v in b),
         "srsname": f"EPSG::{cfg.epsg}",
     }
@@ -171,15 +194,32 @@ def _get(session: requests.Session, b: BBox, cfg: AreaConfig) -> bytes:
 
 
 def _fetch_tile(
-    session: requests.Session, b: BBox, cfg: AreaConfig, depth: int = 0
+    session: requests.Session,
+    b: BBox,
+    cfg: AreaConfig,
+    typename: str = TYPENAME,
+    parse=parse_building_parts,
+    depth: int = 0,
 ) -> Iterator[dict]:
-    parsed = parse_building_parts(_get(session, b, cfg))
+    parsed = parse(_get(session, b, cfg, typename))
     if parsed.n_features >= cfg.catastro.max_features_per_request and depth < 4:
         log.info("Tile %s hit the feature cap, splitting", b)
         for sub in split_in_four(b):
-            yield from _fetch_tile(session, sub, cfg, depth + 1)
+            yield from _fetch_tile(session, sub, cfg, typename, parse, depth + 1)
         return
     yield from parsed.records
+
+
+def fetch_building_uses(cfg: AreaConfig) -> dict[str, str | None]:
+    """Fetch BU.BUILDING in cfg.bbox and return {refcat: current_use}."""
+    tiles = tile_bbox(cfg.bbox, cfg.catastro.tile_size_m)
+    uses: dict[str, str | None] = {}
+    with requests.Session() as session:
+        for t in tiles:
+            for rec in _fetch_tile(session, t, cfg, BUILDING_TYPENAME, parse_building_uses):
+                uses[rec["refcat"]] = rec["current_use"]
+    log.info("Fetched current use for %d buildings", len(uses))
+    return uses
 
 
 def fetch_building_parts(cfg: AreaConfig) -> gpd.GeoDataFrame:
