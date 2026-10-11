@@ -38,7 +38,7 @@ M0 Scaffold ─► M1 First real map ─► M2 LiDAR validated ─► M3 Gap + f
 |---|---|---|
 | Must | ☑ Area chosen and justified in `docs/decisions/0002-area-choice.md` (data openness, size, personal access to users) | ADR file |
 | Must | ☑ `make run` from a clean clone produces `web/data/` for the real area | commit of `web/data/` |
-| Must | ☐ Map live on GitHub Pages, and the `synthetic` banner is gone | public URL in README |
+| Must | ☑ Map live on GitHub Pages, and the `synthetic` banner is gone | public URL in README |
 | Must | ☑ At least 1 real Catastro WFS response saved as a test fixture (small) | `tests/fixtures/` |
 | Target | ☑ ≥ 95% of building parts have `floors_above` | `summary.json` / Notes |
 | Target | ☐ Map usable on a phone (loads, clickable, readable) | screenshot |
@@ -50,7 +50,7 @@ M0 Scaffold ─► M1 First real map ─► M2 LiDAR validated ─► M3 Gap + f
 - Ruzafa, 0.56 km²: 5,057 parts, 932 parcels. Fetch took ~58 s. 100% of parts have `floors_above` (42 of them are 0: patios and sheds, a real zero, not a missing value).
 - Fixture: `tests/fixtures/ruzafa_real_sample.gml` (real, 30 × 30 m, 28 parts).
 - Surprise: the heuristic reports 687,618 m² of "gap" on 1.49M m² existing, with 811 of 932 parcels flagged. The largest come from big 1-3 floor parcels (probably facilities or industrial). Not courtyards: excluding floor-0 parts barely changes the total. Needs the M3 limitation text and maybe a minimum-parcel or use filter.
-- Still open: GitHub Pages URL and phone screenshot (need a push), so the "live" Must stays unticked.
+- Live: https://tgedin.github.io/buildable-land-map/ . Still open: phone screenshot (Target).
 
 ---
 
