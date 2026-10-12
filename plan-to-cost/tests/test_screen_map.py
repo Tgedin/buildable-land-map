@@ -60,3 +60,10 @@ def test_summary_adds_up():
     assert (
         s["parcels_with_homes_1bed"] >= s["parcels_with_homes_2bed"]
     )  # a 1-bed fits wherever a 2-bed does
+
+
+def test_each_screened_parcel_gets_a_residual_that_names_what_it_leaves_out():
+    row = screen_map.run(_parcels())["FAR"]
+    r = row["residual_2bed"]
+    assert r["eur"] is not None and set(r["eur"]) == {"pessimistic", "base", "optimistic"}
+    assert r["excluded"] == ["structural reinforcement"]  # unknown cost is named, not priced at 0

@@ -18,6 +18,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from plan2cost.feasibility import NOT_CHECKED, Assumptions, free_facade_m, screen
+from plan2cost.proforma import residual_value
 
 
 def run(parcels, assumptions: Assumptions = Assumptions()) -> dict:  # noqa: B008
@@ -41,6 +42,12 @@ def run(parcels, assumptions: Assumptions = Assumptions()) -> dict:  # noqa: B00
             s = screen(plate, facade, floors, n, assumptions)
             result[f"homes_{n}bed"] = s.homes
             result[f"limit_{n}bed"] = s.limit
+            p = residual_value(s.useful_m2_total, assumptions.net_to_gross)
+            result[f"residual_{n}bed"] = {
+                "eur": p.residual_eur,  # by scenario, None when withheld
+                "excluded": list(p.excluded),
+                "withheld_reason": p.withheld_reason,
+            }
             if s.profile:
                 result[f"unit_{n}bed"] = {
                     "typology": s.profile.typology,
