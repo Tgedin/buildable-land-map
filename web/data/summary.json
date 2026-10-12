@@ -1,14 +1,13 @@
 {
   "plan_by_class": {
-    "at_limit": 607,
-    "protected": 246,
-    "plan_gap": 65,
+    "at_limit": 580,
+    "protected": 270,
+    "plan_gap": 70,
     "public_use": 7,
-    "no_plan": 6,
-    "open": 1
+    "no_plan": 5
   },
-  "total_plan_gap_m2": 12237.0,
-  "n_parcels_with_plan_gap": 65,
+  "total_plan_gap_m2": 13195.0,
+  "n_parcels_with_plan_gap": 70,
   "n_parcels": 932,
   "n_parcels_with_gap": 280,
   "total_gap_m2": 167826.0,
@@ -23,7 +22,7 @@
   },
   "label": "Ruzafa, Valencia",
   "synthetic": false,
-  "generated_at": "2026-10-12T16:20:02+00:00",
+  "generated_at": "2026-10-12T16:42:31+00:00",
   "bounds_wgs84": [
     -0.383193,
     39.455631,

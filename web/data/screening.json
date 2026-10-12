@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-12T15:33:28+00:00",
+ "generated_at": "2026-10-12T16:44:19+00:00",
  "kind": "screening",
  "meaning": "Homes that could be added on the extra floors the plan allows, limited by floor area and by free facade. A first filter, not a design and not a permit.",
  "assumptions": {
@@ -156,18 +156,18 @@
   }
  },
  "summary": {
-  "parcels_screened": 65,
-  "parcels_redevelopment": 12,
-  "parcels_with_homes_1bed": 48,
-  "parcels_with_homes_2bed": 39,
-  "total_homes_1bed": 163,
-  "total_homes_2bed": 99,
-  "limited_by_facade_2bed": 3,
-  "limited_by_area_2bed": 18,
-  "attic_parcels": 130,
-  "attic_parcels_with_homes_2bed": 30,
-  "attic_total_homes_1bed": 60,
-  "attic_total_homes_2bed": 31
+  "parcels_screened": 70,
+  "parcels_redevelopment": 13,
+  "parcels_with_homes_1bed": 53,
+  "parcels_with_homes_2bed": 42,
+  "total_homes_1bed": 177,
+  "total_homes_2bed": 105,
+  "limited_by_facade_2bed": 4,
+  "limited_by_area_2bed": 20,
+  "attic_parcels": 140,
+  "attic_parcels_with_homes_2bed": 33,
+  "attic_total_homes_1bed": 64,
+  "attic_total_homes_2bed": 34
  },
  "parcels": {
   "5714108YJ2751D": {
@@ -216,6 +216,56 @@
     "plate_m2": 45.6,
     "free_facade_m": 19.5,
     "street_facade_m": 17.4,
+    "homes_1bed": 0,
+    "limit_1bed": "area",
+    "unit_1bed": {
+     "typology": "double-aspect",
+     "useful_m2": 40.0,
+     "facade_m": 10.0
+    },
+    "residual_1bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    },
+    "homes_2bed": 0,
+    "limit_2bed": "area",
+    "unit_2bed": {
+     "typology": "double-aspect",
+     "useful_m2": 54.2,
+     "facade_m": 15.5
+    },
+    "residual_2bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    }
+   }
+  },
+  "5714109YJ2751D": {
+   "plate_m2": 67.3,
+   "free_facade_m": 27.1,
+   "measured_on": "main_part",
+   "added_floors": 0,
+   "kind": "rooftop",
+   "homes_1bed": 0,
+   "limit_1bed": "none",
+   "residual_1bed": {
+    "eur": null,
+    "excluded": [],
+    "withheld_reason": "no homes to price"
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "none",
+   "residual_2bed": {
+    "eur": null,
+    "excluded": [],
+    "withheld_reason": "no homes to price"
+   },
+   "attic": {
+    "plate_m2": 25.9,
+    "free_facade_m": 27.1,
+    "street_facade_m": 5.1,
     "homes_1bed": 0,
     "limit_1bed": "area",
     "unit_1bed": {
@@ -940,6 +990,144 @@
     }
    }
   },
+  "5714602YJ2751D": {
+   "plate_m2": 119.0,
+   "free_facade_m": 20.1,
+   "measured_on": "main_part",
+   "added_floors": 2,
+   "kind": "rooftop",
+   "homes_1bed": 4,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "residual_1bed": {
+    "eur": {
+     "pessimistic": -90011.0,
+     "base": 146687.0,
+     "optimistic": 306118.0
+    },
+    "excluded": [
+     "structural reinforcement"
+    ],
+    "withheld_reason": null
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   },
+   "residual_2bed": {
+    "eur": {
+     "pessimistic": -61039.0,
+     "base": 99472.0,
+     "optimistic": 207586.0
+    },
+    "excluded": [
+     "structural reinforcement"
+    ],
+    "withheld_reason": null
+   },
+   "attic": {
+    "plate_m2": 39.2,
+    "free_facade_m": 20.1,
+    "street_facade_m": 17.4,
+    "homes_1bed": 0,
+    "limit_1bed": "area",
+    "unit_1bed": {
+     "typology": "double-aspect",
+     "useful_m2": 40.0,
+     "facade_m": 10.0
+    },
+    "residual_1bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    },
+    "homes_2bed": 0,
+    "limit_2bed": "area",
+    "unit_2bed": {
+     "typology": "double-aspect",
+     "useful_m2": 54.2,
+     "facade_m": 15.5
+    },
+    "residual_2bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    }
+   }
+  },
+  "5714603YJ2751D": {
+   "plate_m2": 83.8,
+   "free_facade_m": 12.5,
+   "measured_on": "main_part",
+   "added_floors": 1,
+   "kind": "rooftop",
+   "homes_1bed": 1,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "residual_1bed": {
+    "eur": {
+     "pessimistic": -22503.0,
+     "base": 36672.0,
+     "optimistic": 76529.0
+    },
+    "excluded": [
+     "structural reinforcement"
+    ],
+    "withheld_reason": null
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "facade",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   },
+   "residual_2bed": {
+    "eur": null,
+    "excluded": [],
+    "withheld_reason": "no homes to price"
+   },
+   "attic": {
+    "plate_m2": 29.9,
+    "free_facade_m": 12.5,
+    "street_facade_m": 9.5,
+    "homes_1bed": 0,
+    "limit_1bed": "area",
+    "unit_1bed": {
+     "typology": "double-aspect",
+     "useful_m2": 40.0,
+     "facade_m": 10.0
+    },
+    "residual_1bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    },
+    "homes_2bed": 0,
+    "limit_2bed": "both",
+    "unit_2bed": {
+     "typology": "double-aspect",
+     "useful_m2": 54.2,
+     "facade_m": 15.5
+    },
+    "residual_2bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    }
+   }
+  },
   "5714604YJ2751D": {
    "plate_m2": 80.1,
    "free_facade_m": 15.3,
@@ -1162,6 +1350,56 @@
     "plate_m2": 44.1,
     "free_facade_m": 21.1,
     "street_facade_m": 0.0,
+    "homes_1bed": 0,
+    "limit_1bed": "area",
+    "unit_1bed": {
+     "typology": "double-aspect",
+     "useful_m2": 40.0,
+     "facade_m": 10.0
+    },
+    "residual_1bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    },
+    "homes_2bed": 0,
+    "limit_2bed": "area",
+    "unit_2bed": {
+     "typology": "double-aspect",
+     "useful_m2": 54.2,
+     "facade_m": 15.5
+    },
+    "residual_2bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    }
+   }
+  },
+  "5715127YJ2751F": {
+   "plate_m2": 101.4,
+   "free_facade_m": 30.0,
+   "measured_on": "main_part",
+   "added_floors": 0,
+   "kind": "rooftop",
+   "homes_1bed": 0,
+   "limit_1bed": "none",
+   "residual_1bed": {
+    "eur": null,
+    "excluded": [],
+    "withheld_reason": "no homes to price"
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "none",
+   "residual_2bed": {
+    "eur": null,
+    "excluded": [],
+    "withheld_reason": "no homes to price"
+   },
+   "attic": {
+    "plate_m2": 38.5,
+    "free_facade_m": 30.0,
+    "street_facade_m": 13.7,
     "homes_1bed": 0,
     "limit_1bed": "area",
     "unit_1bed": {
@@ -2894,6 +3132,62 @@
     }
    }
   },
+  "5913122YJ2751D": {
+   "plate_m2": 120.1,
+   "free_facade_m": 33.9,
+   "measured_on": "main_part",
+   "added_floors": 0,
+   "kind": "rooftop",
+   "homes_1bed": 0,
+   "limit_1bed": "none",
+   "residual_1bed": {
+    "eur": null,
+    "excluded": [],
+    "withheld_reason": "no homes to price"
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "none",
+   "residual_2bed": {
+    "eur": null,
+    "excluded": [],
+    "withheld_reason": "no homes to price"
+   },
+   "attic": {
+    "plate_m2": 65.7,
+    "free_facade_m": 33.9,
+    "street_facade_m": 9.4,
+    "homes_1bed": 1,
+    "limit_1bed": "area",
+    "unit_1bed": {
+     "typology": "double-aspect",
+     "useful_m2": 40.0,
+     "facade_m": 10.0
+    },
+    "residual_1bed": {
+     "eur": {
+      "pessimistic": -22503.0,
+      "base": 36672.0,
+      "optimistic": 76529.0
+     },
+     "excluded": [
+      "structural reinforcement"
+     ],
+     "withheld_reason": null
+    },
+    "homes_2bed": 0,
+    "limit_2bed": "area",
+    "unit_2bed": {
+     "typology": "double-aspect",
+     "useful_m2": 54.2,
+     "facade_m": 15.5
+    },
+    "residual_2bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    }
+   }
+  },
   "5913123YJ2751D": {
    "plate_m2": 118.1,
    "free_facade_m": 21.2,
@@ -3510,6 +3804,78 @@
     },
     "homes_2bed": 0,
     "limit_2bed": "area",
+    "unit_2bed": {
+     "typology": "double-aspect",
+     "useful_m2": 54.2,
+     "facade_m": 15.5
+    },
+    "residual_2bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    }
+   }
+  },
+  "5915229YJ2751F": {
+   "plate_m2": 94.6,
+   "free_facade_m": 12.5,
+   "measured_on": "main_part",
+   "added_floors": 2,
+   "kind": "rooftop",
+   "homes_1bed": 2,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "residual_1bed": {
+    "eur": {
+     "pessimistic": -45005.0,
+     "base": 73343.0,
+     "optimistic": 153059.0
+    },
+    "excluded": [
+     "structural reinforcement"
+    ],
+    "withheld_reason": null
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "both",
+   "unit_2bed": {
+    "typology": "single-aspect",
+    "useful_m2": 62.9,
+    "facade_m": 9.25
+   },
+   "residual_2bed": {
+    "eur": {
+     "pessimistic": -70771.0,
+     "base": 115332.0,
+     "optimistic": 240685.0
+    },
+    "excluded": [
+     "structural reinforcement"
+    ],
+    "withheld_reason": null
+   },
+   "attic": {
+    "plate_m2": 50.0,
+    "free_facade_m": 12.5,
+    "street_facade_m": 10.1,
+    "homes_1bed": 0,
+    "limit_1bed": "area",
+    "unit_1bed": {
+     "typology": "double-aspect",
+     "useful_m2": 40.0,
+     "facade_m": 10.0
+    },
+    "residual_1bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    },
+    "homes_2bed": 0,
+    "limit_2bed": "both",
     "unit_2bed": {
      "typology": "double-aspect",
      "useful_m2": 54.2,
@@ -4336,6 +4702,68 @@
     }
    }
   },
+  "6013609YJ2761C": {
+   "plate_m2": 182.0,
+   "free_facade_m": 29.4,
+   "measured_on": "main_part",
+   "added_floors": 0,
+   "kind": "rooftop",
+   "homes_1bed": 0,
+   "limit_1bed": "none",
+   "residual_1bed": {
+    "eur": null,
+    "excluded": [],
+    "withheld_reason": "no homes to price"
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "none",
+   "residual_2bed": {
+    "eur": null,
+    "excluded": [],
+    "withheld_reason": "no homes to price"
+   },
+   "attic": {
+    "plate_m2": 90.3,
+    "free_facade_m": 29.4,
+    "street_facade_m": 20.3,
+    "homes_1bed": 1,
+    "limit_1bed": "area",
+    "unit_1bed": {
+     "typology": "double-aspect",
+     "useful_m2": 40.0,
+     "facade_m": 10.0
+    },
+    "residual_1bed": {
+     "eur": {
+      "pessimistic": -22503.0,
+      "base": 36672.0,
+      "optimistic": 76529.0
+     },
+     "excluded": [
+      "structural reinforcement"
+     ],
+     "withheld_reason": null
+    },
+    "homes_2bed": 1,
+    "limit_2bed": "both",
+    "unit_2bed": {
+     "typology": "double-aspect",
+     "useful_m2": 54.2,
+     "facade_m": 15.5
+    },
+    "residual_2bed": {
+     "eur": {
+      "pessimistic": -30491.0,
+      "base": 49690.0,
+      "optimistic": 103697.0
+     },
+     "excluded": [
+      "structural reinforcement"
+     ],
+     "withheld_reason": null
+    }
+   }
+  },
   "6013610YJ2761C": {
    "plate_m2": 151.3,
    "free_facade_m": 25.1,
@@ -4686,6 +5114,68 @@
       "pessimistic": -45005.0,
       "base": 73343.0,
       "optimistic": 153059.0
+     },
+     "excluded": [
+      "structural reinforcement"
+     ],
+     "withheld_reason": null
+    },
+    "homes_2bed": 1,
+    "limit_2bed": "both",
+    "unit_2bed": {
+     "typology": "double-aspect",
+     "useful_m2": 54.2,
+     "facade_m": 15.5
+    },
+    "residual_2bed": {
+     "eur": {
+      "pessimistic": -30491.0,
+      "base": 49690.0,
+      "optimistic": 103697.0
+     },
+     "excluded": [
+      "structural reinforcement"
+     ],
+     "withheld_reason": null
+    }
+   }
+  },
+  "6014924YJ2751D": {
+   "plate_m2": 102.1,
+   "free_facade_m": 26.8,
+   "measured_on": "main_part",
+   "added_floors": 0,
+   "kind": "rooftop",
+   "homes_1bed": 0,
+   "limit_1bed": "none",
+   "residual_1bed": {
+    "eur": null,
+    "excluded": [],
+    "withheld_reason": "no homes to price"
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "none",
+   "residual_2bed": {
+    "eur": null,
+    "excluded": [],
+    "withheld_reason": "no homes to price"
+   },
+   "attic": {
+    "plate_m2": 102.1,
+    "free_facade_m": 26.8,
+    "street_facade_m": 0.0,
+    "homes_1bed": 1,
+    "limit_1bed": "area",
+    "unit_1bed": {
+     "typology": "double-aspect",
+     "useful_m2": 40.0,
+     "facade_m": 10.0
+    },
+    "residual_1bed": {
+     "eur": {
+      "pessimistic": -22503.0,
+      "base": 36672.0,
+      "optimistic": 76529.0
      },
      "excluded": [
       "structural reinforcement"
@@ -7376,6 +7866,72 @@
     }
    }
   },
+  "6117229YJ2761G": {
+   "plate_m2": 80.0,
+   "free_facade_m": 24.3,
+   "measured_on": "main_part",
+   "added_floors": 3,
+   "kind": "redevelopment",
+   "homes_1bed": 3,
+   "limit_1bed": "area",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "residual_1bed": {
+    "eur": {
+     "pessimistic": -67508.0,
+     "base": 110015.0,
+     "optimistic": 229588.0
+    },
+    "excluded": [
+     "structural reinforcement"
+    ],
+    "withheld_reason": null
+   },
+   "homes_2bed": 0,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   },
+   "residual_2bed": {
+    "eur": null,
+    "excluded": [],
+    "withheld_reason": "no homes to price"
+   },
+   "attic": {
+    "plate_m2": 43.1,
+    "free_facade_m": 24.3,
+    "street_facade_m": 3.5,
+    "homes_1bed": 0,
+    "limit_1bed": "area",
+    "unit_1bed": {
+     "typology": "double-aspect",
+     "useful_m2": 40.0,
+     "facade_m": 10.0
+    },
+    "residual_1bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    },
+    "homes_2bed": 0,
+    "limit_2bed": "area",
+    "unit_2bed": {
+     "typology": "double-aspect",
+     "useful_m2": 54.2,
+     "facade_m": 15.5
+    },
+    "residual_2bed": {
+     "eur": null,
+     "excluded": [],
+     "withheld_reason": "no homes to price"
+    }
+   }
+  },
   "6212309YJ2761A": {
    "plate_m2": 32.5,
    "free_facade_m": 16.1,
@@ -8306,6 +8862,90 @@
      "eur": null,
      "excluded": [],
      "withheld_reason": "no homes to price"
+    }
+   }
+  },
+  "6316322YJ2761E": {
+   "plate_m2": 207.0,
+   "free_facade_m": 48.8,
+   "measured_on": "main_part",
+   "added_floors": 1,
+   "kind": "rooftop",
+   "homes_1bed": 4,
+   "limit_1bed": "both",
+   "unit_1bed": {
+    "typology": "double-aspect",
+    "useful_m2": 40.0,
+    "facade_m": 10.0
+   },
+   "residual_1bed": {
+    "eur": {
+     "pessimistic": -90011.0,
+     "base": 146687.0,
+     "optimistic": 306118.0
+    },
+    "excluded": [
+     "structural reinforcement"
+    ],
+    "withheld_reason": null
+   },
+   "homes_2bed": 2,
+   "limit_2bed": "area",
+   "unit_2bed": {
+    "typology": "double-aspect",
+    "useful_m2": 54.2,
+    "facade_m": 15.5
+   },
+   "residual_2bed": {
+    "eur": {
+     "pessimistic": -61039.0,
+     "base": 99472.0,
+     "optimistic": 207586.0
+    },
+    "excluded": [
+     "structural reinforcement"
+    ],
+    "withheld_reason": null
+   },
+   "attic": {
+    "plate_m2": 98.2,
+    "free_facade_m": 48.8,
+    "street_facade_m": 32.6,
+    "homes_1bed": 1,
+    "limit_1bed": "area",
+    "unit_1bed": {
+     "typology": "double-aspect",
+     "useful_m2": 40.0,
+     "facade_m": 10.0
+    },
+    "residual_1bed": {
+     "eur": {
+      "pessimistic": -22503.0,
+      "base": 36672.0,
+      "optimistic": 76529.0
+     },
+     "excluded": [
+      "structural reinforcement"
+     ],
+     "withheld_reason": null
+    },
+    "homes_2bed": 1,
+    "limit_2bed": "area",
+    "unit_2bed": {
+     "typology": "double-aspect",
+     "useful_m2": 54.2,
+     "facade_m": 15.5
+    },
+    "residual_2bed": {
+     "eur": {
+      "pessimistic": -30491.0,
+      "base": 49690.0,
+      "optimistic": 103697.0
+     },
+     "excluded": [
+      "structural reinforcement"
+     ],
+     "withheld_reason": null
     }
    }
   },

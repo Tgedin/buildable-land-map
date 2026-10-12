@@ -95,7 +95,7 @@ M0 Scaffold ─► M1 First real map ─► M2 LiDAR validated ─► M3 Gap + f
 
 **Notes:**
 - Prepared: `docs/discovery/call-script.md`, `docs/discovery/outreach-message.md`, `docs/writeup-1-draft.md` (redone on 2026-10-12 with the corrected numbers and the rooftop screening, Ruzafa only; to be redone for the whole city; user-learnings section empty on purpose). Footer limitation is live. Analytics needs the owner. Decision 2026-10-12: no discovery conversations or quotes for now, so the five-conversations Must stays open; the substitute is public evidence, which is weaker.
-- Added after M2 (ADR 0004): plan-based gap with protection and use exclusions. Ruzafa: 65 parcels / 12,237 m² room under the plan (was 280 / 167,826 m² for the neighbour comparison). The offset was corrected from +1 to 0 on 2026-10-12 after reading PGOU art. 5.33 (the plan's floor count includes the ground floor); the earlier figure was 154 parcels / 38,880 m². Still assumed: that the layer's `altura` is the Plano C number.
+- Added after M2 (ADR 0004): plan-based gap with protection and use exclusions. Ruzafa: 70 parcels / 13,195 m² room under the plan (was 280 / 167,826 m² for the neighbour comparison; the plan is read on the tallest building part, not the whole parcel). The offset was corrected from +1 to 0 on 2026-10-12 after reading PGOU art. 5.33 (the plan's floor count includes the ground floor); the earlier figure was 154 parcels / 38,880 m². A further correction (plan read on the building) moved 12,237 m² to 13,195 m². Still assumed: that the layer's `altura` is the Plano C number.
 
 ---
 

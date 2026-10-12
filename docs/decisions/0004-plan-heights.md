@@ -14,7 +14,7 @@ The neighbour heuristic (ADR 0003) still flags 280 of 932 Ruzafa parcels. It can
 3. `plan_gap_floors = max(0, allowed − floors)`, `plan_gap_m2 = main_footprint × plan_gap_floors`. Parcels that are protected, open space, public-services use (Catastro `4_3_publicServices`) or have no plan height get NaN and a `gap_class` saying why.
 4. The neighbour comparison stays as a second view; the plan view is the default.
 
-## Correction, 2026-10-12: the offset is 0, not 1
+## Correction, 2026-10-12: the offset is 0, not 1 (and the plan is read on the building)
 
 This ADR first assumed `altura` counts floors above the ground floor (offset 1). A later edit cited the Ensanche cornice formula as support. **That was a misreading.** The Normas Urbanísticas (València PGOU, text transcription from valencia.es) say:
 
@@ -58,3 +58,12 @@ Plan gap 38,880 m² vs 167,826 m² for the neighbour heuristic: about 77% of the
 ## Revisit when
 
 The PGOU normative text is read and the offset confirmed, or a user shows a parcel where the plan view is clearly wrong.
+
+## Second correction, 2026-10-12: read the plan where the building stands
+
+A parcel was matched to the plan polygon covering most of the *parcel*. A parcel is the union of its building parts, so a tall front building with a large low rear court (or a block-sized plot with a small tower) could be read as a low plan height, and its protection and zone were read on the yards too. 110 Ensanche parcels in Ruzafa came out as plan height 1, most of them probably this case.
+
+`planning.main_shapes(parts)` gives each parcel the union of its tallest parts, and `match_parcels` and `match_zone` measure on that shape (the screening already did for facade and setback). Ruzafa after the fix: 70 parcels with room under the plan (was 65), 13,195 m² (was 12,237), protected parcels 270 (was 246: protection belongs to the building), at the limit 580 (was 607), and 47 Ensanche parcels read as plan height 1 (was 110). A parcel with no building part keeps its own outline.
+
+Still true: the plan's alignment polygons describe building lines, and the rooms between alignments are not modelled; the plan layer's `altura` is assumed to be the Plano C number.
+

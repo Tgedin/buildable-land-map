@@ -129,9 +129,12 @@ def _build(cfg: AreaConfig, parts: gpd.GeoDataFrame, synthetic_data: bool = Fals
     parcels = metrics.buildable_gap(parcels, cfg.metrics)
     if not synthetic_data and _pgou_path(cfg).exists():
         alignments = gpd.read_parquet(_pgou_path(cfg))
-        parcels = planning.match_parcels(parcels, alignments, cfg.planning)
+        shapes = planning.main_shapes(parts)  # read the plan where the building stands
+        parcels = planning.match_parcels(parcels, alignments, cfg.planning, shapes)
         if _zoning_path(cfg).exists():
-            parcels = planning.match_zone(parcels, gpd.read_parquet(_zoning_path(cfg)))
+            parcels = planning.match_zone(
+                parcels, gpd.read_parquet(_zoning_path(cfg)), shapes=shapes
+            )
         parcels = metrics.plan_gap(parcels)
     else:
         log.warning("No plan data (run `blm plan`): building the neighbour comparison only.")

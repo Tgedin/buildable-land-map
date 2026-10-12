@@ -120,16 +120,21 @@ def fetch_zoning(cfg: AreaConfig) -> gpd.GeoDataFrame:
 
 
 def match_zone(
-    parcels: gpd.GeoDataFrame, zoning: gpd.GeoDataFrame, min_share: float = 0.5
+    parcels: gpd.GeoDataFrame,
+    zoning: gpd.GeoDataFrame,
+    min_share: float = 0.5,
+    shapes: gpd.GeoDataFrame | None = None,
 ) -> gpd.GeoDataFrame:
     """Add `zone`: the zone code covering most of the parcel, or None if no code covers half.
 
     Never guessed: a parcel split between zones, or outside every polygon, has no zone.
+    Measured on `shapes` (see `main_shapes`) when given.
     """
     out = parcels.copy()
-    area = out.set_index("refcat")["footprint_m2"]
+    base = _measured(out, shapes)
+    area = base.set_index("refcat").geometry.area
     ov = gpd.overlay(
-        out[["refcat", "geometry"]],
+        base,
         zoning.dropna(subset=["califi"])[["califi", "geometry"]],
         how="intersection",
         keep_geom_type=True,
@@ -144,18 +149,49 @@ def match_zone(
     return out
 
 
+def main_shapes(parts: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """One shape per parcel: the union of its tallest parts, what an addition would stand on.
+
+    A parcel can be a whole block with a tall building at the front and low parts or yards behind
+    it. Measured on the whole parcel, the low rear polygons of the plan can outvote the front
+    building and give it a plan height of 1. Measured on the tallest parts, they cannot.
+    """
+    p = parts[["refcat", "floors_above", "geometry"]].copy()
+    p["floors_above"] = p["floors_above"].fillna(0)
+    top = p[p["floors_above"] == p.groupby("refcat")["floors_above"].transform("max")]
+    return top.dissolve(by="refcat")[["geometry"]].reset_index()
+
+
+def _measured(parcels: gpd.GeoDataFrame, shapes: gpd.GeoDataFrame | None) -> gpd.GeoDataFrame:
+    """refcat + the geometry to measure the plan on: `shapes` where given, else the parcel."""
+    if shapes is None:
+        return parcels[["refcat", "geometry"]]
+    override = dict(zip(shapes["refcat"], shapes.geometry, strict=True))
+    geoms = [override.get(r, g) for r, g in zip(parcels["refcat"], parcels.geometry, strict=True)]
+    return gpd.GeoDataFrame(
+        {"refcat": parcels["refcat"].to_numpy()}, geometry=geoms, crs=parcels.crs
+    )
+
+
 def match_parcels(
-    parcels: gpd.GeoDataFrame, alignments: gpd.GeoDataFrame, cfg: PlanningConfig
+    parcels: gpd.GeoDataFrame,
+    alignments: gpd.GeoDataFrame,
+    cfg: PlanningConfig,
+    shapes: gpd.GeoDataFrame | None = None,
 ) -> gpd.GeoDataFrame:
     """Add plan_status, plan_floors, plan_allowed_floors and protected_share to each parcel.
 
     plan_status: "protected" | "open" | "floors" | "unknown". Protected wins over a height,
     because a protected building cannot be raised whatever its neighbours allow.
+
+    The plan is read on `shapes` (see `main_shapes`) when given, so that the height and the
+    protection are those of the building, not of the yards around it.
     """
     out = parcels.copy()
-    area = out.set_index("refcat")["footprint_m2"]
+    base = _measured(out, shapes)
+    area = base.set_index("refcat").geometry.area
     ov = gpd.overlay(
-        out[["refcat", "geometry"]],
+        base,
         alignments[["kind", "plan_floors", "geometry"]],
         how="intersection",
         keep_geom_type=True,

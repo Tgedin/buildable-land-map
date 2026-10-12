@@ -30,15 +30,17 @@ Current Ruzafa run (2026-10-12, after the floor-count and geometry corrections b
 
 | Route | Parcels that fit | Homes | Residual |
 |---|---|---|---|
-| Rooftop: 1-2 added floors up to the plan's height | 32 | 57 | -1.8 M / 2.9 M / 6.0 M EUR |
+| Rooftop: 1-2 added floors up to the plan's height | 35 | 63 | -2.0 M / 3.2 M / 6.7 M EUR |
 | Redevelopment: more than 2 added floors (assumed cap) | 7 | 42 | -1.3 M / 2.2 M / 4.6 M EUR |
-| Penthouse (ático) | 30 of 130 eligible | 31 | -0.9 M / 1.5 M / 3.2 M EUR |
+| Penthouse (ático) | 33 of 140 eligible | 34 | -1.0 M / 1.7 M / 3.5 M EUR |
 
-The rooftop thesis is the first and third rows: about 90 homes in Ruzafa (the two routes overlap on some parcels, where the ático comes after the floors). The second row is a different business (an old low building cannot carry five new floors). The 2-floor cap is an assumption, not a finding.
+The rooftop thesis is the first and third rows: about 100 homes in Ruzafa (97 two-bed homes on 63 parcels, residual -3.0 M / 4.9 M / 10.2 M EUR) (the two routes overlap on some parcels, where the ático comes after the floors). The second row is a different business (an old low building cannot carry five new floors). The 2-floor cap is an assumption, not a finding.
 
 No parcel is positive in all three scenarios. Read it as "viable only if prices hold and costs stay low", not as a market size. The ático setback is applied to street-facing facades only, read from the outer edge of the blocks (the plan's own alignments are not used); parcels at the edge of the study area look like street fronts there, a small bias.
 
 **Correction (2026-10-12):** reading the city's Normas Urbanísticas showed the plan's floor count already includes the ground floor (art. 5.33), so the earlier +1 offset overstated the room under the plan by about 3x (154 parcels / 38,880 m² became 65 / 12,237 m²). The first MVP numbers (90 parcels, 11.4 M EUR base) were built on that error. A second correction measured facade and plate on the tallest building part instead of the parcel outline: for 65 of 131 screened parcels the building was under 60% of the outline (one 'parcel' was a whole block of 4,749 m² with a 224 m² building). See ADR 0004.
+
+A third correction (2026-10-12) reads the plan and the zone on the parcel's tallest building part instead of the whole parcel, so a low rear court cannot outvote the front building: room under the plan went from 12,237 to 13,195 m² (65 to 70 parcels), protected parcels from 246 to 270, and Ensanche parcels read as plan height 1 from 110 to 47.
 
 The same plan (art. 6.19.5) allows a penthouse (*ático*) above the cornice, set back 4 m from street facades, in the Ensanche zone. That is the real rooftop route and is now screened (`plan2cost.feasibility.attic_*`): see the table above. Zone comes from the plan's Calificaciones layer (916 of 932 parcels are Ensanche).
 

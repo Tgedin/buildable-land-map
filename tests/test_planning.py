@@ -213,3 +213,69 @@ def test_paging_continues_until_an_empty_page(monkeypatch):
     cfg = AreaConfig(name="t", label="t", epsg=25830, bbox=(0, 0, 10, 10))
     out = planning._fetch_layer("http://x", "califi", cfg)
     assert len(out) == 5 and calls == [0, 2, 4, 5]
+
+
+def _front_and_rear():
+    """One parcel: a 5-floor building at the front (10 x 10 m) on a plan height of 6, and a
+    1-floor yard-side part behind it (10 x 30 m) on a plan height of 1."""
+    parts = gpd.GeoDataFrame(
+        {
+            "refcat": ["P", "P"],
+            "floors_above": [5, 1],
+            "geometry": [box(0, 0, 10, 10), box(0, 10, 10, 40)],
+        },
+        geometry="geometry",
+        crs="EPSG:25830",
+    )
+    parcel = gpd.GeoDataFrame(
+        {"refcat": ["P"], "footprint_m2": [400.0]},
+        geometry=[parts.union_all()],
+        crs="EPSG:25830",
+    )
+    al = gpd.GeoDataFrame(
+        {
+            "kind": ["floors", "floors"],
+            "plan_floors": [6.0, 1.0],
+            "geometry": [box(-1, -1, 11, 10.5), box(-1, 10.5, 11, 41)],
+        },
+        geometry="geometry",
+        crs="EPSG:25830",
+    )
+    return parts, parcel, al
+
+
+def test_the_plan_is_read_on_the_building_not_on_the_yard_behind_it():
+    parts, parcel, al = _front_and_rear()
+    # on the whole parcel the 30 x 10 m rear polygon (plan height 1) outvotes the front building
+    whole = planning.match_parcels(parcel, al, PlanningConfig())
+    assert whole.loc[0, "plan_floors"] == 1.0
+    on_building = planning.match_parcels(parcel, al, PlanningConfig(), planning.main_shapes(parts))
+    assert on_building.loc[0, "plan_floors"] == 6.0
+
+
+def test_main_shapes_is_the_union_of_the_tallest_parts():
+    parts, _, _ = _front_and_rear()
+    shapes = planning.main_shapes(parts)
+    assert list(shapes["refcat"]) == ["P"]
+    assert shapes.geometry.iloc[0].area == pytest.approx(100.0)  # the 5-floor part only
+
+
+def test_a_parcel_without_a_shape_keeps_its_own_geometry():
+    parts, parcel, al = _front_and_rear()
+    other = gpd.GeoDataFrame(
+        {"refcat": ["Z"], "geometry": [box(500, 0, 510, 10)]}, crs="EPSG:25830"
+    )
+    out = planning.match_parcels(parcel, al, PlanningConfig(), other)  # no shape for "P"
+    assert out.loc[0, "plan_floors"] == 1.0  # fell back to the whole parcel, as before
+
+
+def test_the_zone_is_read_on_the_building_too():
+    parts, parcel, _ = _front_and_rear()
+    zoning = gpd.GeoDataFrame(
+        {"califi": ["ENS", "RV"]},
+        geometry=[box(-1, -1, 11, 10.5), box(-1, 10.5, 11, 41)],
+        crs="EPSG:25830",
+    )
+    assert planning.match_zone(parcel, zoning).loc[0, "zone"] == "RV"  # the rear dominates
+    shapes = planning.main_shapes(parts)
+    assert planning.match_zone(parcel, zoning, shapes=shapes).loc[0, "zone"] == "ENS"
