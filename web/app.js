@@ -152,6 +152,18 @@ function screeningText(refcat) {
     `(${fmt(r.added_floors)} added floor${r.added_floors > 1 ? "s" : ""}, ${fmt(r.free_facade_m)} m free facade)`;
 }
 
+// Residual value of the added homes: the most a developer could pay owners for the right to
+// build. Three scenarios, because the sign depends on prices and costs that are assumed.
+function residualText(refcat) {
+  const r = screening?.parcels?.[refcat]?.residual_2bed;
+  if (!r) return "–";
+  if (!r.eur) return `not computed (${r.withheld_reason})`;
+  const k = (v) => `${v < 0 ? "−" : ""}${fmt(Math.round(Math.abs(v) / 1000))}k €`;
+  const left = r.excluded.length ? `; before ${r.excluded.join(", ")}` : "";
+  return `${k(r.eur.pessimistic)} / ${k(r.eur.base)} / ${k(r.eur.optimistic)} ` +
+    `(pessimistic / base / optimistic; inputs assumed${left})`;
+}
+
 function select(f) {
   if (selected) map.setFeatureState({ source: "parcels", id: selected }, { selected: false });
   const p = f.properties;
@@ -162,7 +174,8 @@ function select(f) {
   $("d-refcat").textContent = p.refcat;
   $("d-floors").textContent = fmt(p.floors);
   $("d-screen").textContent = screeningText(p.refcat);
-  $("d-screen").previousElementSibling.hidden = $("d-screen").hidden = !screening;
+  $("d-resid").textContent = residualText(p.refcat);
+  for (const id of ["d-screen", "d-resid"]) $(id).previousElementSibling.hidden = $(id).hidden = !screening;
   $("d-use").textContent = USES[p.current_use] ?? "–";
   $("d-class").textContent = CLASSES[p.gap_class]?.label ?? "–";
   $("d-plan").textContent =
