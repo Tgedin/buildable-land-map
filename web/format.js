@@ -1,4 +1,13 @@
-// Text helpers shared by the map, the shortlist and the report. Plain JS, no build step.
+// Helpers shared by the map, the shortlist and the report. Plain JS, no build step.
+
+// Which data folder to read: data/ (default) or data/<area>/ for ?area=<slug>. The slug is
+// checked so the query string cannot point a fetch somewhere else.
+const AREA = (() => {
+  const a = new URLSearchParams(location.search).get("area");
+  return a && /^[a-z0-9-]+$/.test(a) ? a : null;
+})();
+const DATA = AREA ? `data/${AREA}/` : "data/";
+const withArea = (href) => (AREA ? `${href}${href.includes("?") ? "&" : "?"}area=${AREA}` : href);
 
 const fmt = (n, unit = "") =>
   n === null || n === undefined ? "–" : `${Math.round(n).toLocaleString("es-ES")}${unit}`;

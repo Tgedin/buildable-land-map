@@ -111,3 +111,85 @@ def test_fetch_building_uses_tiles_and_dedupes(monkeypatch):
     uses = catastro.fetch_building_uses(cfg)
     assert calls == ["BU.BUILDING", "BU.BUILDING"]
     assert "1_residential" in uses.values()  # same buildings in both tiles, deduped by refcat
+
+
+class _FakeSession:
+    """Counts calls and returns a canned response."""
+
+    def __init__(self, content: bytes):
+        self.content, self.calls = content, 0
+
+    def get(self, url, params=None, timeout=None):
+        self.calls += 1
+
+        class R:
+            content = self.content
+
+            def raise_for_status(self):
+                pass
+
+        return R()
+
+
+def _cfg(monkeypatch, tmp_path):
+    from blm.config import AreaConfig
+
+    monkeypatch.setattr(AreaConfig, "raw_dir", property(lambda self: tmp_path))
+    return AreaConfig(name="t", label="t", epsg=25830, bbox=(0, 0, 10, 10))
+
+
+def test_a_tile_is_fetched_once_and_then_read_from_disk(monkeypatch, tmp_path):
+    cfg = _cfg(monkeypatch, tmp_path)
+    session = _FakeSession(FIXTURE.read_bytes())
+    first = catastro._get(session, (0, 0, 500, 500), cfg)
+    second = catastro._get(session, (0, 0, 500, 500), cfg)
+    assert first == second and session.calls == 1  # the second call never reached the service
+    assert catastro._get(session, (500, 0, 1000, 500), cfg) and session.calls == 2  # a new tile
+
+
+def test_an_error_body_is_not_cached(monkeypatch, tmp_path):
+    cfg = _cfg(monkeypatch, tmp_path)
+    err = b'<ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1"/>'
+    session = _FakeSession(err)
+    catastro._get(session, (0, 0, 500, 500), cfg)
+    catastro._get(session, (0, 0, 500, 500), cfg)
+    assert session.calls == 2  # asked again: a failure must not look like data
+    assert not list(tmp_path.rglob("*.xml"))
+
+
+def test_parallel_fetch_gives_the_same_parts_as_a_single_worker(monkeypatch, tmp_path):
+    from dataclasses import replace
+
+    cfg = _cfg(monkeypatch, tmp_path)
+    cfg = replace(cfg, bbox=(0, 0, 1500, 1000))  # 6 tiles of 500 m
+    monkeypatch.setattr(catastro, "_get", lambda session, b, c, typename=None: FIXTURE.read_bytes())
+
+    def parts(workers):
+        c = replace(cfg, catastro=replace(cfg.catastro, workers=workers))
+        return catastro.fetch_building_parts(c)
+
+    one, four = parts(1), parts(4)
+    assert sorted(one["part_id"]) == sorted(four["part_id"])
+    assert len(one) == 2  # the same two fixture parts in every tile are deduplicated by part_id
+
+
+def test_a_tile_with_no_buildings_is_an_empty_result_not_an_error():
+    xml = b"""<ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1">
+      <ows:Exception><ows:ExceptionText>No records founded for BBOX</ows:ExceptionText>
+      </ows:Exception></ows:ExceptionReport>"""
+    for parse in (catastro.parse_building_parts, catastro.parse_building_uses):
+        parsed = parse(xml)
+        assert parsed.records == [] and parsed.n_features == 0
+
+
+def test_the_empty_answer_is_cached_so_a_restart_does_not_ask_again(monkeypatch, tmp_path):
+    cfg = _cfg(monkeypatch, tmp_path)
+    empty = (
+        b'<ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1"><ows:Exception>'
+        b"<ows:ExceptionText>No records founded for BBOX</ows:ExceptionText>"
+        b"</ows:Exception></ows:ExceptionReport>"
+    )
+    session = _FakeSession(empty)
+    catastro._get(session, (0, 0, 500, 500), cfg)
+    catastro._get(session, (0, 0, 500, 500), cfg)
+    assert session.calls == 1

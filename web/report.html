@@ -8,11 +8,13 @@
   <link rel="stylesheet" href="page.css" />
 </head>
 <body class="page">
-  <nav class="top"><a href="shortlist.html">← Shortlist</a> · <a href="index.html">Map</a> ·
+  <nav class="top"><a id="to-list" href="shortlist.html">← Shortlist</a> · <a id="to-map" href="index.html">Map</a> ·
     <a href="#" onclick="window.print(); return false;">Print</a></nav>
   <main id="report"><p class="muted">Loading…</p></main>
   <script src="format.js"></script>
   <script>
+    document.getElementById("to-list").href = withArea("shortlist.html");
+    document.getElementById("to-map").href = withArea("index.html");
     const ref = new URLSearchParams(location.search).get("ref") ?? "";
     const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     const cls = (v) => (v === null || v === undefined ? "" : v < 0 ? "neg" : "pos");
@@ -38,13 +40,13 @@
     }
 
     Promise.all([
-      fetch("data/screening.json").then((r) => r.json()),
-      fetch("data/parcels.geojson").then((r) => r.json()),
+      fetch(DATA + "screening.json").then((r) => r.json()),
+      fetch(DATA + "parcels.geojson").then((r) => r.json()),
     ]).then(([s, g]) => {
       const p = s.parcels[ref];
       const f = g.features.find((x) => x.properties.refcat === ref);
       if (!/^[0-9A-Z]{14,20}$/.test(ref) || !p || !f) {
-        document.getElementById("report").innerHTML = `<h1>No report for this parcel</h1><p>Only parcels that the screening found room on have one. <a href="shortlist.html">See the shortlist.</a></p>`;
+        document.getElementById("report").innerHTML = `<h1>No report for this parcel</h1><p>Only parcels that the screening found room on have one. <a href="${withArea('shortlist.html')}">See the shortlist.</a></p>`;
         return;
       }
       const q = f.properties;

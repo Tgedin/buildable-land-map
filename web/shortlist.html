@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="page.css" />
 </head>
 <body class="page">
-  <nav class="top"><a href="index.html">← Map</a></nav>
+  <nav class="top"><a id="to-map" href="index.html">← Map</a></nav>
   <h1>Ranked shortlist</h1>
   <p id="intro" class="muted">Loading…</p>
   <div class="warn" id="warn" hidden></div>
@@ -23,12 +23,13 @@
   <script src="format.js"></script>
   <script>
     const $ = (id) => document.getElementById(id);
+    $("to-map").href = withArea("index.html");
     const cls = (v) => (v === null ? "" : v < 0 ? "neg" : "pos");
 
     Promise.all([
-      fetch("data/screening.json").then((r) => r.json()),
-      fetch("data/parcels.geojson").then((r) => r.json()),
-      fetch("data/summary.json").then((r) => r.json()),
+      fetch(DATA + "screening.json").then((r) => r.json()),
+      fetch(DATA + "parcels.geojson").then((r) => r.json()),
+      fetch(DATA + "summary.json").then((r) => r.json()),
     ]).then(([screening, parcels, summary]) => {
       const props = Object.fromEntries(parcels.features.map((f) => [f.properties.refcat, f.properties]));
       const rows = Object.entries(screening.parcels)
@@ -63,7 +64,7 @@
         };
         const cell = (k) => `<td class="${cls(both(k))}">${both(k) === null ? "–" : kEur(both(k))}</td>`;
         tr.innerHTML =
-          `<td><a href="report.html?ref=${ref}">${ref}</a></td>` +
+          `<td><a href="${withArea("report.html?ref=" + ref)}">${ref}</a></td>` +
           `<td>${p.kind === "redevelopment" ? '<span class="tag" title="Adds more floors than an existing structure usually carries (assumed cap: 2)">redevelopment</span>' : "rooftop"}</td>` +
           `<td>${fmt(pr.floors)} (${fmt(pr.plan_floors)})</td>` +
           `<td>${fmt(p.homes_2bed)} / ${fmt(p.attic?.homes_2bed ?? 0)}</td>` +

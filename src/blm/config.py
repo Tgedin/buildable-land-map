@@ -15,6 +15,8 @@ class CatastroConfig:
     tile_size_m: float = 500
     max_features_per_request: int = 5000
     timeout_s: int = 60
+    request_delay_s: float = 0.0  # pause after each real request: be polite at city scale
+    workers: int = 1  # tiles fetched in parallel; each worker still pauses request_delay_s
 
 
 @dataclass(frozen=True)
@@ -52,6 +54,7 @@ class MetricsConfig:
 @dataclass(frozen=True)
 class ExportConfig:
     coordinate_precision: int = 6
+    web_dir: str = "web/data"  # relative to the repo root; a city-scale build writes elsewhere
 
 
 @dataclass(frozen=True)
@@ -85,7 +88,7 @@ class AreaConfig:
 
     @property
     def web_data_dir(self) -> Path:
-        return REPO_ROOT / "web" / "data"
+        return REPO_ROOT / self.export.web_dir
 
 
 def load_config(path: str | Path = REPO_ROOT / "config" / "area.yaml") -> AreaConfig:

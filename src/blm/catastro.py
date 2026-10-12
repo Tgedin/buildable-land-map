@@ -14,6 +14,7 @@ import logging
 import time
 import xml.etree.ElementTree as ET
 from collections.abc import Iterator
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -118,12 +119,29 @@ class ParsedParts:
     n_features: int
 
 
+def _exception_text(root: ET.Element) -> str:
+    return " ".join(t.strip() for t in root.itertext() if t.strip())
+
+
+def _is_empty_answer(root: ET.Element) -> bool:
+    """A tile with no buildings (sea, fields) is answered with an *exception*, not an empty list.
+
+    "No records founded for BBOX and SRS provided" is a complete, valid answer: nothing there.
+    """
+    return _local(root.tag) == "ExceptionReport" and "No records" in _exception_text(root)
+
+
+def _raise_if_exception(root: ET.Element) -> None:
+    if _local(root.tag) == "ExceptionReport":
+        raise WfsError(f"WFS exception: {_exception_text(root)}")
+
+
 def parse_building_parts(xml_bytes: bytes) -> ParsedParts:
     """Parse a WFS GetFeature response into records with geometry + floors."""
     root = ET.fromstring(xml_bytes)
-    if _local(root.tag) == "ExceptionReport":
-        text = " ".join(t.strip() for t in root.itertext() if t.strip())
-        raise WfsError(f"WFS exception: {text}")
+    if _is_empty_answer(root):
+        return ParsedParts(records=[], n_features=0)
+    _raise_if_exception(root)
 
     records: list[dict] = []
     for el in root.iter():
@@ -151,9 +169,9 @@ def parse_building_parts(xml_bytes: bytes) -> ParsedParts:
 def parse_building_uses(xml_bytes: bytes) -> ParsedParts:
     """Parse a BU.BUILDING response into {refcat, current_use} records (no geometry)."""
     root = ET.fromstring(xml_bytes)
-    if _local(root.tag) == "ExceptionReport":
-        text = " ".join(t.strip() for t in root.itertext() if t.strip())
-        raise WfsError(f"WFS exception: {text}")
+    if _is_empty_answer(root):
+        return ParsedParts(records=[], n_features=0)
+    _raise_if_exception(root)
 
     records: list[dict] = []
     for el in root.iter():
@@ -172,7 +190,21 @@ def parse_building_uses(xml_bytes: bytes) -> ParsedParts:
 # ---------------------------------------------------------------- fetching
 
 
+def _cache_path(cfg: AreaConfig, typename: str, b: BBox) -> Path:
+    key = "_".join(f"{v:.0f}" for v in b)
+    return cfg.raw_dir / "catastro" / cfg.name / f"{typename}_{key}.xml"
+
+
 def _get(session: requests.Session, b: BBox, cfg: AreaConfig, typename: str = TYPENAME) -> bytes:
+    """One WFS response, from the on-disk cache when we already have it.
+
+    Every tile is saved under data/raw so an interrupted city-scale fetch resumes where it
+    stopped instead of starting again. Only complete responses are cached (written to a
+    `.part` file first), and errors are never cached.
+    """
+    cache = _cache_path(cfg, typename, b)
+    if cache.exists() and cache.stat().st_size > 0:
+        return cache.read_bytes()
     params = {
         "service": "wfs",
         "version": "2.0.0",
@@ -185,6 +217,13 @@ def _get(session: requests.Session, b: BBox, cfg: AreaConfig, typename: str = TY
         try:
             r = session.get(WFS_URL, params=params, timeout=cfg.catastro.timeout_s)
             r.raise_for_status()
+            if b"ExceptionReport" not in r.content[:2000] or b"No records" in r.content[:2000]:
+                cache.parent.mkdir(parents=True, exist_ok=True)
+                tmp = cache.with_suffix(".part")
+                tmp.write_bytes(r.content)
+                tmp.rename(cache)
+            if cfg.catastro.request_delay_s:
+                time.sleep(cfg.catastro.request_delay_s)
             return r.content
         except requests.RequestException as exc:
             wait = 2**attempt
@@ -210,28 +249,43 @@ def _fetch_tile(
     yield from parsed.records
 
 
+def _tiles_in_parallel(cfg: AreaConfig, typename: str, parse) -> Iterator[list[dict]]:
+    """The records of each tile, in tile order, fetched by `cfg.catastro.workers` threads.
+
+    Each tile gets its own session (a Session is not guaranteed thread-safe). Results come back in
+    order, so the output does not depend on how many workers ran.
+    """
+    tiles = tile_bbox(cfg.bbox, cfg.catastro.tile_size_m)
+    log.info("%s: %d tile(s), %d worker(s)", typename, len(tiles), cfg.catastro.workers)
+
+    def one(t: BBox) -> list[dict]:
+        with requests.Session() as session:
+            return list(_fetch_tile(session, t, cfg, typename, parse))
+
+    with ThreadPoolExecutor(max_workers=max(1, cfg.catastro.workers)) as pool:
+        for i, recs in enumerate(pool.map(one, tiles), 1):
+            if i % 25 == 0 or i == len(tiles):
+                log.info("  %s tile %d/%d done", typename, i, len(tiles))
+            yield recs
+
+
 def fetch_building_uses(cfg: AreaConfig) -> dict[str, str | None]:
     """Fetch BU.BUILDING in cfg.bbox and return {refcat: current_use}."""
-    tiles = tile_bbox(cfg.bbox, cfg.catastro.tile_size_m)
     uses: dict[str, str | None] = {}
-    with requests.Session() as session:
-        for t in tiles:
-            for rec in _fetch_tile(session, t, cfg, BUILDING_TYPENAME, parse_building_uses):
-                uses[rec["refcat"]] = rec["current_use"]
+    for recs in _tiles_in_parallel(cfg, BUILDING_TYPENAME, parse_building_uses):
+        for rec in recs:
+            uses[rec["refcat"]] = rec["current_use"]
     log.info("Fetched current use for %d buildings", len(uses))
     return uses
 
 
 def fetch_building_parts(cfg: AreaConfig) -> gpd.GeoDataFrame:
     """Fetch all building parts in cfg.bbox, deduplicated by part_id."""
-    tiles = tile_bbox(cfg.bbox, cfg.catastro.tile_size_m)
-    log.info("Fetching %d tile(s) from Catastro WFS", len(tiles))
     records: dict[str, dict] = {}
-    with requests.Session() as session:
-        for i, t in enumerate(tiles, 1):
-            for rec in _fetch_tile(session, t, cfg):
-                records[rec["part_id"]] = rec  # parts crossing tile edges appear twice
-            log.info("  tile %d/%d done, %d parts so far", i, len(tiles), len(records))
+    for recs in _tiles_in_parallel(cfg, TYPENAME, parse_building_parts):
+        for rec in recs:
+            records[rec["part_id"]] = rec  # parts crossing tile edges appear twice
+    log.info("Fetched %d building parts", len(records))
     return to_geodataframe(list(records.values()), cfg.crs)
 
 

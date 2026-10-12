@@ -122,7 +122,9 @@ def test_fetch_alignments_pages_and_classifies(monkeypatch):
                 "properties": {"exceededTransferLimit": True},
             }
             return Resp(first)
-        return Resp({**body, "features": body["features"][5:]})
+        if params["resultOffset"] == 5:
+            return Resp({**body, "features": body["features"][5:]})
+        return Resp({**body, "features": []})  # past the end: an empty page ends the paging
 
     monkeypatch.setattr(planning.requests, "get", fake_get)
     cfg = AreaConfig(
@@ -133,7 +135,7 @@ def test_fetch_alignments_pages_and_classifies(monkeypatch):
         planning=PlanningConfig(alignments_url="https://example.test/MapServer/1"),
     )
     out = planning.fetch_alignments(cfg)
-    assert calls == [0, 5]
+    assert calls[:2] == [0, 5] and calls[-1] == len(body["features"])  # then one empty page
     assert len(out) == len(body["features"])
     assert "kind" in out.columns
 
@@ -179,3 +181,35 @@ def test_match_zone_is_none_when_no_zone_covers_half_or_any():
     assert out.loc["SPLIT", "zone"] is None  # neither zone reaches 60%: never guessed
     assert out.loc["OUT", "zone"] is None  # outside every polygon
     assert out.loc["IN", "zone"] is None
+
+
+def test_paging_continues_until_an_empty_page(monkeypatch):
+    """The server's page size is 2,000: a layer with 5 polygons and page size 2 needs 3 requests."""
+    feats = [
+        {
+            "type": "Feature",
+            "properties": {"califi": f"Z{i}"},
+            "geometry": {"type": "Point", "coordinates": [i, i]},
+        }
+        for i in range(5)
+    ]
+    calls = []
+
+    class R:
+        def __init__(self, page):
+            self.page = page
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"features": self.page}  # no "more pages" flag at all
+
+    def fake_get(url, params=None, timeout=None):
+        calls.append(params["resultOffset"])
+        return R(feats[params["resultOffset"] : params["resultOffset"] + 2])
+
+    monkeypatch.setattr(planning.requests, "get", fake_get)
+    cfg = AreaConfig(name="t", label="t", epsg=25830, bbox=(0, 0, 10, 10))
+    out = planning._fetch_layer("http://x", "califi", cfg)
+    assert len(out) == 5 and calls == [0, 2, 4, 5]

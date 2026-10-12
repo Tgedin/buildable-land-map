@@ -1,0 +1,52 @@
+# Area of interest. Start with ONE neighborhood (~0.5–1 km²), then grow to a city.
+# Coordinates are ETRS89 / UTM. Most of mainland Spain is zone 30N (EPSG:25830);
+# Galicia/west is 29N (25829), Catalonia/Balearics east is 31N (25831).
+# Canarias, Navarra and the Basque Country are NOT covered by the national Catastro WFS.
+
+name: valencia-city               # slug used in output file names
+label: "València (urban area)"    # shown in the map title
+epsg: 25830
+
+# [xmin, ymin, xmax, ymax] in the EPSG above.
+# The continuous urban area, ~11 x 18.5 km: the districts of the city proper plus the maritime
+# quarters. It leaves out El Saler, El Perellonet, the Albufera and the rural pedanías to the
+# south and north (a choice, not a limit of the pipeline; see docs/decisions/0006).
+bbox: [720500, 4364000, 731500, 4382500]
+
+catastro:
+  # Service limits: 4 km² per request and 5,000 features. We tile well below that
+  # and split a tile again if it comes back full.
+  tile_size_m: 500
+  max_features_per_request: 5000
+  timeout_s: 60
+  request_delay_s: 0.3        # city scale: ~800 tiles x 2 passes, be polite to the service
+  workers: 4                  # tiles in parallel; every tile is cached, so a restart resumes
+
+lidar:
+  # PNOA LiDAR .laz tiles, downloaded manually from the CNIG download centre
+  # into data/raw/lidar/. ASPRS classes: 2 = ground, 6 = building.
+  ground_class: 2
+  building_class: 6
+  inner_buffer_m: 0.5        # shrink footprint to avoid wall/edge points
+  ground_ring_m: 10.0        # ring outside the footprint used for ground level
+  min_roof_points: 20        # below this, the height is flagged as low confidence
+  # Valencia: ICV 2015 LiDAR sheet index, so `blm lidar` / `make run` fetch the .laz themselves.
+  sheet_index_url: https://terramapas.icv.gva.es/0301_2015PVAL0005_hojas?service=wfs&version=2.0.0&request=GetFeature&Typenames=distribucion_descargas&srsName=EPSG:25830&outputformat=geojsonstream
+
+metrics:
+  floor_height_m: 3.0        # typical floor-to-floor height for floor estimates
+  neighbor_radius_m: 50.0    # radius used for the "dominant height" of the surroundings
+  min_neighbors: 3           # below this, no gap is computed
+
+export:
+  coordinate_precision: 6    # decimals in the WGS84 GeoJSON
+  web_dir: data/processed/valencia-city/web   # too large for web/data (see ADR 0006)
+
+planning:
+  # Municipal plan heights. Valencia: PGOU - Alineaciones (CC BY 4.0). Remove this section
+  # for a city without plan data; the map then falls back to the neighbour comparison only.
+  alignments_url: https://geoportal.valencia.es/server/rest/services/OPENDATA/UrbanismoEInfraestructuras/MapServer/212
+  zoning_url: https://geoportal.valencia.es/server/rest/services/OPENDATA/UrbanismoEInfraestructuras/MapServer/231
+  ground_floor_offset: 0     # plan `altura` already includes the ground floor: PGOU art. 5.33 (ADR 0004)
+  protected_min_share: 0.5   # parcel counts as protected if >= this share is under protected polygons
+  min_coverage: 0.5          # parcel needs a numeric plan height over >= this share of its footprint

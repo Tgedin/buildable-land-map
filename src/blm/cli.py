@@ -4,6 +4,7 @@ blm fetch     Catastro WFS            -> data/interim/<area>/parts.parquet
 blm heights   + PNOA LiDAR .laz       -> data/interim/<area>/parts_lidar.parquet
 blm plan      municipal plan (PGOU)   -> data/interim/<area>/pgou.parquet + zoning.parquet
 blm lidar     download the .laz sheets -> data/raw/lidar/ (if the config has a sheet index)
+blm candidates only the parcels a screening.json lists -> web data dir (city scale, ADR 0006)
 blm build     parcels + gap + checks  -> data/processed/<area>/ + web/data/
 blm run       fetch -> heights (if .laz present) -> build
 blm sample    synthetic data end-to-end, so the map works offline
@@ -71,6 +72,19 @@ def cmd_plan(cfg: AreaConfig, args: argparse.Namespace) -> None:
         zoning = planning.fetch_zoning(cfg)
         zoning.to_parquet(_zoning_path(cfg))
         log.info("Saved %d zone polygons -> %s", len(zoning), _zoning_path(cfg))
+
+
+def cmd_candidates(cfg: AreaConfig, args: argparse.Namespace) -> None:
+    """Export only the parcels listed in a screening.json (written by plan2cost.screen_map)."""
+    screening = json.loads(Path(args.screening).read_text(encoding="utf-8"))
+    refcats = set(screening["parcels"])
+    parcels = gpd.read_parquet(cfg.processed_dir / "parcels.parquet")
+    summary = json.loads((cfg.processed_dir / "summary.json").read_text())
+    out = Path(args.out) if args.out else cfg.web_data_dir
+    export.export_candidates(
+        parcels, refcats, summary, out, cfg.label, cfg.export.coordinate_precision
+    )
+    log.info("Exported %d of %d parcels -> %s", len(refcats), len(parcels), out)
 
 
 def cmd_lidar(cfg: AreaConfig, args: argparse.Namespace) -> None:
@@ -191,6 +205,11 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("heights", help="compute LiDAR heights per building part")
     sub.add_parser("plan", help="download municipal plan (PGOU) heights")
     sub.add_parser("lidar", help="download the LiDAR sheets covering the area")
+    p_cand = sub.add_parser("candidates", help="export only the parcels in a screening.json")
+    p_cand.add_argument(
+        "--screening", required=True, help="screening.json from plan2cost.screen_map"
+    )
+    p_cand.add_argument("--out", help="output directory (default: the area's web data dir)")
     sub.add_parser("build", help="parcels, buildable gap, validation, web export")
     p_run = sub.add_parser("run", help="fetch -> heights -> build")
     p_run.add_argument("--from-files", nargs="+", metavar="GML")
@@ -208,6 +227,7 @@ def main(argv: list[str] | None = None) -> None:
         "heights": cmd_heights,
         "plan": cmd_plan,
         "lidar": cmd_lidar,
+        "candidates": cmd_candidates,
         "build": cmd_build,
         "run": cmd_run,
         "sample": cmd_sample,

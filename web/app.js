@@ -76,11 +76,11 @@ function applyView() {
 
 async function load() {
   const [summ, parcels] = await Promise.all([
-    fetch("data/summary.json").then((r) => r.json()),
-    fetch("data/parcels.geojson").then((r) => r.json()),
+    fetch(DATA + "summary.json").then((r) => r.json()),
+    fetch(DATA + "parcels.geojson").then((r) => r.json()),
   ]);
   summary = summ;
-  screening = await fetch("data/screening.json").then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  screening = await fetch(DATA + "screening.json").then((r) => (r.ok ? r.json() : null)).catch(() => null);
   if (summary.plan_by_class) {
     view = "plan";
     $("view-toggle").hidden = false;
@@ -138,6 +138,7 @@ function renderSensitivityNote() {
   const hard = screening?.sensitivity?.inputs?.["hard cost"]?.base;
   if (!b) return;
   $("sens-note").hidden = $("list-link").hidden = false;
+  $("list-link").querySelector("a").href = withArea("shortlist.html");
   $("sens-note").textContent =
     `What flips it: at base inputs each m² of new floor leaves ${fmt(b.residual_per_m2)} €. That reaches zero if ` +
     `the sale price falls from ${fmt(price)} to ${fmt(b.breakeven_sale_price)} €/m², or the hard cost rises from ` +
@@ -178,7 +179,7 @@ function select(f) {
   $("d-screen").textContent = screeningText(p.refcat);
   const sp = screening?.parcels?.[p.refcat];
   $("d-report").hidden = !sp;
-  if (sp) $("d-report").href = `report.html?ref=${p.refcat}`;
+  if (sp) $("d-report").href = withArea(`report.html?ref=${p.refcat}`);
   $("d-resid").textContent = residualText(sp?.residual_2bed);
   $("d-attic").textContent = atticText(sp?.attic);
   $("d-attic-resid").textContent = sp?.attic?.residual_2bed ? residualText(sp.attic.residual_2bed) : "–";

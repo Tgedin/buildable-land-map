@@ -88,8 +88,8 @@ def _fetch_layer(url: str, fields: str, cfg: AreaConfig) -> gpd.GeoDataFrame:
             break
         frames.append(page)
         offset += len(page)
-        if not body.get("properties", {}).get("exceededTransferLimit"):
-            break  # the server says there is no next page
+        # Keep asking until a page comes back empty. The "more pages" flag is not reliable in
+        # the GeoJSON output, and trusting it stopped a city-scale query at the first 2,000.
     if not frames:
         cols = [*fields.split(","), "geometry"]
         return gpd.GeoDataFrame(columns=cols, geometry="geometry", crs=cfg.crs)

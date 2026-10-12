@@ -57,3 +57,20 @@ def export_web(
     summary_path = out_dir / "summary.json"
     summary_path.write_text(json.dumps(summary_out, indent=2), encoding="utf-8")
     return geojson_path, summary_path
+
+
+def export_candidates(
+    parcels: gpd.GeoDataFrame,
+    refcats: set[str],
+    summary: dict,
+    out_dir: Path,
+    label: str,
+    precision: int = 6,
+) -> tuple[Path, Path]:
+    """Export only the parcels in `refcats` (those the screening found something on).
+
+    A whole city has too many parcels for a static web page (ADR 0006); the map only needs the
+    ones with a result. The summary still describes every parcel.
+    """
+    chosen = parcels[parcels["refcat"].isin(refcats)]
+    return export_web(chosen, summary, out_dir, label, precision)
