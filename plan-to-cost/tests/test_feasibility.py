@@ -73,3 +73,44 @@ def test_nothing_checked_beyond_the_dwelling_is_hidden():
 
 def test_module_exports_the_caveat_list():
     assert len(F.NOT_CHECKED) >= 5
+
+
+def test_attic_plate_is_set_back_from_free_facades_only():
+    from plan2cost.feasibility import attic_plate_m2
+
+    lot = box(0, 0, 10, 20)
+    party = [box(-10, 0, 0, 20), box(10, 0, 20, 20)]  # both long sides are party walls
+    # free: the two 10 m ends. A 4 m setback at each end leaves 10 x 12 m = 120 m² of 200 m²
+    assert attic_plate_m2(lot, party, 200.0) == pytest.approx(120.0, abs=8.0)
+    # detached: 4 m all round leaves 2 x 12 = 24 m²
+    assert attic_plate_m2(lot, [], 200.0) == pytest.approx(24.0, abs=1.0)
+
+
+def test_attic_plate_scales_with_the_built_footprint():
+    from plan2cost.feasibility import attic_plate_m2
+
+    lot = box(0, 0, 10, 20)
+    full = attic_plate_m2(lot, [], 200.0)
+    assert attic_plate_m2(lot, [], 100.0) == pytest.approx(full / 2)  # half the parcel is yard
+
+
+@pytest.mark.parametrize(
+    ("zone", "klass", "plan", "floors", "ok", "why"),
+    [
+        ("ENS", "at_limit", 5.0, 5.0, True, "eligible"),
+        ("ENS", "plan_gap", 6.0, 4.0, True, "eligible"),  # must first reach the plan's 6
+        ("ENS", "at_limit", 8.0, 8.0, True, "eligible"),
+        ("ENS", "at_limit", 9.0, 9.0, False, "plan_over_8_floors"),
+        ("ENS", "at_limit", 5.0, 7.0, False, "already_above_plan"),  # may have an ático already
+        ("ENS", "protected", None, 5.0, False, "no_buildable_plan_height"),
+        ("ENS", "public_use", 5.0, 5.0, False, "no_buildable_plan_height"),
+        ("RV", "at_limit", 5.0, 5.0, False, "not_ensanche"),
+        (None, "at_limit", 5.0, 5.0, False, "zone_unknown"),  # never guessed
+        ("ENS", "at_limit", 5.0, None, False, "floors_unknown"),
+        ("ENS", "at_limit", None, 5.0, False, "floors_unknown"),
+    ],
+)
+def test_attic_eligibility_follows_art_6_19_5(zone, klass, plan, floors, ok, why):
+    from plan2cost.feasibility import attic_eligibility
+
+    assert attic_eligibility(zone, klass, plan, floors) == (ok, why)

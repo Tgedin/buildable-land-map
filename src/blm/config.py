@@ -35,6 +35,7 @@ class PlanningConfig:
     """Municipal plan (PGOU) layer. `alignments_url` None = no plan data for this area."""
 
     alignments_url: str | None = None  # ArcGIS REST layer URL (…/MapServer/<id>)
+    zoning_url: str | None = None  # same service, "Calificaciones" layer: gives the zone code
     ground_floor_offset: int = 0  # allowed = plan `altura` + this; 0: art. 5.33 (ADR 0004)
     protected_min_share: float = 0.5  # share of parcel under protected polygons => protected
     min_coverage: float = 0.5  # share of parcel that must carry a numeric height

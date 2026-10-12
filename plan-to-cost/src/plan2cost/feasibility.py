@@ -40,6 +40,8 @@ NOT_CHECKED = (
     "owners' consent (propiedad horizontal), permits, party-wall and neighbour-light conditions",
     "urban parameters other than the plan's height (occupation, setbacks, courtyards)",
     "only Decreto 80/2023 arts. 9-10 and 51-56 are applied to the dwelling",
+    "ático: every free facade is set back 4 m (the street side is not known), the 3.20 m "
+    "height limit and a pitched roof are not modelled, and whether the existing roof can host it",
 )
 
 
@@ -51,6 +53,9 @@ class Assumptions:
     core_m2: float = 18.0  # stair, landing and lift per floor
     party_tol_m: float = 0.35  # an edge this close to a neighbour is a party wall
     min_patio_m2: float = 30.0  # an inner hole smaller than this is a light well, not a facade
+    attic_setback_m: float = (
+        4.0  # PGOU art. 6.19.5: the ático is set back this far from street facades
+    )
 
 
 @dataclass(frozen=True)
@@ -89,17 +94,77 @@ def _outline_parts(poly: Polygon | MultiPolygon, min_patio_m2: float):
     return lines
 
 
+def _free_facade_lines(
+    poly: Polygon | MultiPolygon,
+    neighbours: list[Polygon | MultiPolygon],
+    a: Assumptions,
+):
+    """The parcel's boundary that is not a party wall (and not a small light well)."""
+    lines = unary_union(_outline_parts(poly, a.min_patio_m2))
+    near = [n for n in neighbours if n.distance(poly) <= 2 * a.party_tol_m]
+    if near:
+        lines = lines.difference(unary_union(near).buffer(a.party_tol_m))
+    return lines
+
+
 def free_facade_m(
     poly: Polygon | MultiPolygon,
     neighbours: list[Polygon | MultiPolygon],
     a: Assumptions = Assumptions(),  # noqa: B008
 ) -> float:
     """Length of the parcel's boundary that is not a party wall (and not a small light well)."""
-    lines = unary_union(_outline_parts(poly, a.min_patio_m2))
-    near = [n for n in neighbours if n.distance(poly) <= 2 * a.party_tol_m]
-    if near:
-        lines = lines.difference(unary_union(near).buffer(a.party_tol_m))
-    return float(lines.length)
+    return float(_free_facade_lines(poly, neighbours, a).length)
+
+
+def attic_plate_m2(
+    poly: Polygon | MultiPolygon,
+    neighbours: list[Polygon | MultiPolygon],
+    footprint_m2: float,
+    a: Assumptions = Assumptions(),  # noqa: B008
+) -> float:
+    """Floor area of an ático: the building footprint minus a band along the free facades.
+
+    PGOU art. 6.19.5 sets the ático back at least `attic_setback_m` from the facades onto a public
+    street or space. We cannot tell a street facade from a back-yard one here, so every free
+    facade is set back: conservative, it under-counts where the back is not a street. The
+    parcel's share left after the setback is applied to the building footprint, because the
+    parcel outline includes unbuilt yards.
+    """
+    if poly.area <= 0:
+        return 0.0
+    band = _free_facade_lines(poly, neighbours, a).buffer(a.attic_setback_m)
+    return float(footprint_m2 * poly.difference(band).area / poly.area)
+
+
+ATTIC_ZONE = "ENS"  # Ensanche: the zone art. 6.19 of the Normas applies to
+ATTIC_MAX_FLOORS = 8  # "áticos excepto en edificios de más de ocho plantas (incluida la baja)"
+ATTIC_CLASSES = ("plan_gap", "at_limit")  # not protected, public, open or without plan height
+
+
+def attic_eligibility(
+    zone: str | None, gap_class: str | None, plan_floors: float | None, floors: float | None
+) -> tuple[bool, str]:
+    """Can this parcel take an ático under art. 6.19.5? Returns (eligible, reason).
+
+    Conditions taken from the text: Ensanche zone; at most 8 floors including the ground floor;
+    no ático when fewer floors were built than the plan assigns, so the building must first
+    reach the plan's floor count. A building already above the plan is not assumed to be able
+    to add one: it may have an ático already, or be out of the plan.
+    """
+    nan = float("nan")
+    plan_floors = nan if plan_floors is None else plan_floors
+    floors = nan if floors is None else floors
+    if zone != ATTIC_ZONE:
+        return False, "not_ensanche" if zone else "zone_unknown"
+    if gap_class not in ATTIC_CLASSES:
+        return False, "no_buildable_plan_height"
+    if plan_floors != plan_floors or floors != floors:
+        return False, "floors_unknown"
+    if plan_floors > ATTIC_MAX_FLOORS:
+        return False, "plan_over_8_floors"
+    if floors > plan_floors:
+        return False, "already_above_plan"
+    return True, "eligible"
 
 
 @cache

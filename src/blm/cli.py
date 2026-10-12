@@ -2,7 +2,7 @@
 
 blm fetch     Catastro WFS            -> data/interim/<area>/parts.parquet
 blm heights   + PNOA LiDAR .laz       -> data/interim/<area>/parts_lidar.parquet
-blm plan      municipal plan (PGOU)   -> data/interim/<area>/pgou.parquet
+blm plan      municipal plan (PGOU)   -> data/interim/<area>/pgou.parquet + zoning.parquet
 blm lidar     download the .laz sheets -> data/raw/lidar/ (if the config has a sheet index)
 blm build     parcels + gap + checks  -> data/processed/<area>/ + web/data/
 blm run       fetch -> heights (if .laz present) -> build
@@ -53,6 +53,10 @@ def _pgou_path(cfg: AreaConfig) -> Path:
     return cfg.interim_dir / "pgou.parquet"
 
 
+def _zoning_path(cfg: AreaConfig) -> Path:
+    return cfg.interim_dir / "zoning.parquet"
+
+
 def cmd_plan(cfg: AreaConfig, args: argparse.Namespace) -> None:
     alignments = planning.fetch_alignments(cfg)
     cfg.interim_dir.mkdir(parents=True, exist_ok=True)
@@ -63,6 +67,10 @@ def cmd_plan(cfg: AreaConfig, args: argparse.Namespace) -> None:
         alignments["kind"].value_counts().to_dict(),
         _pgou_path(cfg),
     )
+    if cfg.planning.zoning_url:
+        zoning = planning.fetch_zoning(cfg)
+        zoning.to_parquet(_zoning_path(cfg))
+        log.info("Saved %d zone polygons -> %s", len(zoning), _zoning_path(cfg))
 
 
 def cmd_lidar(cfg: AreaConfig, args: argparse.Namespace) -> None:
@@ -104,6 +112,8 @@ def _build(cfg: AreaConfig, parts: gpd.GeoDataFrame, synthetic_data: bool = Fals
     if not synthetic_data and _pgou_path(cfg).exists():
         alignments = gpd.read_parquet(_pgou_path(cfg))
         parcels = planning.match_parcels(parcels, alignments, cfg.planning)
+        if _zoning_path(cfg).exists():
+            parcels = planning.match_zone(parcels, gpd.read_parquet(_zoning_path(cfg)))
         parcels = metrics.plan_gap(parcels)
     else:
         log.warning("No plan data (run `blm plan`): building the neighbour comparison only.")

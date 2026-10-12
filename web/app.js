@@ -140,7 +140,9 @@ function renderScreeningNote() {
   $("screen-note").hidden = false;
   $("screen-note").textContent =
     `Screening: up to ${fmt(s.total_homes_2bed)} two-bedroom homes (or ${fmt(s.total_homes_1bed)} ` +
-    `one-bedroom) could be added on ${fmt(s.parcels_with_homes_1bed)} parcels. A first filter limited ` +
+    `one-bedroom) could be added on ${fmt(s.parcels_with_homes_1bed)} parcels by building up to the plan's ` +
+    `height, and up to ${fmt(s.attic_total_homes_2bed)} two-bedroom homes in a penthouse (ático) on ` +
+    `${fmt(s.attic_parcels_with_homes_2bed)} parcels. A first filter limited ` +
     `by floor area and free facade. Adding floors needs 3/5 of the owners holding 3/5 of the quotas (LPH art. 17.4); whether it needs unanimity is for a lawyer. Structure, lifts, fire safety and permits are not checked.`;
 }
 
@@ -154,14 +156,31 @@ function screeningText(refcat) {
 
 // Residual value of the added homes: the most a developer could pay owners for the right to
 // build. Three scenarios, because the sign depends on prices and costs that are assumed.
-function residualText(refcat) {
-  const r = screening?.parcels?.[refcat]?.residual_2bed;
+function residualText(r) {
   if (!r) return "–";
   if (!r.eur) return `not computed (${r.withheld_reason})`;
   const k = (v) => `${v < 0 ? "−" : ""}${fmt(Math.round(Math.abs(v) / 1000))}k €`;
   const left = r.excluded.length ? `; before ${r.excluded.join(", ")}` : "";
   return `${k(r.eur.pessimistic)} / ${k(r.eur.base)} / ${k(r.eur.optimistic)} ` +
     `(pessimistic / base / optimistic; inputs assumed${left})`;
+}
+
+const ATTIC_NO = {
+  not_ensanche: "not in the Ensanche zone",
+  zone_unknown: "zone not known",
+  no_buildable_plan_height: "protected, public use or no plan height",
+  floors_unknown: "floor count unknown",
+  plan_over_8_floors: "plan allows more than 8 floors (no ático above 8)",
+  already_above_plan: "already above the plan's floors",
+};
+
+// Penthouse (ático) allowed above the cornice by PGOU art. 6.19.5, set back 4 m from the facades.
+function atticText(refcat) {
+  const a = screening?.parcels?.[refcat]?.attic;
+  if (!a) return "–";
+  if (a.eligible === false) return `not eligible: ${ATTIC_NO[a.reason] ?? a.reason}`;
+  return `${fmt(a.homes_2bed)} two-bed · ${fmt(a.homes_1bed)} one-bed ` +
+    `(one floor of ${fmt(a.plate_m2)} m² after the 4 m setback)`;
 }
 
 function select(f) {
@@ -174,8 +193,12 @@ function select(f) {
   $("d-refcat").textContent = p.refcat;
   $("d-floors").textContent = fmt(p.floors);
   $("d-screen").textContent = screeningText(p.refcat);
-  $("d-resid").textContent = residualText(p.refcat);
-  for (const id of ["d-screen", "d-resid"]) $(id).previousElementSibling.hidden = $(id).hidden = !screening;
+  const sp = screening?.parcels?.[p.refcat];
+  $("d-resid").textContent = residualText(sp?.residual_2bed);
+  $("d-attic").textContent = atticText(p.refcat);
+  $("d-attic-resid").textContent = sp?.attic?.residual_2bed ? residualText(sp.attic.residual_2bed) : "–";
+  for (const id of ["d-screen", "d-resid", "d-attic", "d-attic-resid"])
+    $(id).previousElementSibling.hidden = $(id).hidden = !screening;
   $("d-use").textContent = USES[p.current_use] ?? "–";
   $("d-class").textContent = CLASSES[p.gap_class]?.label ?? "–";
   $("d-plan").textContent =

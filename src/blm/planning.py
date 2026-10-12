@@ -61,11 +61,8 @@ def classify_alignments(raw: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     return out
 
 
-def fetch_alignments(cfg: AreaConfig) -> gpd.GeoDataFrame:
-    """Download the plan polygons intersecting cfg.bbox (paged ArcGIS REST query)."""
-    url = cfg.planning.alignments_url
-    if not url:
-        raise ValueError("planning.alignments_url is not set in config/area.yaml")
+def _fetch_layer(url: str, fields: str, cfg: AreaConfig) -> gpd.GeoDataFrame:
+    """Page through an ArcGIS REST layer for the polygons intersecting cfg.bbox."""
     xmin, ymin, xmax, ymax = cfg.bbox
     params = {
         "where": "1=1",
@@ -74,7 +71,7 @@ def fetch_alignments(cfg: AreaConfig) -> gpd.GeoDataFrame:
         "inSR": cfg.epsg,
         "outSR": cfg.epsg,
         "spatialRel": "esriSpatialRelIntersects",
-        "outFields": "altura,protec",
+        "outFields": fields,
         "f": "geojson",
     }
     frames, offset = [], 0
@@ -94,15 +91,57 @@ def fetch_alignments(cfg: AreaConfig) -> gpd.GeoDataFrame:
         if not body.get("properties", {}).get("exceededTransferLimit"):
             break  # the server says there is no next page
     if not frames:
-        return classify_alignments(
-            gpd.GeoDataFrame(
-                columns=["altura", "protec", "geometry"], geometry="geometry", crs=cfg.crs
-            )
-        )
+        cols = [*fields.split(","), "geometry"]
+        return gpd.GeoDataFrame(columns=cols, geometry="geometry", crs=cfg.crs)
     raw = pd.concat(frames, ignore_index=True)
-    raw = gpd.GeoDataFrame(raw, geometry="geometry", crs=cfg.crs)
+    return gpd.GeoDataFrame(raw, geometry="geometry", crs=cfg.crs)
+
+
+def fetch_alignments(cfg: AreaConfig) -> gpd.GeoDataFrame:
+    """Download the plan polygons intersecting cfg.bbox (paged ArcGIS REST query)."""
+    url = cfg.planning.alignments_url
+    if not url:
+        raise ValueError("planning.alignments_url is not set in config/area.yaml")
+    raw = _fetch_layer(url, "altura,protec", cfg)
     log.info("Plan alignments: %d polygons", len(raw))
     return classify_alignments(raw)
+
+
+def fetch_zoning(cfg: AreaConfig) -> gpd.GeoDataFrame:
+    """Download the plan's zone polygons (`califi`: ENS, RV, ...) intersecting cfg.bbox."""
+    url = cfg.planning.zoning_url
+    if not url:
+        raise ValueError("planning.zoning_url is not set in config/area.yaml")
+    raw = _fetch_layer(url, "califi", cfg)
+    out = raw[["califi", "geometry"]].copy()
+    out["califi"] = out["califi"].astype("string").str.strip().replace("", pd.NA)
+    log.info("Plan zoning: %d polygons", len(out))
+    return out
+
+
+def match_zone(
+    parcels: gpd.GeoDataFrame, zoning: gpd.GeoDataFrame, min_share: float = 0.5
+) -> gpd.GeoDataFrame:
+    """Add `zone`: the zone code covering most of the parcel, or None if no code covers half.
+
+    Never guessed: a parcel split between zones, or outside every polygon, has no zone.
+    """
+    out = parcels.copy()
+    area = out.set_index("refcat")["footprint_m2"]
+    ov = gpd.overlay(
+        out[["refcat", "geometry"]],
+        zoning.dropna(subset=["califi"])[["califi", "geometry"]],
+        how="intersection",
+        keep_geom_type=True,
+    )
+    ov["ar"] = ov.geometry.area
+    by_zone = ov.groupby(["refcat", "califi"])["ar"].sum().reset_index()
+    best = by_zone.sort_values("ar").groupby("refcat").last()
+    share = best["ar"] / area.reindex(best.index)
+    zone = best["califi"].where(share >= min_share)
+    mapped = out["refcat"].map(zone)
+    out["zone"] = mapped.astype(object).where(mapped.notna(), None)
+    return out
 
 
 def match_parcels(

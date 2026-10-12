@@ -41,6 +41,7 @@ planning:
   # Municipal plan heights. Valencia: PGOU - Alineaciones (CC BY 4.0). Remove this section
   # for a city without plan data; the map then falls back to the neighbour comparison only.
   alignments_url: https://geoportal.valencia.es/server/rest/services/OPENDATA/UrbanismoEInfraestructuras/MapServer/212
+  zoning_url: https://geoportal.valencia.es/server/rest/services/OPENDATA/UrbanismoEInfraestructuras/MapServer/231
   ground_floor_offset: 0     # plan `altura` already includes the ground floor: PGOU art. 5.33 (ADR 0004)
   protected_min_share: 0.5   # parcel counts as protected if >= this share is under protected polygons
   min_coverage: 0.5          # parcel needs a numeric plan height over >= this share of its footprint

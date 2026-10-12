@@ -42,3 +42,15 @@ Structure and the capacity of the existing building for extra floors; whether th
 ## Revisit when
 
 An architect reviewing a few real parcels disagrees with the numbers, or a real layout fit (placing the flats inside the parcel outline) replaces the facade proxy.
+
+## Addendum, 2026-10-12: the ático route
+
+The València Normas Urbanísticas (art. 6.19.5) allow an *ático* above the cornice in the Ensanche zone. The screening now has a second route next to "build up to the plan's height":
+
+- **Eligible** if the parcel's zone is `ENS` (from the plan's *Calificaciones* layer), the plan allows at most 8 floors including the ground floor, and the building has no more floors than the plan assigns (the text bars an ático when fewer floors than assigned were built; a building already above the plan may have one). Anything else gets a reason, never a guess.
+- **Plate** = the building footprint minus a 4 m band along every free facade. The text asks for the setback from street facades; we cannot tell a street from a back yard, so every free facade is set back. This under-counts where the back is not a street.
+- **One floor**, then the same homes screening and residual as the floors route. A parcel can have both routes; the ático then comes after the floors reach the plan.
+
+Not modelled: the 3.20 m height limit of the ático, pitched roofs, whether the existing roof and structure can host it, and `enrase de cornisas` (art. 6.19.3).
+
+Ruzafa result: 152 parcels eligible, 32 fit 2-bed homes (47 homes; 84 one-bed). Summed 2-bed residual over those: about -1.6 M EUR pessimistic, 2.6 M EUR base, 5.3 M EUR optimistic, before structural reinforcement. No parcel is positive in all three scenarios.

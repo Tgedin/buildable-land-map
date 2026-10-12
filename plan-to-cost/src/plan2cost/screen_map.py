@@ -1,8 +1,8 @@
 """Run the screening over the Buildable Land Map's parcels and write web/data/screening.json.
 
-Reads `parcels.parquet` (made by `blm build`, with the plan columns) and, for every parcel the
-map marks as having room under the plan (`gap_class == "plan_gap"`), asks how many 1- and
-2-bedroom homes could be added on the extra floors. The result is a screening, not a design:
+Reads `parcels.parquet` (made by `blm build`, with the plan and zone columns) and asks, for
+every parcel with room under the plan (`gap_class == "plan_gap"`) or that can take an ático,
+how many 1- and 2-bedroom homes could be added. The result is a screening, not a design:
 read `not_checked` in the output before quoting any number.
 
     python -m plan2cost.screen_map --parcels data/processed/ruzafa-valencia/parcels.parquet \\
@@ -18,59 +18,100 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from plan2cost.consent import REQUIREMENTS
-from plan2cost.feasibility import NOT_CHECKED, Assumptions, free_facade_m, screen
+from plan2cost.feasibility import (
+    NOT_CHECKED,
+    Assumptions,
+    attic_eligibility,
+    attic_plate_m2,
+    free_facade_m,
+    screen,
+)
 from plan2cost.proforma import residual_value
 
 
+def _homes(plate: float, facade: float, floors: int, assumptions: Assumptions) -> dict:
+    """Homes, limit, unit and residual value for 1- and 2-bedroom flats on `floors` new floors."""
+    out: dict = {}
+    for n in (1, 2):
+        s = screen(plate, facade, floors, n, assumptions)
+        out[f"homes_{n}bed"] = s.homes
+        out[f"limit_{n}bed"] = s.limit
+        if s.profile:
+            out[f"unit_{n}bed"] = {
+                "typology": s.profile.typology,
+                "useful_m2": round(s.profile.useful_m2, 1),
+                "facade_m": round(s.profile.facade_needed_m, 2),
+            }
+        p = residual_value(s.useful_m2_total, assumptions.net_to_gross)
+        out[f"residual_{n}bed"] = {
+            "eur": p.residual_eur,  # by scenario, None when withheld
+            "excluded": list(p.excluded),
+            "withheld_reason": p.withheld_reason,
+        }
+    return out
+
+
+def _num(row, key):
+    v = row.get(key)
+    return None if v is None or v != v else float(v)
+
+
 def run(parcels, assumptions: Assumptions = Assumptions()) -> dict:  # noqa: B008
-    """`parcels` is a GeoDataFrame in a metric CRS with the columns `blm build` writes."""
-    candidates = parcels[parcels["gap_class"] == "plan_gap"]
+    """`parcels` is a GeoDataFrame in a metric CRS with the columns `blm build` writes.
+
+    Two routes are screened. `floors`: parcels the map marks `plan_gap` (room under the plan's
+    height), at the top level of each result. `attic`: parcels that can take an ático above the
+    cornice (art. 6.19.5), under the `attic` key. A parcel can have either or both.
+    """
     tree = parcels.sindex
     out: dict[str, dict] = {}
-    for _, row in candidates.iterrows():
+    for _, row in parcels.iterrows():
+        floors_route = row["gap_class"] == "plan_gap"
+        eligible, reason = attic_eligibility(
+            row.get("zone"), row["gap_class"], _num(row, "plan_floors"), _num(row, "floors")
+        )
+        if not (floors_route or eligible):
+            continue
         geom = row.geometry
         idx = tree.query(geom.buffer(2 * assumptions.party_tol_m))
         near = [parcels.geometry.iloc[i] for i in idx if parcels["refcat"].iloc[i] != row["refcat"]]
         facade = free_facade_m(geom, near, assumptions)
-        floors = int(row["plan_gap_floors"])
-        plate = float(row["main_footprint_m2"])
+        footprint = float(row["main_footprint_m2"])
+        added = int(row["plan_gap_floors"]) if floors_route else 0
         result = {
-            "plate_m2": round(plate, 1),
+            "plate_m2": round(footprint, 1),
             "free_facade_m": round(facade, 1),
-            "added_floors": floors,
+            "added_floors": added,
+            **_homes(footprint, facade, added, assumptions),
         }
-        for n in (1, 2):
-            s = screen(plate, facade, floors, n, assumptions)
-            result[f"homes_{n}bed"] = s.homes
-            result[f"limit_{n}bed"] = s.limit
-            p = residual_value(s.useful_m2_total, assumptions.net_to_gross)
-            result[f"residual_{n}bed"] = {
-                "eur": p.residual_eur,  # by scenario, None when withheld
-                "excluded": list(p.excluded),
-                "withheld_reason": p.withheld_reason,
+        if eligible:
+            plate = attic_plate_m2(geom, near, footprint, assumptions)
+            result["attic"] = {
+                "plate_m2": round(plate, 1),
+                "free_facade_m": round(facade, 1),  # the setback line runs parallel to it
+                **_homes(plate, facade, 1, assumptions),
             }
-            if s.profile:
-                result[f"unit_{n}bed"] = {
-                    "typology": s.profile.typology,
-                    "useful_m2": round(s.profile.useful_m2, 1),
-                    "facade_m": round(s.profile.facade_needed_m, 2),
-                }
+        else:
+            result["attic"] = {"eligible": False, "reason": reason}
         out[row["refcat"]] = result
     return out
 
 
 def summarize(per_parcel: dict) -> dict:
-    n = len(per_parcel)
+    floors = {k: v for k, v in per_parcel.items() if v["added_floors"] > 0}
+    attic = {k: v["attic"] for k, v in per_parcel.items() if "homes_2bed" in v["attic"]}
     return {
-        "parcels_screened": n,
-        "parcels_with_homes_1bed": sum(1 for v in per_parcel.values() if v["homes_1bed"] > 0),
-        "parcels_with_homes_2bed": sum(1 for v in per_parcel.values() if v["homes_2bed"] > 0),
-        "total_homes_1bed": sum(v["homes_1bed"] for v in per_parcel.values()),
-        "total_homes_2bed": sum(v["homes_2bed"] for v in per_parcel.values()),
-        "limited_by_facade_2bed": sum(
-            1 for v in per_parcel.values() if v["limit_2bed"] == "facade"
-        ),
-        "limited_by_area_2bed": sum(1 for v in per_parcel.values() if v["limit_2bed"] == "area"),
+        "parcels_screened": len(floors),
+        "parcels_with_homes_1bed": sum(1 for v in floors.values() if v["homes_1bed"] > 0),
+        "parcels_with_homes_2bed": sum(1 for v in floors.values() if v["homes_2bed"] > 0),
+        "total_homes_1bed": sum(v["homes_1bed"] for v in floors.values()),
+        "total_homes_2bed": sum(v["homes_2bed"] for v in floors.values()),
+        "limited_by_facade_2bed": sum(1 for v in floors.values() if v["limit_2bed"] == "facade"),
+        "limited_by_area_2bed": sum(1 for v in floors.values() if v["limit_2bed"] == "area"),
+        "attic_parcels": len(attic),
+        "attic_parcels_with_homes_2bed": sum(1 for v in attic.values() if v["homes_2bed"] > 0),
+        "attic_total_homes_1bed": sum(v["homes_1bed"] for v in attic.values()),
+        "attic_total_homes_2bed": sum(v["homes_2bed"] for v in attic.values()),
     }
 
 

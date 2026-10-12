@@ -67,3 +67,53 @@ def test_each_screened_parcel_gets_a_residual_that_names_what_it_leaves_out():
     r = row["residual_2bed"]
     assert r["eur"] is not None and set(r["eur"]) == {"pessimistic", "base", "optimistic"}
     assert r["excluded"] == ["structural reinforcement"]  # unknown cost is named, not priced at 0
+
+
+def _ensanche_parcels() -> gpd.GeoDataFrame:
+    """A detached 20 x 30 m block at its plan limit (5 floors) and one over the limit."""
+    rows = [
+        {
+            "refcat": "LIMIT",
+            "geometry": box(0, 0, 20, 30),
+            "main_footprint_m2": 600.0,
+            "plan_gap_floors": 0.0,
+            "gap_class": "at_limit",
+            "zone": "ENS",
+            "plan_floors": 5.0,
+            "floors": 5.0,
+        },
+        {
+            "refcat": "OVER",
+            "geometry": box(100, 0, 120, 30),
+            "main_footprint_m2": 600.0,
+            "plan_gap_floors": 0.0,
+            "gap_class": "at_limit",
+            "zone": "ENS",
+            "plan_floors": 5.0,
+            "floors": 7.0,
+        },
+    ]
+    return gpd.GeoDataFrame(rows, geometry="geometry", crs="EPSG:25830")
+
+
+def test_a_building_at_its_plan_limit_is_screened_for_an_attic_only():
+    out = screen_map.run(_ensanche_parcels())
+    assert set(out) == {"LIMIT"}  # OVER is above the plan: no attic assumed, no floors gap
+    row = out["LIMIT"]
+    assert row["added_floors"] == 0 and row["homes_2bed"] == 0  # no floors route
+    attic = row["attic"]
+    assert 0 < attic["plate_m2"] < row["plate_m2"]  # the setback takes area away
+    assert attic["homes_2bed"] >= 1
+    assert attic["residual_2bed"]["excluded"] == ["structural reinforcement"]
+
+
+def test_parcels_without_a_zone_column_get_no_attic_and_say_why():
+    out = screen_map.run(_parcels())
+    assert out["ROW1"]["attic"] == {"eligible": False, "reason": "zone_unknown"}
+
+
+def test_summary_counts_the_two_routes_separately():
+    summary = screen_map.summarize(screen_map.run(_ensanche_parcels()))
+    assert summary["parcels_screened"] == 0  # nothing in the floors route
+    assert summary["attic_parcels"] == 1
+    assert summary["attic_total_homes_2bed"] >= 1

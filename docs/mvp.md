@@ -30,7 +30,7 @@ First run on Ruzafa (2026-10-12, after the floor-count correction below): 65 par
 
 **Correction (2026-10-12):** reading the city's Normas Urbanísticas showed the plan's floor count already includes the ground floor (art. 5.33), so the earlier +1 offset overstated the room under the plan by about 3x (154 parcels / 38,880 m² became 65 / 12,237 m²). The first MVP numbers (90 parcels, 11.4 M EUR base) were built on that error. See ADR 0004.
 
-The same plan (art. 6.19.5) allows a penthouse (*ático*) above the cornice, set back 4 m from street facades, in the Ensanche zone. That is the real rooftop route and is not modelled yet: it is the next change to the screening.
+The same plan (art. 6.19.5) allows a penthouse (*ático*) above the cornice, set back 4 m from street facades, in the Ensanche zone. That is the real rooftop route and is now screened (2026-10-12, `plan2cost.feasibility.attic_*`): 152 Ruzafa parcels are eligible, 32 fit 2-bed homes (47 homes), summed residual about -1.6 M EUR pessimistic / 2.6 M EUR base / 5.3 M EUR optimistic, again with no parcel positive in all three scenarios. Zone comes from the plan's Calificaciones layer (916 of 932 parcels are Ensanche).
 
 ## How it is built (see ADR 0005)
 
