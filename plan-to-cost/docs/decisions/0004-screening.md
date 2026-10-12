@@ -53,4 +53,10 @@ The València Normas Urbanísticas (art. 6.19.5) allow an *ático* above the cor
 
 Not modelled: the 3.20 m height limit of the ático, pitched roofs, whether the existing roof and structure can host it, and `enrase de cornisas` (art. 6.19.3).
 
-Ruzafa result: 152 parcels eligible, 32 fit 2-bed homes (47 homes; 84 one-bed). Summed 2-bed residual over those: about -1.6 M EUR pessimistic, 2.6 M EUR base, 5.3 M EUR optimistic, before structural reinforcement. No parcel is positive in all three scenarios.
+Ruzafa result: 130 parcels eligible, 7 fit 2-bed homes (7 homes; 13 one-bed), residual about -0.2 M EUR pessimistic, 0.3 M EUR base, 0.7 M EUR optimistic, before structural reinforcement. No parcel is positive in all three scenarios. Earlier versions gave 152 parcels / 2.6 M EUR base (it included plan-height-1 parcels) and 25 parcels / 1.4 M EUR base (it measured the setback on the parcel outline, not the building).
+
+**Geometry.** Facade length and the ático setback are measured on the tallest building part (`main_part_geometries`, from `parts_lidar.parquet`), not on the parcel outline: a parcel can be a whole block with a small tall building on it. Each result says what it was `measured_on`; without the parts file the outline is used.
+
+**Known weakness found while testing the shortlist.** A parcel is matched to the plan polygon covering most of the *parcel*, not of the *building*. A tall front building with a large low rear court can therefore be read as "plan height 1". 110 Ensanche parcels in Ruzafa have a plan height of 1, most of them probably this case. The ático route excludes plan height 1 (reason `plan_ground_floor_only`), but the right fix is to match the plan to the building footprint; the same mix-up can distort the plan gap in m² (ADR 0004, plan heights).
+
+**Rooftop or redevelopment.** The floors route can ask for more floors than an existing structure carries (a 2-floor building in a 7-floor plan "adds 5"). Results with more than `max_rooftop_floors` (2, assumed, no source) are labelled `redevelopment`. Ruzafa: 32 rooftop parcels (57 two-bed homes, residual 2.9 M EUR base) against 7 redevelopment parcels (42 homes, 2.2 M EUR base).

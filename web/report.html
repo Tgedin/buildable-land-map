@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Parcel report · Buildable Land Map</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="page.css" />
+</head>
+<body class="page">
+  <nav class="top"><a href="shortlist.html">← Shortlist</a> · <a href="index.html">Map</a> ·
+    <a href="#" onclick="window.print(); return false;">Print</a></nav>
+  <main id="report"><p class="muted">Loading…</p></main>
+  <script src="format.js"></script>
+  <script>
+    const ref = new URLSearchParams(location.search).get("ref") ?? "";
+    const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const cls = (v) => (v === null || v === undefined ? "" : v < 0 ? "neg" : "pos");
+    const money = (v) => (v === null || v === undefined ? "–" : `<span class="${cls(v)}">${v < 0 ? "−" : ""}${fmt(Math.abs(v))} €</span>`);
+    const LIMIT = { area: "limited by floor area", facade: "limited by free facade", both: "area and facade equal", none: "" };
+
+    function routeTable(title, block, floorsText) {
+      if (!block || block.eligible === false) {
+        return `<h3>${title}</h3><p>${block ? "Not eligible: " + esc(ATTIC_NO[block.reason] ?? block.reason) : "No room under the plan."}</p>`;
+      }
+      const row = (n) => {
+        const u = block[`unit_${n}bed`];
+        const r = block[`residual_${n}bed`];
+        return `<tr><td>${n}-bedroom</td><td>${fmt(block[`homes_${n}bed`])}</td>` +
+          `<td>${u ? `${esc(u.typology)}, ${fmt(u.useful_m2)} m²` : "–"}</td>` +
+          `<td>${LIMIT[block[`limit_${n}bed`]] ?? ""}</td>` +
+          (r?.eur ? ["pessimistic", "base", "optimistic"].map((k) => `<td>${money(r.eur[k])}</td>`).join("")
+                  : `<td colspan="3">not computed (${esc(r?.withheld_reason ?? "no homes")})</td>`) + "</tr>";
+      };
+      return `<h3>${title}</h3><p>${floorsText}</p>
+        <table><thead><tr><th>Unit</th><th>Homes</th><th>Dwelling</th><th>Limit</th>
+        <th>Pessimistic</th><th>Base</th><th>Optimistic</th></tr></thead><tbody>${row(1)}${row(2)}</tbody></table>`;
+    }
+
+    Promise.all([
+      fetch("data/screening.json").then((r) => r.json()),
+      fetch("data/parcels.geojson").then((r) => r.json()),
+    ]).then(([s, g]) => {
+      const p = s.parcels[ref];
+      const f = g.features.find((x) => x.properties.refcat === ref);
+      if (!/^[0-9A-Z]{14,20}$/.test(ref) || !p || !f) {
+        document.getElementById("report").innerHTML = `<h1>No report for this parcel</h1><p>Only parcels that the screening found room on have one. <a href="shortlist.html">See the shortlist.</a></p>`;
+        return;
+      }
+      const q = f.properties;
+      const sens = s.sensitivity.per_m2_built;
+      const inputs = s.sensitivity.inputs;
+      const floorsText = p.added_floors > 0
+        ? `Up to ${fmt(p.added_floors)} added floor${p.added_floors > 1 ? "s" : ""} on a ${fmt(p.plate_m2)} m² floor plate, ${fmt(p.free_facade_m)} m of free facade.`
+        : "";
+      const atticText1 = p.attic?.eligible === false ? "" :
+        `One penthouse floor of ${fmt(p.attic?.plate_m2)} m² after a 4 m setback from the facades.`;
+
+      // Shares (VAT, soft costs, profit) are fractions: fmt() would round 0.10 to 0.
+      const val = (i, v) => (i.unit.includes("share") ? `${Math.round(v * 100)} %` : fmt(v));
+      const inputRows = Object.entries(inputs).map(([name, i]) =>
+        `<tr><td>${esc(name)}</td><td>${i.base === null ? "unknown" : val(i, i.pessimistic) + " / " + val(i, i.base) + " / " + val(i, i.optimistic)}</td>` +
+        `<td>${esc(i.unit)}</td><td><span class="tag">${esc(i.status)}</span></td></tr>` +
+        `<tr><td colspan="4" class="muted" style="text-align:left;border:0;padding-top:0">${esc(i.source)}</td></tr>`).join("");
+
+      const consent = s.consent.map((c) =>
+        `<li><b>${esc(c.what)}:</b> ${esc(c.needed)}. <i>${esc(c.clause)}</i><blockquote>${esc(c.quote)}</blockquote></li>`).join("");
+      const notChecked = s.not_checked.map((t) => `<li>${esc(t)}</li>`).join("");
+      const b = sens.base;
+
+      document.getElementById("report").innerHTML = `
+        <h1>Parcel ${esc(ref)}</h1>
+        <p class="muted">${esc(s.meaning)}</p>
+        <div class="warn">Screening, not a design, valuation or permit. Euro figures rest on assumed inputs (below) and leave out structural reinforcement.</div>
+
+        <h2>1. What the plan allows</h2>
+        <table><tbody>
+          <tr><td>Floors today (Catastro)</td><td>${fmt(q.floors)}</td></tr>
+          <tr><td>Plan height, ground floor included</td><td>${fmt(q.plan_floors)}</td></tr>
+          <tr><td>Room under the plan</td><td>${q.plan_gap_floors == null ? "–" : fmt(q.plan_gap_floors) + " floors, " + fmt(q.plan_gap_m2) + " m²"}</td></tr>
+          <tr><td>Measured height (LiDAR)</td><td>${q.lidar_height_m == null ? "–" : fmt(q.lidar_height_m) + " m (" + esc(q.lidar_confidence) + " confidence)"}</td></tr>
+        </tbody></table>
+
+        <h2>2. Homes that could be added</h2>
+        ${p.kind === "redevelopment" ? `<div class="warn">This parcel could add ${fmt(p.added_floors)} floors, more than an existing structure usually carries (assumed cap: 2). Treat it as redevelopment, not a rooftop addition.</div>` : ""}
+        ${routeTable("Building up to the plan's height", p.added_floors > 0 ? p : null, floorsText)}
+        ${routeTable("Penthouse (ático), PGOU art. 6.19.5", p.attic, atticText1)}
+        <p class="muted">Residual = what the homes could bear for the right to build, per scenario: net sale revenue minus building cost and required profit. It is the shared pot for structural reinforcement, any rooftop premium and the payment to the owners.</p>
+
+        <h2>3. What flips the answer</h2>
+        <p>At base inputs each m² of new floor leaves <b>${fmt(b.residual_per_m2)} €</b>. It reaches zero if the sale price falls from
+        ${fmt(inputs["sale price"].base)} to <b>${fmt(b.breakeven_sale_price)} €/m²</b>, or the hard cost rises from ${fmt(inputs["hard cost"].base)} to
+        <b>${fmt(b.breakeven_hard_cost)} €/m²</b>. In the pessimistic case it is ${fmt(sens.pessimistic.residual_per_m2)} €/m².
+        This is the same for every parcel: only the size changes.</p>
+        <table><thead><tr><th>Input</th><th>Pessimistic / base / optimistic</th><th>Unit</th><th>Status</th></tr></thead><tbody>${inputRows}</tbody></table>
+
+        <h2>4. Who must agree (Ley de Propiedad Horizontal)</h2>
+        <ul>${consent}</ul>
+
+        <h2>5. Not checked</h2>
+        <ul>${notChecked}</ul>
+        <p class="muted">Data generated ${esc(s.generated_at.slice(0, 10))}. Sources: Catastro, PNOA LiDAR, València PGOU (alineaciones and calificaciones, CC BY 4.0), Normas Urbanísticas, Ley 49/1960.</p>`;
+    });
+  </script>
+</body>
+</html>

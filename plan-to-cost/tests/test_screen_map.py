@@ -117,3 +117,56 @@ def test_summary_counts_the_two_routes_separately():
     assert summary["parcels_screened"] == 0  # nothing in the floors route
     assert summary["attic_parcels"] == 1
     assert summary["attic_total_homes_2bed"] >= 1
+
+
+def test_main_part_is_the_union_of_the_tallest_parts():
+    parts = gpd.GeoDataFrame(
+        {
+            "refcat": ["A", "A", "A", "B"],
+            "floors_above": [5, 5, 2, 3],
+            "geometry": [
+                box(0, 0, 10, 10),
+                box(10, 0, 20, 10),
+                box(20, 0, 30, 10),
+                box(50, 0, 60, 10),
+            ],
+        },
+        geometry="geometry",
+        crs="EPSG:25830",
+    )
+    main = screen_map.main_part_geometries(parts)
+    assert main["A"].area == pytest.approx(200.0)  # the two 5-floor parts, not the 2-floor one
+    assert main["B"].area == pytest.approx(100.0)
+
+
+def test_facade_is_measured_on_the_building_not_on_a_big_parcel_outline():
+    # a 100 x 100 m parcel with a 10 x 20 m tall building in the middle
+    parcels = gpd.GeoDataFrame(
+        [
+            {
+                "refcat": "BIG",
+                "geometry": box(0, 0, 100, 100),
+                "main_footprint_m2": 200.0,
+                "plan_gap_floors": 1.0,
+                "gap_class": "plan_gap",
+            }
+        ],
+        geometry="geometry",
+        crs="EPSG:25830",
+    )
+    on_outline = screen_map.run(parcels)["BIG"]
+    on_building = screen_map.run(parcels, main_parts={"BIG": box(45, 40, 55, 60)})["BIG"]
+    assert on_outline["measured_on"] == "parcel_outline"
+    assert on_building["measured_on"] == "main_part"
+    assert on_outline["free_facade_m"] == pytest.approx(400.0)
+    assert on_building["free_facade_m"] == pytest.approx(60.0)  # 10 + 20 + 10 + 20
+
+
+def test_adding_more_floors_than_a_structure_can_carry_is_labelled_redevelopment():
+    out = screen_map.run(_parcels())  # ROW1 may add 2 floors, FAR 1
+    assert out["ROW1"]["kind"] == "rooftop" and out["FAR"]["kind"] == "rooftop"
+    tall = _parcels()
+    tall.loc[tall["refcat"] == "FAR", "plan_gap_floors"] = 5.0
+    out = screen_map.run(tall)
+    assert out["FAR"]["kind"] == "redevelopment"
+    assert screen_map.summarize(out)["parcels_redevelopment"] == 1

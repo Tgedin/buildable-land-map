@@ -26,11 +26,21 @@ For each parcel with room under the plan:
 | Costs left out | structural reinforcement | named as excluded |
 | Blocking risks | structure, owners' consent, protection, lift, fire | listed, not yet scored |
 
-First run on Ruzafa (2026-10-12, after the floor-count correction below): 65 parcels have room under the plan, 35 fit 2-bed homes (85 homes); summed residual about 4.5 M EUR in the base case, about -2.7 M EUR pessimistic, about 9.4 M EUR optimistic. Structural reinforcement is not in the cost. Read that as "viable only if prices hold and costs stay low", not as a market size.
+Current Ruzafa run (2026-10-12, after the floor-count and geometry corrections below). Two routes, 2-bed homes, residual as pessimistic / base / optimistic, before structural reinforcement:
 
-**Correction (2026-10-12):** reading the city's Normas Urbanísticas showed the plan's floor count already includes the ground floor (art. 5.33), so the earlier +1 offset overstated the room under the plan by about 3x (154 parcels / 38,880 m² became 65 / 12,237 m²). The first MVP numbers (90 parcels, 11.4 M EUR base) were built on that error. See ADR 0004.
+| Route | Parcels that fit | Homes | Residual |
+|---|---|---|---|
+| Rooftop: 1-2 added floors up to the plan's height | 32 | 57 | -1.8 M / 2.9 M / 6.0 M EUR |
+| Redevelopment: more than 2 added floors (assumed cap) | 7 | 42 | -1.3 M / 2.2 M / 4.6 M EUR |
+| Penthouse (ático) | 7 of 130 eligible | 7 | -0.2 M / 0.3 M / 0.7 M EUR |
 
-The same plan (art. 6.19.5) allows a penthouse (*ático*) above the cornice, set back 4 m from street facades, in the Ensanche zone. That is the real rooftop route and is now screened (2026-10-12, `plan2cost.feasibility.attic_*`): 152 Ruzafa parcels are eligible, 32 fit 2-bed homes (47 homes), summed residual about -1.6 M EUR pessimistic / 2.6 M EUR base / 5.3 M EUR optimistic, again with no parcel positive in all three scenarios. Zone comes from the plan's Calificaciones layer (916 of 932 parcels are Ensanche).
+The rooftop thesis is the first and third rows: about 60 homes in Ruzafa. The second row is a different business (an old low building cannot carry five new floors). The 2-floor cap is an assumption, not a finding.
+
+No parcel is positive in all three scenarios. Read it as "viable only if prices hold and costs stay low", not as a market size. The ático result is small mostly because every free facade is set back 4 m (street and back yard are not told apart): it is a lower bound, not an estimate.
+
+**Correction (2026-10-12):** reading the city's Normas Urbanísticas showed the plan's floor count already includes the ground floor (art. 5.33), so the earlier +1 offset overstated the room under the plan by about 3x (154 parcels / 38,880 m² became 65 / 12,237 m²). The first MVP numbers (90 parcels, 11.4 M EUR base) were built on that error. A second correction measured facade and plate on the tallest building part instead of the parcel outline: for 65 of 131 screened parcels the building was under 60% of the outline (one 'parcel' was a whole block of 4,749 m² with a 224 m² building). See ADR 0004.
+
+The same plan (art. 6.19.5) allows a penthouse (*ático*) above the cornice, set back 4 m from street facades, in the Ensanche zone. That is the real rooftop route and is now screened (`plan2cost.feasibility.attic_*`): see the table above. Zone comes from the plan's Calificaciones layer (916 of 932 parcels are Ensanche).
 
 ## How it is built (see ADR 0005)
 

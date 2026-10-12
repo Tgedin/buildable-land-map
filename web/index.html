@@ -25,6 +25,8 @@
     </div>
 
     <p id="screen-note" class="muted note" hidden></p>
+    <p id="sens-note" class="muted note" hidden></p>
+    <p id="list-link" class="muted note" hidden><a href="shortlist.html">Ranked shortlist of parcels →</a></p>
 
     <div id="view-toggle" class="views" hidden>
       <label><input type="radio" name="view" value="plan" checked /> Vs. the plan (PGOU)</label>
@@ -55,6 +57,7 @@
       </dl>
       <div class="actions">
         <a id="d-catastro" target="_blank" rel="noopener">Open in Catastro ↗</a>
+        <a id="d-report" target="_blank" rel="noopener" hidden>One-page report →</a>
         <button id="d-share" type="button">Copy link</button>
       </div>
     </section>
@@ -77,6 +80,7 @@
   <main id="map" aria-label="Map of parcels"></main>
 
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="format.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

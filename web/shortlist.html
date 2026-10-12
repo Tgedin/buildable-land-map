@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shortlist · Buildable Land Map</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="page.css" />
+</head>
+<body class="page">
+  <nav class="top"><a href="index.html">← Map</a></nav>
+  <h1>Ranked shortlist</h1>
+  <p id="intro" class="muted">Loading…</p>
+  <div class="warn" id="warn" hidden></div>
+  <table id="list" hidden>
+    <thead>
+      <tr><th>Parcel</th><th>Type</th><th>Floors (plan)</th><th>2-bed homes: up / ático</th>
+          <th>Pessimistic</th><th>Base</th><th>Optimistic</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <p class="muted" id="foot" hidden></p>
+  <script src="format.js"></script>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const cls = (v) => (v === null ? "" : v < 0 ? "neg" : "pos");
+
+    Promise.all([
+      fetch("data/screening.json").then((r) => r.json()),
+      fetch("data/parcels.geojson").then((r) => r.json()),
+      fetch("data/summary.json").then((r) => r.json()),
+    ]).then(([screening, parcels, summary]) => {
+      const props = Object.fromEntries(parcels.features.map((f) => [f.properties.refcat, f.properties]));
+      const rows = Object.entries(screening.parcels)
+        .map(([ref, p]) => ({ ref, p, base: baseResidual(p) }))
+        .filter((r) => r.base !== null)
+        .sort((a, b) => (a.p.kind === "redevelopment") - (b.p.kind === "redevelopment") || b.base - a.base);
+
+      const sum = (key) => rows.reduce((t, r) => {
+        const v = [r.p.residual_2bed?.eur?.[key], r.p.attic?.residual_2bed?.eur?.[key]]
+          .filter((x) => x != null).reduce((a, b) => a + b, 0);
+        return t + v;
+      }, 0);
+      $("intro").textContent =
+        `${fmt(rows.length)} parcels in ${summary.label} can host two-bedroom ` +
+        `homes, by building up to the plan's height, as a penthouse (ático), or both. Ranked by the base-case ` +
+        `residual: the most that could be offered to the owners for the right to build, before structural ` +
+        `reinforcement. Summed over the list: ${kEur(sum("pessimistic"))} / ${kEur(sum("base"))} / ` +
+        `${kEur(sum("optimistic"))} (pessimistic / base / optimistic).`;
+      $("warn").hidden = false;
+      $("warn").textContent =
+        "A screening, not a design, a valuation or a permit. \"Redevelopment\" rows add more floors than an existing structure usually carries (assumed cap: 2), so they are not rooftop additions. The prices, costs and profit behind the euro figures are " +
+        "assumed (see each report). Structure, the existing stair, fire safety, owners' consent and permits are not checked.";
+
+      const body = $("list").querySelector("tbody");
+      for (const { ref, p } of rows.slice(0, 60)) {
+        const pr = props[ref] ?? {};
+        const e = (r, k) => (r?.eur ? r.eur[k] : null);
+        const tr = document.createElement("tr");
+        const both = (k) => {
+          const parts = [e(p.residual_2bed, k), e(p.attic?.residual_2bed, k)].filter((x) => x != null);
+          return parts.length ? parts.reduce((a, b) => a + b, 0) : null;
+        };
+        const cell = (k) => `<td class="${cls(both(k))}">${both(k) === null ? "–" : kEur(both(k))}</td>`;
+        tr.innerHTML =
+          `<td><a href="report.html?ref=${ref}">${ref}</a></td>` +
+          `<td>${p.kind === "redevelopment" ? '<span class="tag" title="Adds more floors than an existing structure usually carries (assumed cap: 2)">redevelopment</span>' : "rooftop"}</td>` +
+          `<td>${fmt(pr.floors)} (${fmt(pr.plan_floors)})</td>` +
+          `<td>${fmt(p.homes_2bed)} / ${fmt(p.attic?.homes_2bed ?? 0)}</td>` +
+          cell("pessimistic") + cell("base") + cell("optimistic");
+        body.appendChild(tr);
+      }
+      $("list").hidden = false;
+      $("foot").hidden = false;
+      $("foot").textContent = `Top ${Math.min(60, rows.length)} of ${rows.length}. Data generated ${screening.generated_at.slice(0, 10)}.`;
+    });
+  </script>
+</body>
+</html>

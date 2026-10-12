@@ -25,8 +25,6 @@ const USES = {
 const RAMP = ["#cfcac0", 1, "#f6b26b", 2, "#e8833a", 3, "#c2410c", 4, "#7c1d06"];
 
 const $ = (id) => document.getElementById(id);
-const fmt = (n, unit = "") =>
-  n === null || n === undefined ? "–" : `${Math.round(n).toLocaleString("es-ES")}${unit}`;
 
 const map = new maplibregl.Map({
   container: "map",
@@ -134,8 +132,22 @@ function renderSummary() {
   $("generated").textContent = `Updated ${s.generated_at.slice(0, 10)}.`;
 }
 
+function renderSensitivityNote() {
+  const b = screening?.sensitivity?.per_m2_built?.base;
+  const price = screening?.sensitivity?.inputs?.["sale price"]?.base;
+  const hard = screening?.sensitivity?.inputs?.["hard cost"]?.base;
+  if (!b) return;
+  $("sens-note").hidden = $("list-link").hidden = false;
+  $("sens-note").textContent =
+    `What flips it: at base inputs each m² of new floor leaves ${fmt(b.residual_per_m2)} €. That reaches zero if ` +
+    `the sale price falls from ${fmt(price)} to ${fmt(b.breakeven_sale_price)} €/m², or the hard cost rises from ` +
+    `${fmt(hard)} to ${fmt(b.breakeven_hard_cost)} €/m². Structural reinforcement, a rooftop premium and any ` +
+    `payment to the owners all have to fit inside that ${fmt(b.cost_budget_per_m2)} €/m². The inputs are assumed.`;
+}
+
 function renderScreeningNote() {
   if (!screening) return;
+  renderSensitivityNote();
   const s = screening.summary;
   $("screen-note").hidden = false;
   $("screen-note").textContent =
@@ -154,35 +166,6 @@ function screeningText(refcat) {
     `(${fmt(r.added_floors)} added floor${r.added_floors > 1 ? "s" : ""}, ${fmt(r.free_facade_m)} m free facade)`;
 }
 
-// Residual value of the added homes: the most a developer could pay owners for the right to
-// build. Three scenarios, because the sign depends on prices and costs that are assumed.
-function residualText(r) {
-  if (!r) return "–";
-  if (!r.eur) return `not computed (${r.withheld_reason})`;
-  const k = (v) => `${v < 0 ? "−" : ""}${fmt(Math.round(Math.abs(v) / 1000))}k €`;
-  const left = r.excluded.length ? `; before ${r.excluded.join(", ")}` : "";
-  return `${k(r.eur.pessimistic)} / ${k(r.eur.base)} / ${k(r.eur.optimistic)} ` +
-    `(pessimistic / base / optimistic; inputs assumed${left})`;
-}
-
-const ATTIC_NO = {
-  not_ensanche: "not in the Ensanche zone",
-  zone_unknown: "zone not known",
-  no_buildable_plan_height: "protected, public use or no plan height",
-  floors_unknown: "floor count unknown",
-  plan_over_8_floors: "plan allows more than 8 floors (no ático above 8)",
-  already_above_plan: "already above the plan's floors",
-};
-
-// Penthouse (ático) allowed above the cornice by PGOU art. 6.19.5, set back 4 m from the facades.
-function atticText(refcat) {
-  const a = screening?.parcels?.[refcat]?.attic;
-  if (!a) return "–";
-  if (a.eligible === false) return `not eligible: ${ATTIC_NO[a.reason] ?? a.reason}`;
-  return `${fmt(a.homes_2bed)} two-bed · ${fmt(a.homes_1bed)} one-bed ` +
-    `(one floor of ${fmt(a.plate_m2)} m² after the 4 m setback)`;
-}
-
 function select(f) {
   if (selected) map.setFeatureState({ source: "parcels", id: selected }, { selected: false });
   const p = f.properties;
@@ -194,8 +177,10 @@ function select(f) {
   $("d-floors").textContent = fmt(p.floors);
   $("d-screen").textContent = screeningText(p.refcat);
   const sp = screening?.parcels?.[p.refcat];
+  $("d-report").hidden = !sp;
+  if (sp) $("d-report").href = `report.html?ref=${p.refcat}`;
   $("d-resid").textContent = residualText(sp?.residual_2bed);
-  $("d-attic").textContent = atticText(p.refcat);
+  $("d-attic").textContent = atticText(sp?.attic);
   $("d-attic-resid").textContent = sp?.attic?.residual_2bed ? residualText(sp.attic.residual_2bed) : "–";
   for (const id of ["d-screen", "d-resid", "d-attic", "d-attic-resid"])
     $(id).previousElementSibling.hidden = $(id).hidden = !screening;

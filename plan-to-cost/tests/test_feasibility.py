@@ -101,6 +101,7 @@ def test_attic_plate_scales_with_the_built_footprint():
         ("ENS", "plan_gap", 6.0, 4.0, True, "eligible"),  # must first reach the plan's 6
         ("ENS", "at_limit", 8.0, 8.0, True, "eligible"),
         ("ENS", "at_limit", 9.0, 9.0, False, "plan_over_8_floors"),
+        ("ENS", "at_limit", 1.0, 1.0, False, "plan_ground_floor_only"),  # block interior
         ("ENS", "at_limit", 5.0, 7.0, False, "already_above_plan"),  # may have an ático already
         ("ENS", "protected", None, 5.0, False, "no_buildable_plan_height"),
         ("ENS", "public_use", 5.0, 5.0, False, "no_buildable_plan_height"),

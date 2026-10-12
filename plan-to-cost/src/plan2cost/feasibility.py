@@ -53,9 +53,8 @@ class Assumptions:
     core_m2: float = 18.0  # stair, landing and lift per floor
     party_tol_m: float = 0.35  # an edge this close to a neighbour is a party wall
     min_patio_m2: float = 30.0  # an inner hole smaller than this is a light well, not a facade
-    attic_setback_m: float = (
-        4.0  # PGOU art. 6.19.5: the ático is set back this far from street facades
-    )
+    attic_setback_m: float = 4.0  # PGOU art. 6.19.5: ático setback from street facades
+    max_rooftop_floors: int = 2  # ASSUMED: more added floors is redevelopment, not a rooftop
 
 
 @dataclass(frozen=True)
@@ -137,6 +136,7 @@ def attic_plate_m2(
 
 
 ATTIC_ZONE = "ENS"  # Ensanche: the zone art. 6.19 of the Normas applies to
+ATTIC_MIN_FLOORS = 2  # a plan height of 1 is a ground-floor-only area (block interior): no ático
 ATTIC_MAX_FLOORS = 8  # "áticos excepto en edificios de más de ocho plantas (incluida la baja)"
 ATTIC_CLASSES = ("plan_gap", "at_limit")  # not protected, public, open or without plan height
 
@@ -149,7 +149,9 @@ def attic_eligibility(
     Conditions taken from the text: Ensanche zone; at most 8 floors including the ground floor;
     no ático when fewer floors were built than the plan assigns, so the building must first
     reach the plan's floor count. A building already above the plan is not assumed to be able
-    to add one: it may have an ático already, or be out of the plan.
+    to add one: it may have an ático already, or be out of the plan. A plan height of 1 is
+    read as a ground-floor-only area (our inference: it is the value of block interiors), where
+    there is no cornice to set an ático on.
     """
     nan = float("nan")
     plan_floors = nan if plan_floors is None else plan_floors
@@ -160,6 +162,8 @@ def attic_eligibility(
         return False, "no_buildable_plan_height"
     if plan_floors != plan_floors or floors != floors:
         return False, "floors_unknown"
+    if plan_floors < ATTIC_MIN_FLOORS:
+        return False, "plan_ground_floor_only"
     if plan_floors > ATTIC_MAX_FLOORS:
         return False, "plan_over_8_floors"
     if floors > plan_floors:

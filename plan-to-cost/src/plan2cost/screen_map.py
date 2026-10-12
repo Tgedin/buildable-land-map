@@ -56,8 +56,25 @@ def _num(row, key):
     return None if v is None or v != v else float(v)
 
 
-def run(parcels, assumptions: Assumptions = Assumptions()) -> dict:  # noqa: B008
+def main_part_geometries(parts) -> dict:
+    """refcat -> the union of the parts at the parcel's tallest height (what gets built on).
+
+    The screening measures facade and ático setback on this shape, not on the parcel outline:
+    a parcel can be a whole block with a small tall building on it.
+    """
+    top = parts[parts["floors_above"] == parts.groupby("refcat")["floors_above"].transform("max")]
+    return {ref: g.union_all() for ref, g in top.groupby("refcat").geometry}
+
+
+def run(
+    parcels,
+    assumptions: Assumptions = Assumptions(),  # noqa: B008
+    main_parts: dict | None = None,
+) -> dict:
     """`parcels` is a GeoDataFrame in a metric CRS with the columns `blm build` writes.
+
+    `main_parts` (from `main_part_geometries`) gives the shape to measure; without it the
+    parcel outline is used, which over-states the facade of a small building on a big parcel.
 
     Two routes are screened. `floors`: parcels the map marks `plan_gap` (room under the plan's
     height), at the top level of each result. `attic`: parcels that can take an ático above the
@@ -72,7 +89,9 @@ def run(parcels, assumptions: Assumptions = Assumptions()) -> dict:  # noqa: B00
         )
         if not (floors_route or eligible):
             continue
-        geom = row.geometry
+        outline = row.geometry
+        geom = (main_parts or {}).get(row["refcat"], outline)
+        basis = "main_part" if geom is not outline else "parcel_outline"
         idx = tree.query(geom.buffer(2 * assumptions.party_tol_m))
         near = [parcels.geometry.iloc[i] for i in idx if parcels["refcat"].iloc[i] != row["refcat"]]
         facade = free_facade_m(geom, near, assumptions)
@@ -81,11 +100,18 @@ def run(parcels, assumptions: Assumptions = Assumptions()) -> dict:  # noqa: B00
         result = {
             "plate_m2": round(footprint, 1),
             "free_facade_m": round(facade, 1),
+            "measured_on": basis,
             "added_floors": added,
+            # An existing structure rarely carries many extra floors; beyond the (assumed) cap
+            # this is a redevelopment case, which the product is not about.
+            "kind": "redevelopment" if added > assumptions.max_rooftop_floors else "rooftop",
             **_homes(footprint, facade, added, assumptions),
         }
         if eligible:
-            plate = attic_plate_m2(geom, near, footprint, assumptions)
+            # on the main part the footprint IS the shape; on the outline, scale it by the share
+            plate = attic_plate_m2(
+                geom, near, geom.area if basis == "main_part" else footprint, assumptions
+            )
             result["attic"] = {
                 "plate_m2": round(plate, 1),
                 "free_facade_m": round(facade, 1),  # the setback line runs parallel to it
@@ -102,6 +128,7 @@ def summarize(per_parcel: dict) -> dict:
     attic = {k: v["attic"] for k, v in per_parcel.items() if "homes_2bed" in v["attic"]}
     return {
         "parcels_screened": len(floors),
+        "parcels_redevelopment": sum(1 for v in floors.values() if v["kind"] == "redevelopment"),
         "parcels_with_homes_1bed": sum(1 for v in floors.values() if v["homes_1bed"] > 0),
         "parcels_with_homes_2bed": sum(1 for v in floors.values() if v["homes_2bed"] > 0),
         "total_homes_1bed": sum(v["homes_1bed"] for v in floors.values()),
@@ -120,11 +147,17 @@ def main(argv: list[str] | None = None) -> None:
 
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--parcels", type=Path, required=True)
+    ap.add_argument(
+        "--parts",
+        type=Path,
+        help="parts_lidar.parquet (`blm heights`): measure the building, not the parcel",
+    )
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
 
     assumptions = Assumptions()
-    per_parcel = run(gpd.read_parquet(a.parcels), assumptions)
+    main_parts = main_part_geometries(gpd.read_parquet(a.parts)) if a.parts else None
+    per_parcel = run(gpd.read_parquet(a.parcels), assumptions, main_parts)
     payload = {
         "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "kind": "screening",
