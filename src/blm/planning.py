@@ -27,6 +27,13 @@ from blm.config import AreaConfig, PlanningConfig
 log = logging.getLogger(__name__)
 
 PROTECTED_CODES = {"AMB", "PAR", "INT", "BRL"}
+# Tags in the `altura` text itself that mean a protected building: "PROT_1h", "PROT.PARCIAL",
+# "BIC_M" (Bien de Interés Cultural), "BRL_MIL" (Bien de Relevancia Local).
+_PROTECTED_TEXT = re.compile(r"^(PROT|BIC|BRL)")
+# A number in the height field is not always a height ("3833", "6400" and "2650406" exist in the
+# city layer). No plan allows more than this many floors in València, so a larger number is
+# "unknown", never a height.
+MAX_PLAN_FLOORS = 20
 _PLAIN = re.compile(r"^\s*(?:<=\s*)?(\d+)\s*$")
 _GROUND_PLUS = re.compile(r"^\s*B\s*\+\s*(\d+)\s*$", re.IGNORECASE)
 
@@ -42,14 +49,17 @@ def parse_altura(altura: str | None, protec: str | None = None) -> Altura:
     # pandas turns missing text into float NaN, so test the type, not truthiness.
     text = altura.strip().upper() if isinstance(altura, str) else ""
     code = protec.strip().upper() if isinstance(protec, str) else ""
-    if text.startswith(("PROTEG", "PROTECC")) or code in PROTECTED_CODES:
+    if _PROTECTED_TEXT.match(text) or code in PROTECTED_CODES:
         return Altura("protected", np.nan)
     if m := _PLAIN.match(text):
         n = int(m.group(1))
+        if n > MAX_PLAN_FLOORS:
+            return Altura("unknown", np.nan)
         # 0 means no building allowed (open space), different from "unknown".
         return Altura("open", np.nan) if n == 0 else Altura("floors", float(n))
     if m := _GROUND_PLUS.match(text):
-        return Altura("floors", float(m.group(1)))
+        n = int(m.group(1))
+        return Altura("unknown", np.nan) if n > MAX_PLAN_FLOORS else Altura("floors", float(n))
     return Altura("unknown", np.nan)
 
 
@@ -72,6 +82,7 @@ def _fetch_layer(url: str, fields: str, cfg: AreaConfig) -> gpd.GeoDataFrame:
         "outSR": cfg.epsg,
         "spatialRel": "esriSpatialRelIntersects",
         "outFields": fields,
+        "orderByFields": "objectid",  # paging needs a stable order, or pages can overlap or skip
         "f": "geojson",
     }
     frames, offset = [], 0

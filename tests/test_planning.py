@@ -22,6 +22,17 @@ FIXTURE = Path(__file__).parent / "fixtures" / "pgou_alignments_sample.geojson"
         ("PROTEGIDO", "AMB", "protected", math.nan),
         ("PROTEGIDO?", "", "protected", math.nan),
         ("7", "PAR", "protected", math.nan),  # protection code wins over a number
+        ("PROT_1h", "", "protected", math.nan),  # protection tags written in the height field
+        ("PROT.PARCIAL", "", "protected", math.nan),
+        ("BIC_M", "", "protected", math.nan),
+        ("BRL_MIL", "", "protected", math.nan),
+        ("2650406", "", "unknown", math.nan),  # a number that is not a height: never a floor count
+        ("3833", "", "unknown", math.nan),
+        ("29", "", "unknown", math.nan),  # above any plan in València
+        ("B+40", "", "unknown", math.nan),
+        ("20", "", "floors", 20),  # the cap itself is allowed
+        ("PPARCIAL", "", "unknown", math.nan),  # governed by another planning instrument
+        ("8(B)", "", "unknown", math.nan),  # ambiguous: never guessed
         ("-+-", "", "unknown", math.nan),
         ("6(B+1)", "", "unknown", math.nan),  # ambiguous text is never guessed
         (None, None, "unknown", math.nan),
@@ -279,3 +290,21 @@ def test_the_zone_is_read_on_the_building_too():
     assert planning.match_zone(parcel, zoning).loc[0, "zone"] == "RV"  # the rear dominates
     shapes = planning.main_shapes(parts)
     assert planning.match_zone(parcel, zoning, shapes=shapes).loc[0, "zone"] == "ENS"
+
+
+def test_paging_asks_for_a_stable_order(monkeypatch):
+    seen = []
+
+    class R:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"features": []}
+
+    monkeypatch.setattr(
+        planning.requests, "get", lambda url, params=None, timeout=None: seen.append(params) or R()
+    )
+    cfg = AreaConfig(name="t", label="t", epsg=25830, bbox=(0, 0, 10, 10))
+    planning._fetch_layer("http://x", "califi", cfg)
+    assert seen[0]["orderByFields"] == "objectid"
