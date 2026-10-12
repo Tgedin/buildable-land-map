@@ -17,6 +17,7 @@ from dataclasses import asdict
 from datetime import UTC, datetime
 from pathlib import Path
 
+from plan2cost.consent import REQUIREMENTS
 from plan2cost.feasibility import NOT_CHECKED, Assumptions, free_facade_m, screen
 from plan2cost.proforma import residual_value
 
@@ -92,6 +93,7 @@ def main(argv: list[str] | None = None) -> None:
         ),
         "assumptions": asdict(assumptions),
         "not_checked": list(NOT_CHECKED),
+        "consent": [asdict(r) for r in REQUIREMENTS],
         "summary": summarize(per_parcel),
         "parcels": per_parcel,
     }

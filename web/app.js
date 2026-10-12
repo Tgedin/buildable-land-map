@@ -141,7 +141,7 @@ function renderScreeningNote() {
   $("screen-note").textContent =
     `Screening: up to ${fmt(s.total_homes_2bed)} two-bedroom homes (or ${fmt(s.total_homes_1bed)} ` +
     `one-bedroom) could be added on ${fmt(s.parcels_with_homes_1bed)} parcels. A first filter limited ` +
-    `by floor area and free facade; structure, lifts, fire safety, owners' consent and permits are not checked.`;
+    `by floor area and free facade. Adding floors needs 3/5 of the owners holding 3/5 of the quotas (LPH art. 17.4); whether it needs unanimity is for a lawyer. Structure, lifts, fire safety and permits are not checked.`;
 }
 
 function screeningText(refcat) {

@@ -11,7 +11,7 @@ The longer goal is cheaper, better housing. The route is to own the *front of th
 ## Why this, and not another thing
 
 1. **Where the money is.** Developers keep roughly 5x the contractor margin, but small projects carry the risk and the financing. Prefab ventures that built factories before they had approved sites (Katerra, Veev, L&G, Ilke, TopHat) failed. Survivors own the customer and the downstream income. A screener is the cheapest way to own the customer.
-2. **Where the pain is.** Spain is short by an estimated 750,000 homes; industrialised building is 1-2% of the market. The gates are licensing, owner consent (reportedly three-fifths under LPH art. 17.4: *to be read in the BOE and confirmed with a lawyer*) and capped-price housing.
+2. **Where the pain is.** Spain is short by an estimated 750,000 homes; industrialised building is 1-2% of the market. The gates are licensing, owner consent (three-fifths under LPH art. 17.4, read in the BOE consolidated text of 2026-10-05; unanimity is an open question for a lawyer) and capped-price housing.
 3. **What we already have.** A buildable-land map (Phase 1), a rule engine with 17 Decreto 80/2023 rules, rule-checked dwelling generators and a screening of added homes (Phase 2). The MVP is mostly connecting them to money and risk.
 
 ## What the MVP does
@@ -38,7 +38,7 @@ First run on Ruzafa (2026-10-12): 90 parcels fit 2-bed homes; summed base-case r
 
 1. **Done:** claims ledger, pro-forma, residual per parcel in `screening.json`.
 2. **Next:** show it in the map's parcel panel (range, status badges, excluded costs); rank the shortlist; export a one-page PDF/HTML report per building.
-3. Risk scoring: owners' consent (needs LPH read), structure (needs an engineer; start with building age and floors as a flag), lift/stair, protection.
+3. Risk scoring: owners' consent (**LPH read 2026-10-12**: new floors need 3/5 of owners and of quotas, art. 17.4; unanimity under arts. 5 and 17.6 is an open legal question, coded as a flag in `plan2cost.consent`), structure (needs an engineer; start with building age and floors as a flag), lift/stair, protection.
 4. Sensitivity: which input flips the sign (price vs hard cost), shown to the user.
 5. Real inputs: local quotes from a carpenter, a structural engineer's survey on one building, real sale comparables for Ruzafa. Each replaces an `assumed` with `sourced`.
 6. Whole Valencia (M4 of Phase 1) so the shortlist covers the city.

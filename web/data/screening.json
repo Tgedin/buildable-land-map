@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-12T14:47:02+00:00",
+ "generated_at": "2026-10-12T14:54:11+00:00",
  "kind": "screening",
  "meaning": "Homes that could be added on the extra floors the plan allows, limited by floor area and by free facade. A first filter, not a design and not a permit.",
  "assumptions": {
@@ -15,6 +15,48 @@
   "owners' consent (propiedad horizontal), permits, party-wall and neighbour-light conditions",
   "urban parameters other than the plan's height (occupation, setbacks, courtyards)",
   "only Decreto 80/2023 arts. 9-10 and 51-56 are applied to the dwelling"
+ ],
+ "consent": [
+  {
+   "what": "Build new floors on the building",
+   "needed": "3/5 of all owners who also hold 3/5 of the share quotas",
+   "owners_share": 0.6,
+   "cuotas_share": 0.6,
+   "clause": "LPH art. 17.4, third paragraph",
+   "quote": "estar\u00e1n sujetas al voto favorable de las tres quintas partes del total de los propietarios que, a su vez, representen las tres quintas partes de las cuotas de participaci\u00f3n, [...] la construcci\u00f3n de nuevas plantas y cualquier otra alteraci\u00f3n de la estructura o f\u00e1brica del edificio"
+  },
+  {
+   "what": "Owners whose flat or local is affected by the works",
+   "needed": "their express consent, and a compensation agreed by the same majority",
+   "owners_share": null,
+   "cuotas_share": null,
+   "clause": "LPH art. 10.3.b and art. 17.4, last paragraph",
+   "quote": "En estos supuestos deber\u00e1 constar el consentimiento de los titulares afectados y corresponder\u00e1 a la Junta de Propietarios [...] la determinaci\u00f3n de la indemnizaci\u00f3n por da\u00f1os y perjuicios que corresponda."
+  },
+  {
+   "what": "Administrative authorisation",
+   "needed": "the authorisation the planning law requires, after the owners' vote",
+   "owners_share": null,
+   "cuotas_share": null,
+   "clause": "LPH art. 10.3.b",
+   "quote": "Estar\u00e1n sujetas al r\u00e9gimen de autorizaci\u00f3n administrativa que corresponda: [...] la construcci\u00f3n de nuevas plantas y cualquier otra alteraci\u00f3n de la estructura o f\u00e1brica del edificio"
+  },
+  {
+   "what": "Install a lift (the easier part)",
+   "needed": "a majority of owners who also hold a majority of the share quotas",
+   "owners_share": 0.5,
+   "cuotas_share": 0.5,
+   "clause": "LPH art. 17.2",
+   "quote": "el establecimiento de los servicios de ascensor, incluso cuando impliquen la modificaci\u00f3n del t\u00edtulo constitutivo, o de los estatutos, requerir\u00e1 el voto favorable de la mayor\u00eda de los propietarios, que, a su vez, representen la mayor\u00eda de las cuotas de participaci\u00f3n"
+  },
+  {
+   "what": "Possible unanimity (NOT decided: ask a lawyer)",
+   "needed": "all owners, if adding floors counts as a change to the title or statutes",
+   "owners_share": 1.0,
+   "cuotas_share": 1.0,
+   "clause": "LPH art. 17.6 and art. 5, last paragraph",
+   "quote": "Los acuerdos no regulados expresamente en este art\u00edculo, que impliquen la aprobaci\u00f3n o modificaci\u00f3n de las reglas contenidas en el t\u00edtulo constitutivo de la propiedad horizontal o en los estatutos de la comunidad, requerir\u00e1n para su validez la unanimidad del total de los propietarios"
+  }
  ],
  "summary": {
   "parcels_screened": 154,
