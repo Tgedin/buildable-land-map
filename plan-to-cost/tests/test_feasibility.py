@@ -115,3 +115,53 @@ def test_attic_eligibility_follows_art_6_19_5(zone, klass, plan, floors, ok, why
     from plan2cost.feasibility import attic_eligibility
 
     assert attic_eligibility(zone, klass, plan, floors) == (ok, why)
+
+
+def _block():
+    """Two 10 x 20 m rows back to back: a block 20 x 20 m, streets all round."""
+    front = box(0, 0, 20, 10)  # south row
+    back = box(0, 10, 20, 20)  # north row
+    return front, back
+
+
+def test_public_edge_is_the_outer_boundary_of_the_block_only():
+    from plan2cost.feasibility import public_edge
+
+    front, back = _block()
+    edge = public_edge([front, back])
+    assert edge.length == pytest.approx(80.0, abs=0.5)  # the block's perimeter
+    assert not edge.intersects(Polygon([(2, 9.9), (18, 9.9), (18, 10.1), (2, 10.1)]))  # party line
+
+
+def test_public_edge_closes_sliver_gaps_between_neighbours():
+    from plan2cost.feasibility import public_edge
+
+    a, b = box(0, 0, 10, 20), box(10.2, 0, 20, 20)  # a 20 cm gap between the two parcels
+    assert public_edge([a, b]).length == pytest.approx(80.0, abs=1.0)  # no inner edge from the gap
+
+
+def test_street_facade_leaves_out_the_back_yard():
+    from plan2cost.feasibility import public_edge, street_facade_m
+
+    # three parcels in a row (a block 30 x 30): the middle one has a street front and a
+    # back that meets a fourth parcel behind it, so only the front is on the street
+    mid = box(10, 0, 20, 20)
+    parcels = [box(0, 0, 10, 20), mid, box(20, 0, 30, 20), box(0, 20, 30, 30)]
+    edge = public_edge(parcels)
+    neighbours = [p for p in parcels if p is not mid]
+    assert street_facade_m(mid, neighbours, edge) == pytest.approx(10.0, abs=1.0)  # the front only
+
+
+def test_attic_setback_with_an_edge_only_applies_to_street_facades():
+    from plan2cost.feasibility import attic_plate_m2, public_edge
+
+    # a deep parcel (10 x 30 m) between two neighbours; the building (10 x 15 m) stands at the
+    # street front (y = 0) and its rear faces the parcel's own yard
+    left, right = box(-10, 0, 0, 30), box(10, 0, 20, 30)
+    parcel, building = box(0, 0, 10, 30), box(0, 0, 10, 15)
+    edge = public_edge([left, parcel, right])
+    # every free facade set back (front 4 m and rear 4 m): 10 x 7 m
+    assert attic_plate_m2(building, [left, right], 150.0) == pytest.approx(70.0, abs=2.0)
+    # only the street facade set back: 10 x 11 m, the rear faces a yard and keeps its area
+    street_only = attic_plate_m2(building, [left, right], 150.0, edge=edge)
+    assert street_only == pytest.approx(110.0, abs=2.0)

@@ -40,8 +40,9 @@ NOT_CHECKED = (
     "owners' consent (propiedad horizontal), permits, party-wall and neighbour-light conditions",
     "urban parameters other than the plan's height (occupation, setbacks, courtyards)",
     "only Decreto 80/2023 arts. 9-10 and 51-56 are applied to the dwelling",
-    "ático: every free facade is set back 4 m (the street side is not known), the 3.20 m "
-    "height limit and a pitched roof are not modelled, and whether the existing roof can host it",
+    "ático: the street side is read from the blocks' outer edge (not from the plan's "
+    "alignments), the 3.20 m height limit and a pitched roof are not modelled, and whether the "
+    "existing roof can host it",
 )
 
 
@@ -54,6 +55,7 @@ class Assumptions:
     party_tol_m: float = 0.35  # an edge this close to a neighbour is a party wall
     min_patio_m2: float = 30.0  # an inner hole smaller than this is a light well, not a facade
     attic_setback_m: float = 4.0  # PGOU art. 6.19.5: ático setback from street facades
+    street_tol_m: float = 1.5  # a facade this close to the block's outer edge faces the street
     max_rooftop_floors: int = 2  # ASSUMED: more added floors is redevelopment, not a rooftop
 
 
@@ -115,23 +117,49 @@ def free_facade_m(
     return float(_free_facade_lines(poly, neighbours, a).length)
 
 
+def public_edge(parcels: list[Polygon | MultiPolygon], gap_m: float = 0.5):
+    """The outer boundary of the blocks: where parcels meet a street or public space.
+
+    Parcels tile the blocks, so the boundary of their union is the street front, and anything
+    inside a block (back yards, party lines) is not on it. Buffering by `gap_m` and back closes
+    the sliver gaps between neighbouring parcels so they do not show up as edges. Parcels cut
+    by the edge of the study area look like street fronts there: a small bias at the border.
+    """
+    return unary_union([p.buffer(gap_m) for p in parcels]).buffer(-gap_m).boundary
+
+
+def street_facade_m(
+    poly: Polygon | MultiPolygon,
+    neighbours: list[Polygon | MultiPolygon],
+    edge,
+    a: Assumptions = Assumptions(),  # noqa: B008
+) -> float:
+    """Length of the free facade that faces the street, given the blocks' outer `edge`."""
+    free = _free_facade_lines(poly, neighbours, a)
+    return float(free.intersection(edge.buffer(a.street_tol_m)).length)
+
+
 def attic_plate_m2(
     poly: Polygon | MultiPolygon,
     neighbours: list[Polygon | MultiPolygon],
     footprint_m2: float,
     a: Assumptions = Assumptions(),  # noqa: B008
+    edge=None,
 ) -> float:
-    """Floor area of an ático: the building footprint minus a band along the free facades.
+    """Floor area of an ático: the building footprint minus a band along the street facades.
 
     PGOU art. 6.19.5 sets the ático back at least `attic_setback_m` from the facades onto a public
-    street or space. We cannot tell a street facade from a back-yard one here, so every free
-    facade is set back: conservative, it under-counts where the back is not a street. The
-    parcel's share left after the setback is applied to the building footprint, because the
-    parcel outline includes unbuilt yards.
+    street or space. With `edge` (see `public_edge`) only the facades that face the street are set
+    back. Without it every free facade is, which is conservative: it under-counts where the back
+    is a yard. The share left after the setback is applied to `footprint_m2`, so a parcel outline
+    that includes unbuilt yards can be passed with the building's footprint.
     """
     if poly.area <= 0:
         return 0.0
-    band = _free_facade_lines(poly, neighbours, a).buffer(a.attic_setback_m)
+    lines = _free_facade_lines(poly, neighbours, a)
+    if edge is not None:
+        lines = lines.intersection(edge.buffer(a.street_tol_m))
+    band = lines.buffer(a.attic_setback_m)
     return float(footprint_m2 * poly.difference(band).area / poly.area)
 
 

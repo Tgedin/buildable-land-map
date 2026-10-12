@@ -24,7 +24,9 @@ from plan2cost.feasibility import (
     attic_eligibility,
     attic_plate_m2,
     free_facade_m,
+    public_edge,
     screen,
+    street_facade_m,
 )
 from plan2cost.proforma import DEFAULTS, residual_value, sensitivity
 
@@ -81,6 +83,7 @@ def run(
     cornice (art. 6.19.5), under the `attic` key. A parcel can have either or both.
     """
     tree = parcels.sindex
+    edge = public_edge(list(parcels.geometry))
     out: dict[str, dict] = {}
     for _, row in parcels.iterrows():
         floors_route = row["gap_class"] == "plan_gap"
@@ -110,11 +113,12 @@ def run(
         if eligible:
             # on the main part the footprint IS the shape; on the outline, scale it by the share
             plate = attic_plate_m2(
-                geom, near, geom.area if basis == "main_part" else footprint, assumptions
+                geom, near, geom.area if basis == "main_part" else footprint, assumptions, edge
             )
             result["attic"] = {
                 "plate_m2": round(plate, 1),
                 "free_facade_m": round(facade, 1),  # the setback line runs parallel to it
+                "street_facade_m": round(street_facade_m(geom, near, edge, assumptions), 1),
                 **_homes(plate, facade, 1, assumptions),
             }
         else:
