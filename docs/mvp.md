@@ -26,7 +26,11 @@ For each parcel with room under the plan:
 | Costs left out | structural reinforcement | named as excluded |
 | Blocking risks | structure, owners' consent, protection, lift, fire | listed, not yet scored |
 
-First run on Ruzafa (2026-10-12): 90 parcels fit 2-bed homes; summed base-case residual about 11.4 M EUR, pessimistic about -7.0 M EUR, optimistic about 23.7 M EUR; **no parcel is positive in all three scenarios**, and structural reinforcement is not yet in the cost. Read that as "viable only if prices hold and costs stay low", not as a market size.
+First run on Ruzafa (2026-10-12, after the floor-count correction below): 65 parcels have room under the plan, 35 fit 2-bed homes (85 homes); summed residual about 4.5 M EUR in the base case, about -2.7 M EUR pessimistic, about 9.4 M EUR optimistic. Structural reinforcement is not in the cost. Read that as "viable only if prices hold and costs stay low", not as a market size.
+
+**Correction (2026-10-12):** reading the city's Normas Urbanísticas showed the plan's floor count already includes the ground floor (art. 5.33), so the earlier +1 offset overstated the room under the plan by about 3x (154 parcels / 38,880 m² became 65 / 12,237 m²). The first MVP numbers (90 parcels, 11.4 M EUR base) were built on that error. See ADR 0004.
+
+The same plan (art. 6.19.5) allows a penthouse (*ático*) above the cornice, set back 4 m from street facades, in the Ensanche zone. That is the real rooftop route and is not modelled yet: it is the next change to the screening.
 
 ## How it is built (see ADR 0005)
 

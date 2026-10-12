@@ -4,9 +4,11 @@ Source for Valencia: "PGOU - Alineaciones", CC BY 4.0, ArcGIS REST layer on
 geoportal.valencia.es. Each polygon has an `altura` text (e.g. "6", "B+5", "PROTEGIDO",
 "0") and a `protec` code. See docs/decisions/0004-plan-heights.md.
 
-ASSUMPTION (unverified against the plan's rules text): a numeric `altura` counts floors
-above the ground floor, so allowed floors = altura + ground_floor_offset. Evidence: Catastro
-floors are usually altura + 1 or + 2. The offset lives in config so it is easy to change.
+The plan's floor count INCLUDES the ground floor (Normas Urbanísticas art. 5.33: "número de
+plantas por encima de la cota de referencia o de la rasante, incluida la planta baja"; art.
+6.19.1 uses "el señalado en los planos menos uno" for floors above it), so allowed floors =
+altura + 0. The remaining assumption is that the layer's `altura` is the Plano C number. The
+offset stays in config so a reader can see the earlier +1 reading (ADR 0004).
 """
 
 from __future__ import annotations

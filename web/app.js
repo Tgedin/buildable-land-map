@@ -179,7 +179,7 @@ function select(f) {
   $("d-use").textContent = USES[p.current_use] ?? "–";
   $("d-class").textContent = CLASSES[p.gap_class]?.label ?? "–";
   $("d-plan").textContent =
-    p.plan_allowed_floors == null ? "–" : `${fmt(p.plan_allowed_floors)} (plan altura ${fmt(p.plan_floors)} + 1)`;
+    p.plan_allowed_floors == null ? "–" : `${fmt(p.plan_allowed_floors)} (plan altura ${fmt(p.plan_floors)}, ground floor included)`;
   $("d-plangap").textContent = p.plan_gap_floors == null ? "–" : `${fmt(p.plan_gap_floors)} floors, ${fmt(p.plan_gap_m2, " m²")}`;
   for (const id of ["d-use", "d-class", "d-plan", "d-plangap"])
     $(id).previousElementSibling.hidden = $(id).hidden = !summary.plan_by_class;
