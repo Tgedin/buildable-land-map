@@ -9,30 +9,31 @@ const ORTHO_TILES =
 const FLOOR_H = 3; // metres, for the 3D extrusion only
 
 // Colours for parcels the plan view sets aside, and the reason shown in the panel.
+// All colours come from tokens.css (ADR 0007), so the map and the panel cannot disagree.
 const CLASSES = {
   plan_gap: { label: "Room under the plan", color: null }, // coloured by floors, see RAMP
-  at_limit: { label: "At or above the plan height", color: "#cfcac0" },
-  protected: { label: "Protected by the plan", color: "#8da0cb" },
-  public_use: { label: "Public use (not a target)", color: "#b9a7d6" },
-  open: { label: "Open space in the plan", color: "#a8d5a2" },
-  no_plan: { label: "No plan height found", color: "#e9e5db" },
+  at_limit: { label: "At or above the plan height", color: token("--class-at-limit") },
+  protected: { label: "Protected by the plan", color: token("--class-protected") },
+  public_use: { label: "Public use (not a target)", color: token("--class-public-use") },
+  open: { label: "Open space in the plan", color: token("--class-open") },
+  no_plan: { label: "No plan height found", color: token("--class-no-plan") },
 };
 const USES = {
   "1_residential": "Residential", "4_1_office": "Office", "4_2_retail": "Retail",
   "3_industrial": "Industrial", "4_3_publicServices": "Public services",
   "2_agriculture": "Agriculture",
 };
-const RAMP = ["#cfcac0", 1, "#f6b26b", 2, "#e8833a", 3, "#c2410c", 4, "#7c1d06"];
+const RAMP = [token("--ramp-0"), 1, token("--ramp-1"), 2, token("--ramp-2"), 3, token("--ramp-3"), 4, token("--ramp-4")];
 
 // "Rooftop candidates" view: three kinds of result, plus everything else muted. The three hues
 // were checked for colour-blind separation; the panel also says the kind in words.
 const CAND = {
-  rooftop: { color: "#c2410c", label: "Rooftop addition (1–2 floors, up to the plan)" },
-  attic: { color: "#0891b2", label: "Penthouse (ático) only" },
-  redevelopment: { color: "#7c3aed", label: "Redevelopment (3+ floors: not a rooftop)" },
+  rooftop: { color: token("--data-rooftop"), label: "Rooftop addition (1–2 floors, up to the plan)" },
+  attic: { color: token("--data-attic"), label: "Penthouse (ático) only" },
+  redevelopment: { color: token("--data-redevelopment"), label: "Redevelopment (3+ floors: not a rooftop)" },
 };
-const CAND_REST = "#e4e0d6";
-const SELECTED = "#111827";
+const CAND_REST = token("--data-rest");
+const SELECTED = token("--data-selected");
 
 const $ = (id) => document.getElementById(id);
 

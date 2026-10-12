@@ -1,5 +1,9 @@
 // Helpers shared by the map, the shortlist and the report. Plain JS, no build step.
 
+// A design token (tokens.css) as authored. The map needs plain sRGB strings, so the data colours
+// are hex there; do not read a Radix step directly, it can be a display-p3 value.
+const token = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
 // Which data folder to read: data/ (default) or data/<area>/ for ?area=<slug>. The slug is
 // checked so the query string cannot point a fetch somewhere else.
 const AREA = (() => {

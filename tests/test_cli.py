@@ -51,3 +51,28 @@ def test_plan_command_saves_alignments(tmp_path, monkeypatch):
     cli.main(["--config", str(cfg), "plan"])
     saved = gpd.read_parquet(tmp_path / "data" / "interim" / "test-area" / "pgou.parquet")
     assert {"kind", "plan_floors"} <= set(saved.columns)
+
+
+def test_candidates_exports_only_the_parcels_a_screening_lists(tmp_path, monkeypatch):
+    import blm.config as config
+
+    monkeypatch.setattr(cli, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(config, "REPO_ROOT", tmp_path)
+    cfg = _config(tmp_path)
+    cli.main(["--config", str(cfg), "fetch", "--from-files", str(FIXTURE)])
+    cli.main(["--config", str(cfg), "build"])
+    all_refcats = [
+        f["properties"]["refcat"]
+        for f in json.loads((tmp_path / "web" / "data" / "parcels.geojson").read_text())["features"]
+    ]
+
+    screening = tmp_path / "screening.json"
+    screening.write_text(json.dumps({"parcels": {}}))  # nothing screened: nothing exported
+    out = tmp_path / "city"
+    cli.main(["--config", str(cfg), "candidates", "--screening", str(screening), "--out", str(out)])
+    assert json.loads((out / "parcels.geojson").read_text())["features"] == []
+
+    screening.write_text(json.dumps({"parcels": {all_refcats[0]: {}}}))
+    cli.main(["--config", str(cfg), "candidates", "--screening", str(screening), "--out", str(out)])
+    exported = json.loads((out / "parcels.geojson").read_text())["features"]
+    assert [f["properties"]["refcat"] for f in exported] == [all_refcats[0]]

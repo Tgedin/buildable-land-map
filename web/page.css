@@ -1,18 +1,17 @@
-/* Shared by shortlist.html and report.html: reading pages, printable. */
-body.page { display: block; height: auto; max-width: 880px; margin: 0 auto; padding: 24px 20px 48px; line-height: 1.5; }
-.page h1 { font-size: 24px; margin-bottom: 4px; }
-.page h2 { font-size: 16px; margin: 28px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
-.page p, .page li { font-size: 14px; }
-.page table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
-.page th, .page td { text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+/* Reading pages: shortlist, report, style guide. Printable. Tokens only (ADR 0007). */
+
+body.page { display: block; height: auto; max-width: 56rem; margin: 0 auto; padding: var(--size-5) var(--size-4) var(--size-9); }
+.page h1 { font-size: var(--font-size-4); margin-bottom: var(--size-1); }
+.page h2 { font-size: var(--text-lg); margin: var(--size-7) 0 var(--size-2); padding-bottom: var(--size-1); border-bottom: 1px solid var(--line); }
+.page p, .page li { font-size: var(--text-md); }
+.page table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); font-variant-numeric: tabular-nums; }
+.page th, .page td { text-align: right; padding: var(--size-2); border-bottom: 1px solid var(--line); }
 .page th:first-child, .page td:first-child { text-align: left; }
-.page th { color: var(--muted); font-weight: 500; font-size: 12px; }
-.neg { color: #b42318; }
-.pos { color: #0f6e3a; }
-.warn { background: #fff4e5; border: 1px solid #f5c58a; color: #7a3e00; padding: 10px 12px; border-radius: 6px; font-size: 13px; }
-blockquote { margin: 6px 0 12px; padding: 4px 12px; border-left: 3px solid var(--line); color: var(--muted); font-size: 12px; }
-.tag { font-size: 11px; padding: 1px 6px; border-radius: 4px; background: var(--line); color: var(--fg); }
-nav.top { font-size: 13px; margin-bottom: 14px; }
+.page th { color: var(--text-muted); font-weight: var(--weight-medium); font-size: var(--text-xs); }
+.warn { background: var(--caution-surface); border: 1px solid var(--caution-line); color: var(--caution-text); padding: var(--size-2) var(--size-3); border-radius: var(--radius-control); font-size: var(--text-sm); }
+blockquote { margin: var(--size-1) 0 var(--size-3); padding: var(--size-1) var(--size-3); border-left: 3px solid var(--line); color: var(--text-muted); font-size: var(--text-xs); }
+.tag { font-size: var(--text-xs); padding: 1px var(--size-2); border-radius: var(--radius-control); background: var(--line); color: var(--text); }
+nav.top { font-size: var(--text-sm); margin-bottom: var(--size-3); }
+#more { font: inherit; font-size: var(--text-sm); margin-top: var(--size-2); padding: var(--size-2) var(--size-4); border: 1px solid var(--line); background: var(--surface-card); border-radius: var(--radius-control); cursor: pointer; color: var(--text); }
+#more:hover { border-color: var(--text); }
 @media print { nav.top, .noprint { display: none; } body.page { padding: 0; } }
-#more { font: inherit; font-size: 13px; margin-top: 10px; padding: 6px 14px; border: 1px solid var(--line); background: #fff; border-radius: 6px; cursor: pointer; }
-#more:hover { border-color: var(--fg); }

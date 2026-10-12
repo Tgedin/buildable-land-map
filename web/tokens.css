@@ -1,0 +1,82 @@
+/* Design tokens: the one place that decides how the product looks (ADR 0007).
+
+   Foundations, vendored unmodified and MIT-licensed (see vendor/README.txt):
+     Radix Colors  ->  colour scales (--sand-1 ... --orange-12): each step has a job
+     Open Props    ->  space (--size-*), type (--font-size-*), radius, shadow
+
+   Everything else in web/ uses the semantic names below. No raw hex and no raw Radix step
+   outside this file, so a rebrand or a dark mode is a change here and nowhere else. */
+
+@import url("vendor/radix-colors/sand.css");
+@import url("vendor/radix-colors/orange.css");
+@import url("vendor/radix-colors/cyan.css");
+@import url("vendor/radix-colors/violet.css");
+@import url("vendor/radix-colors/green.css");
+@import url("vendor/radix-colors/red.css");
+@import url("vendor/radix-colors/amber.css");
+@import url("vendor/open-props/sizes.min.css");
+@import url("vendor/open-props/fonts.min.css");
+@import url("vendor/open-props/borders.min.css");
+@import url("vendor/open-props/shadows.min.css");
+
+:root {
+  /* ---- Colour roles (Radix step semantics: 1-2 backgrounds, 3-5 components, 6-8 borders,
+          9-10 solid fills, 11-12 text) ---- */
+  --surface-page: var(--sand-2);
+  --surface-card: var(--sand-1);
+  --surface-hover: var(--sand-3);
+  --line: var(--sand-6);
+  --line-strong: var(--sand-8);
+  --text: var(--sand-12);
+  --text-muted: var(--sand-11);
+  --accent: var(--orange-11);        /* links, focus ring, the one brand colour */
+  --positive: var(--green-11);
+  --negative: var(--red-11);
+  --caution-surface: var(--amber-3);
+  --caution-line: var(--amber-7);
+  --caution-text: var(--amber-11);
+  --action: var(--sand-12);          /* primary button fill and the active segment */
+  --on-action: var(--sand-1);
+
+  /* ---- Data colours. Written as sRGB hex because MapLibre cannot read the display-p3
+          values Radix serves to wide-gamut screens. tests/test_web_tokens.py checks each hex
+          against the vendored step named in its comment, so they cannot drift.
+          The three category colours pass the colour-blind validator (CVD ΔE >= 15). ---- */
+  --data-rooftop: #cc4e00;        /* orange-11 */
+  --data-attic: #0797b9;          /* cyan-10 */
+  --data-redevelopment: #654dc4;  /* violet-10 */
+  --data-rest: #e2e1de;           /* sand-5 */
+  --data-selected: #21201c;       /* sand-12 */
+
+  /* Parcels the plan view sets aside (identity, not magnitude) */
+  --class-at-limit: #cfceca;      /* sand-7 */
+  --class-protected: #7dcedc;     /* cyan-7 */
+  --class-public-use: #c2b5f5;    /* violet-7 */
+  --class-open: #8eceaa;          /* green-7 */
+  --class-no-plan: #e9e8e6;       /* sand-4 */
+
+  /* Sequential ramp for floors: one hue, light to dark */
+  --ramp-0: #cfceca;              /* sand-7 */
+  --ramp-1: #f5ae73;              /* orange-7 */
+  --ramp-2: #f76b15;              /* orange-9 */
+  --ramp-3: #cc4e00;              /* orange-11 */
+  --ramp-4: #582d1d;              /* orange-12 */
+
+  /* ---- Type ---- */
+  --font-body: var(--font-system-ui);
+  --font-data: var(--font-monospace-code);
+  --text-xs: var(--font-size-0);                 /* .75rem: captions, table heads */
+  --text-sm: 0.8125rem;                          /* labels, table cells */
+  --text-md: 0.9375rem;                          /* body */
+  --text-lg: var(--font-size-3);                 /* 1.25rem: page and card titles */
+  --text-stat: var(--font-size-4);               /* 1.5rem: headline numbers */
+  --weight-regular: var(--font-weight-4);
+  --weight-medium: var(--font-weight-5);
+  --weight-bold: var(--font-weight-6);
+
+  /* ---- Shape and depth ---- */
+  --radius-control: var(--radius-2);             /* 5px: buttons, chips */
+  --radius-card: 0.5rem;
+  --shadow-card: var(--shadow-1);
+  --panel-width: 21.25rem;
+}

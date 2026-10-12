@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Style guide · Buildable Land Map</title>
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="page.css" />
+  <style>
+    /* Style-guide-only layout. Colours still come from tokens: nothing raw here. */
+    .sw { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: var(--size-2); }
+    .sw div { border: 1px solid var(--line); border-radius: var(--radius-card); overflow: hidden; font-size: var(--text-xs); background: var(--surface-card); }
+    .sw i { display: block; height: 2.75rem; }
+    .sw b, .sw code { display: block; padding: 2px var(--size-2); }
+    .sw code { color: var(--text-muted); font-family: var(--font-data); padding-bottom: var(--size-1); }
+    .demo { border: 1px dashed var(--line-strong); border-radius: var(--radius-card); padding: var(--size-3); margin: var(--size-2) 0; background: var(--surface-page); max-width: 21.25rem; display: flex; flex-direction: column; gap: var(--size-3); }
+    .row { display: flex; gap: var(--size-3); flex-wrap: wrap; align-items: flex-start; }
+    .type div { margin: var(--size-2) 0; }
+    .scale { display: flex; gap: var(--size-2); align-items: flex-end; flex-wrap: wrap; }
+    .scale i { display: block; background: var(--accent); border-radius: 2px; }
+  </style>
+</head>
+<body class="page">
+  <nav class="top"><a href="index.html">← Map</a></nav>
+  <h1>Style guide</h1>
+  <p class="muted">The design system the pages are built on (ADR 0007). Colours, type, space, radius and shadow are tokens in <code>tokens.css</code>, on <a href="vendor/README.txt">Radix Colors and Open Props</a>. Components below use the real stylesheet.</p>
+
+  <h2>Colour roles</h2>
+  <div class="sw" id="roles"></div>
+
+  <h2>Data colours</h2>
+  <p class="muted">Used on the map. Three category colours (orange, cyan, violet) checked for colour-blind separation; one sequential orange ramp for floors; muted classes for what the plan sets aside. Colour is never the only cue: the panel says it in words.</p>
+  <div class="sw" id="data"></div>
+
+  <h2>Type</h2>
+  <div class="type">
+    <div style="font-size: var(--text-lg); font-weight: var(--weight-bold)">Page and card titles, text-lg</div>
+    <div style="font-size: var(--text-stat); font-weight: var(--weight-bold)">1.234 headline number, text-stat</div>
+    <div style="font-size: var(--text-md)">Body text, text-md. Where could homes be added on top of existing buildings?</div>
+    <div style="font-size: var(--text-sm)">Labels and table cells, text-sm. 4 floors · 566 m² · −212k € / 346k € / 722k €</div>
+    <div style="font-size: var(--text-xs); color: var(--text-muted)">Captions and table heads, text-xs</div>
+    <div style="font-family: var(--font-data)">5714122YJ2751D (data font, for references)</div>
+  </div>
+
+  <h2>Space, radius, shadow</h2>
+  <div class="scale" aria-label="Spacing scale">
+    <div><i style="width:var(--size-1);height:var(--size-1)"></i><small class="muted">size-1</small></div>
+    <div><i style="width:var(--size-2);height:var(--size-2)"></i><small class="muted">size-2</small></div>
+    <div><i style="width:var(--size-3);height:var(--size-3)"></i><small class="muted">size-3</small></div>
+    <div><i style="width:var(--size-4);height:var(--size-4)"></i><small class="muted">size-4</small></div>
+    <div><i style="width:var(--size-5);height:var(--size-5)"></i><small class="muted">size-5</small></div>
+    <div><i style="width:var(--size-7);height:var(--size-7)"></i><small class="muted">size-7</small></div>
+  </div>
+  <div class="row" style="margin-top: var(--size-3)">
+    <div style="padding:var(--size-3);border:1px solid var(--line);border-radius:var(--radius-control);background:var(--surface-card)">radius-control</div>
+    <div style="padding:var(--size-3);border:1px solid var(--line);border-radius:var(--radius-card);background:var(--surface-card);box-shadow:var(--shadow-card)">radius-card + shadow-card</div>
+  </div>
+
+  <h2>Components</h2>
+  <div class="row">
+    <div>
+      <h3>Stat cards</h3>
+      <div class="demo"><div class="cards">
+        <div><span>58</span><label>parcels where a rooftop addition fits</label></div>
+        <div><span>88</span><label>two-bedroom homes on top</label></div>
+        <div><span>4,4 M €</span><label>most that could be paid for the air rights, base case</label><small>range −2,7 M € to 9,2 M €</small></div>
+      </div></div>
+    </div>
+    <div>
+      <h3>Segmented control and legend</h3>
+      <div class="demo">
+        <fieldset class="seg"><legend>Colour parcels by</legend>
+          <label><input type="radio" name="sg" checked /><span>Rooftop candidates</span></label>
+          <label><input type="radio" name="sg" /><span>City plan</span></label>
+          <label><input type="radio" name="sg" /><span>Vs. the street</span></label>
+        </fieldset>
+        <ul class="chips" style="margin:0">
+          <li><i style="background:var(--data-rooftop)"></i>Rooftop addition (1–2 floors)</li>
+          <li><i style="background:var(--data-attic)"></i>Penthouse (ático) only</li>
+          <li><i style="background:var(--data-redevelopment)"></i>Redevelopment (3+ floors)</li>
+          <li><i style="background:var(--data-rest)"></i>Nothing fits, or not screened</li>
+        </ul>
+        <div class="ramp"><span>0</span><span>1</span><span>2</span><span>3</span><span>4+</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <h3>Parcel card</h3>
+      <div class="demo"><section id="detail" style="box-shadow:var(--shadow-card)">
+        <div class="d-head"><h2>Parcel <span id="d-refcat">5714122YJ2751D</span></h2><button id="d-close" type="button" aria-label="Close">×</button></div>
+        <p class="verdict">6 two-bed homes on 3 added floors + 1 in a penthouse (ático).</p>
+        <p class="money">Could bear for the air rights: <b class="pos">396k €</b> base case <span class="muted">(−243k € to 826k €; inputs assumed, before structural reinforcement)</span></p>
+        <h4>Homes that could be added</h4>
+        <dl><dt>Up to the plan's height</dt><dd>6 two-bed · 9 one-bed</dd><dt>Range (2-bed)</dt><dd>−212k € / 346k € / 722k €</dd></dl>
+        <div class="actions"><a class="btn" href="#">One-page report →</a><a href="#">Catastro ↗</a><button type="button">Copy link</button></div>
+      </section></div>
+    </div>
+    <div>
+      <h3>Notice, tag, tabs</h3>
+      <div class="demo">
+        <div class="warn">A screening, not a design, a valuation or a permit.</div>
+        <div><span class="tag">redevelopment</span> <span class="tag">assumed</span> <span class="tag">sourced</span></div>
+        <nav class="tabs"><a href="#" aria-current="page">Map</a><a href="#">Ranked shortlist</a></nav>
+        <p class="muted">Positive <b class="pos">348k €</b> and negative <b class="neg">−214k €</b> figures use text colours with a sign, never colour alone.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Table</h3>
+  <table>
+    <thead><tr><th>Parcel</th><th>Type</th><th>Pessimistic</th><th>Base</th><th>Optimistic</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#">6215901YJ2761E</a></td><td>rooftop</td><td class="neg">−214k €</td><td class="pos">348k €</td><td class="pos">726k €</td></tr>
+      <tr><td><a href="#">6216405YJ2761E</a></td><td><span class="tag">redevelopment</span></td><td class="neg">−183k €</td><td class="pos">298k €</td><td class="pos">623k €</td></tr>
+    </tbody>
+  </table>
+
+  <script src="format.js"></script>
+  <script>
+    const sw = (host, items) => {
+      document.getElementById(host).innerHTML = items.map(([name, label]) =>
+        `<div><i style="background:var(--${name})"></i><b>${label ?? name}</b><code>--${name}</code></div>`).join("");
+    };
+    sw("roles", [["surface-page"], ["surface-card"], ["surface-hover"], ["line"], ["line-strong"], ["text"],
+      ["text-muted"], ["accent"], ["positive"], ["negative"], ["caution-surface"], ["action"]]);
+    sw("data", [["data-rooftop", "rooftop"], ["data-attic", "penthouse"], ["data-redevelopment", "redevelopment"],
+      ["data-rest", "rest"], ["data-selected", "selected parcel"], ["class-at-limit", "at limit"],
+      ["class-protected", "protected"], ["class-public-use", "public use"], ["class-open", "open space"],
+      ["class-no-plan", "no plan height"], ["ramp-0", "ramp 0"], ["ramp-1", "ramp 1"], ["ramp-2", "ramp 2"],
+      ["ramp-3", "ramp 3"], ["ramp-4", "ramp 4+"]]);
+  </script>
+</body>
+</html>
