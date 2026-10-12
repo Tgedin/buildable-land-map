@@ -14,3 +14,5 @@ blockquote { margin: 6px 0 12px; padding: 4px 12px; border-left: 3px solid var(-
 .tag { font-size: 11px; padding: 1px 6px; border-radius: 4px; background: var(--line); color: var(--fg); }
 nav.top { font-size: 13px; margin-bottom: 14px; }
 @media print { nav.top, .noprint { display: none; } body.page { padding: 0; } }
+#more { font: inherit; font-size: 13px; margin-top: 10px; padding: 6px 14px; border: 1px solid var(--line); background: #fff; border-radius: 6px; cursor: pointer; }
+#more:hover { border-color: var(--fg); }

@@ -52,36 +52,6 @@ let lookup = {}; // refcat -> feature properties
 let screening = null; // optional: data/screening.json, from plan-to-cost
 let view = "street"; // "plan" with plan columns, "candidates" when a screening is loaded
 
-// Which kind of result a screened parcel has, if any. Rooftop wins over ático, which wins over
-// redevelopment, because that is the order of how much the thesis cares.
-function candidateClass(p) {
-  if (!p) return null;
-  const up = p.added_floors > 0 && p.homes_2bed > 0;
-  if (up && p.kind === "rooftop") return "rooftop";
-  if (p.attic?.homes_2bed > 0) return "attic";
-  if (up) return "redevelopment";
-  return null;
-}
-
-// Totals for the rooftop candidates: floors route only where it is a rooftop, plus every ático.
-function candidateTotals() {
-  const t = { parcels: 0, homes: 0, eur: { pessimistic: 0, base: 0, optimistic: 0 }, redev: 0 };
-  for (const p of Object.values(screening.parcels)) {
-    const cls = candidateClass(p);
-    if (cls === "redevelopment") t.redev++;
-    if (cls !== "rooftop" && cls !== "attic") continue;
-    t.parcels++;
-    const routes = [];
-    if (p.kind === "rooftop" && p.added_floors > 0 && p.homes_2bed > 0) routes.push(p);
-    if (p.attic?.homes_2bed > 0) routes.push(p.attic);
-    for (const r of routes) {
-      t.homes += r.homes_2bed;
-      for (const k of Object.keys(t.eur)) t.eur[k] += r.residual_2bed?.eur?.[k] ?? 0;
-    }
-  }
-  return t;
-}
-
 // Parcel colour for the current view. The selected parcel is always near-black.
 function colorExpr() {
   const floors = (prop) => ["step", ["coalesce", ["get", prop], 0], ...RAMP];
@@ -108,7 +78,7 @@ function applyView() {
   const dot = (color, text) => `<li><i style="background:${color}"></i>${text}</li>`;
 
   if (view === "candidates") {
-    const t = candidateTotals();
+    const t = candidateTotals(screening);
     const eur = t.eur;
     $("cards").innerHTML =
       card(fmt(t.parcels), "parcels where a rooftop addition fits") +
@@ -225,7 +195,7 @@ function renderSensitivityNote() {
 function renderScreeningNote() {
   if (!screening) return;
   renderSensitivityNote();
-  const t = candidateTotals();
+  const t = candidateTotals(screening);
   $("screen-note").hidden = false;
   $("screen-note").textContent =
     `Screening result: ${fmt(t.homes)} two-bedroom homes on ${fmt(t.parcels)} parcels, by adding 1–2 floors ` +
