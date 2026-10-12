@@ -22,12 +22,13 @@ const kEur = (v) => {
 
 // Residual value of the added homes: the most a developer could pay owners for the right to
 // build. Three scenarios, because the sign depends on prices and costs that are assumed.
-function residualText(r) {
+function residualText(r, short = false) {
   if (!r) return "–";
   if (!r.eur) return `not computed (${r.withheld_reason})`;
+  const range = `${kEur(r.eur.pessimistic)} / ${kEur(r.eur.base)} / ${kEur(r.eur.optimistic)}`;
+  if (short) return range; // the caveats are stated once, next to the headline figure
   const left = r.excluded.length ? `; before ${r.excluded.join(", ")}` : "";
-  return `${kEur(r.eur.pessimistic)} / ${kEur(r.eur.base)} / ${kEur(r.eur.optimistic)} ` +
-    `(pessimistic / base / optimistic; inputs assumed${left})`;
+  return `${range} (pessimistic / base / optimistic; inputs assumed${left})`;
 }
 
 const ATTIC_NO = {
@@ -48,10 +49,16 @@ function atticText(a) {
     `(one floor of ${fmt(a.plate_m2)} m² after the 4 m setback)`;
 }
 
-// Base-case residual summed over the routes that have a number. A route with none is left out,
-// not counted as 0.
-function baseResidual(p) {
-  const parts = [p.residual_2bed?.eur?.base, p.attic?.residual_2bed?.eur?.base];
-  const known = parts.filter((v) => v !== null && v !== undefined);
-  return known.length ? known.reduce((a, b) => a + b, 0) : null;
+// Residual summed over the routes that have a number, per scenario: {pessimistic, base,
+// optimistic}, or null when no route has one. A route with none is left out, not counted as 0.
+function residualRange(p) {
+  const out = {};
+  for (const k of ["pessimistic", "base", "optimistic"]) {
+    const parts = [p.residual_2bed?.eur?.[k], p.attic?.residual_2bed?.eur?.[k]].filter((v) => v != null);
+    if (!parts.length) return null;
+    out[k] = parts.reduce((a, b) => a + b, 0);
+  }
+  return out;
 }
+
+const baseResidual = (p) => residualRange(p)?.base ?? null;

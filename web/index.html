@@ -18,59 +18,76 @@
     <header>
       <h1>Buildable Land Map</h1>
       <p id="area-label" class="muted">Loading…</p>
+      <nav class="tabs" aria-label="Pages">
+        <a href="index.html" id="tab-map" aria-current="page">Map</a>
+        <a href="shortlist.html" id="tab-list">Ranked shortlist</a>
+      </nav>
     </header>
 
     <div id="synthetic-banner" hidden>
       Synthetic sample data. Not a real place. Run the pipeline to load real Catastro data.
     </div>
 
-    <p id="screen-note" class="muted note" hidden></p>
-    <p id="sens-note" class="muted note" hidden></p>
-    <p id="list-link" class="muted note" hidden><a href="shortlist.html">Ranked shortlist of parcels →</a></p>
-
-    <div id="view-toggle" class="views" hidden>
-      <label><input type="radio" name="view" value="plan" checked /> Vs. the plan (PGOU)</label>
-      <label><input type="radio" name="view" value="street" /> Vs. the street</label>
-    </div>
-
-    <section class="stats">
-      <div><span id="stat-gap">–</span><label id="stat-gap-label">m² missing floor area</label></div>
-      <div><span id="stat-parcels">–</span><label id="stat-parcels-label">parcels below street height</label></div>
-    </section>
-
-    <section id="detail" hidden>
-      <h2>Parcel <span id="d-refcat"></span></h2>
+    <section id="detail" hidden aria-live="polite">
+      <div class="d-head">
+        <h2>Parcel <span id="d-refcat"></span></h2>
+        <button id="d-close" type="button" aria-label="Close parcel details">×</button>
+      </div>
+      <p id="d-verdict" class="verdict"></p>
+      <p id="d-money" class="money" hidden></p>
+      <h4>Today and the city plan</h4>
       <dl>
-        <dt>Floors (Catastro)</dt><dd id="d-floors"></dd>
+        <dt>Floors today (Catastro)</dt><dd id="d-floors"></dd>
         <dt>Use (Catastro)</dt><dd id="d-use"></dd>
-        <dt>Status</dt><dd id="d-class"></dd>
-        <dt>Plan height (allowed floors)</dt><dd id="d-plan"></dd>
+        <dt>Status in the plan</dt><dd id="d-class"></dd>
+        <dt>Plan height (floors, ground floor included)</dt><dd id="d-plan"></dd>
         <dt>Room under the plan</dt><dd id="d-plangap"></dd>
+        <dt>Measured height (LiDAR)</dt><dd id="d-lidar"></dd>
         <dt>Street height (median)</dt><dd id="d-dominant"></dd>
-        <dt>Added homes (screening)</dt><dd id="d-screen"></dd>
-        <dt>Could pay for the air rights (2-bed)</dt><dd id="d-resid"></dd>
-        <dt>Penthouse (ático) allowed?</dt><dd id="d-attic"></dd>
-        <dt>Could pay for the ático (2-bed)</dt><dd id="d-attic-resid"></dd>
         <dt>Missing floors vs. street</dt><dd id="d-gapf"></dd>
         <dt>Missing floor area vs. street</dt><dd id="d-gapm2"></dd>
-        <dt>Measured height (LiDAR)</dt><dd id="d-lidar"></dd>
+      </dl>
+      <h4>Homes that could be added</h4>
+      <p class="muted" style="margin:0 0 6px">Ranges read pessimistic / base / optimistic.</p>
+      <dl>
+        <dt>Up to the plan's height</dt><dd id="d-screen"></dd>
+        <dt>Range (2-bed)</dt><dd id="d-resid"></dd>
+        <dt>Penthouse (ático)</dt><dd id="d-attic"></dd>
+        <dt>Range (2-bed)</dt><dd id="d-attic-resid"></dd>
       </dl>
       <div class="actions">
-        <a id="d-catastro" target="_blank" rel="noopener">Open in Catastro ↗</a>
-        <a id="d-report" target="_blank" rel="noopener" hidden>One-page report →</a>
+        <a id="d-report" class="btn" target="_blank" rel="noopener" hidden>One-page report →</a>
+        <a id="d-catastro" target="_blank" rel="noopener">Catastro ↗</a>
         <button id="d-share" type="button">Copy link</button>
       </div>
     </section>
 
-    <section class="legend">
-      <h3 id="legend-title">Missing floors vs. street</h3>
-      <div class="ramp"><span>0</span><span>1</span><span>2</span><span>3</span><span>4+</span></div>
-      <ul id="legend-classes" class="chips" hidden></ul>
-      <label class="toggle"><input id="toggle-ortho" type="checkbox" /> Aerial photo (IGN PNOA)</label>
+    <section id="overview">
+      <div id="cards" class="cards"></div>
+
+      <fieldset id="view-toggle" class="seg" hidden>
+        <legend>Colour parcels by</legend>
+        <label id="seg-candidates" hidden><input type="radio" name="view" value="candidates" /><span>Rooftop candidates</span></label>
+        <label id="seg-plan" hidden><input type="radio" name="view" value="plan" /><span>City plan</span></label>
+        <label><input type="radio" name="view" value="street" /><span>Vs. the street</span></label>
+      </fieldset>
+
+      <section class="legend">
+        <h3 id="legend-title"></h3>
+        <div id="legend-ramp" class="ramp" hidden><span>0</span><span>1</span><span>2</span><span>3</span><span>4+</span></div>
+        <ul id="legend-classes" class="chips"></ul>
+        <label class="toggle"><input id="toggle-ortho" type="checkbox" /> Aerial photo (IGN PNOA)</label>
+      </section>
+
+      <details class="how">
+        <summary>How to read this, and what it does not check</summary>
+        <p id="screen-note" class="note" hidden></p>
+        <p id="sens-note" class="note" hidden></p>
+      </details>
     </section>
 
     <footer class="muted">
-      Not a permit and not legal advice. "Vs. the plan" compares floors with the PGOU height field, assuming it excludes the ground floor (+1; unverified, the total changes a lot if wrong). Protected buildings and public uses are excluded. "Vs. the street" is only a comparison with neighbours and ignores zoning. Plan data © Ajuntament de València (CC BY 4.0).
+      A screening, not a design, a valuation, a permit or legal advice. Heights come from the city plan (PGOU) and count the ground floor (art. 5.33 of its norms); protected buildings and public uses are excluded. "Vs. the street" only compares with neighbours and ignores the plan. Plan data © Ajuntament de València (CC BY 4.0).
       Data © <a href="https://www.sedecatastro.gob.es/" target="_blank" rel="noopener">Dirección General del Catastro</a>,
       LiDAR © <a href="https://pnoa.ign.es/" target="_blank" rel="noopener">IGN PNOA</a>.
       <span id="generated"></span>
