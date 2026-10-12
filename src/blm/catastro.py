@@ -213,7 +213,7 @@ def _get(session: requests.Session, b: BBox, cfg: AreaConfig, typename: str = TY
         "bbox": ",".join(f"{v:.2f}" for v in b),
         "srsname": f"EPSG::{cfg.epsg}",
     }
-    for attempt in range(3):
+    for attempt in range(cfg.catastro.retries):
         try:
             r = session.get(WFS_URL, params=params, timeout=cfg.catastro.timeout_s)
             r.raise_for_status()
@@ -226,10 +226,10 @@ def _get(session: requests.Session, b: BBox, cfg: AreaConfig, typename: str = TY
                 time.sleep(cfg.catastro.request_delay_s)
             return r.content
         except requests.RequestException as exc:
-            wait = 2**attempt
+            wait = cfg.catastro.retry_wait_s * 2**attempt
             log.warning("WFS request failed (%s), retry in %ss", exc, wait)
             time.sleep(wait)
-    raise WfsError(f"WFS request failed 3 times for bbox {b}")
+    raise WfsError(f"WFS request failed {cfg.catastro.retries} times for bbox {b}")
 
 
 def _fetch_tile(

@@ -193,3 +193,55 @@ def test_the_empty_answer_is_cached_so_a_restart_does_not_ask_again(monkeypatch,
     catastro._get(session, (0, 0, 500, 500), cfg)
     catastro._get(session, (0, 0, 500, 500), cfg)
     assert session.calls == 1
+
+
+def test_a_busy_server_is_retried_with_growing_waits(monkeypatch, tmp_path):
+    import requests
+
+    from blm.config import CatastroConfig
+
+    cfg = _cfg(monkeypatch, tmp_path)
+    from dataclasses import replace
+
+    cfg = replace(cfg, catastro=CatastroConfig(retries=4, retry_wait_s=3))
+    waits = []
+    monkeypatch.setattr(catastro.time, "sleep", waits.append)
+
+    class Flaky:
+        calls = 0
+
+        def get(self, url, params=None, timeout=None):
+            Flaky.calls += 1
+            if Flaky.calls < 3:
+                raise requests.ReadTimeout("slow")
+
+            class R:
+                content = FIXTURE.read_bytes()
+
+                def raise_for_status(self):
+                    pass
+
+            return R()
+
+    out = catastro._get(Flaky(), (0, 0, 500, 500), cfg)
+    assert out and Flaky.calls == 3 and waits == [3, 6]  # waited 3 s, then 6 s, then it worked
+
+
+def test_giving_up_names_how_many_tries(monkeypatch, tmp_path):
+    from dataclasses import replace
+
+    import requests
+
+    from blm.config import CatastroConfig
+
+    cfg = replace(_cfg(monkeypatch, tmp_path), catastro=CatastroConfig(retries=2, retry_wait_s=0))
+    monkeypatch.setattr(catastro.time, "sleep", lambda s: None)
+
+    class Down:
+        def get(self, *a, **k):
+            raise requests.ConnectionError("down")
+
+    import pytest
+
+    with pytest.raises(catastro.WfsError, match="failed 2 times"):
+        catastro._get(Down(), (0, 0, 500, 500), cfg)

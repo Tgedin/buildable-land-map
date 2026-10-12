@@ -17,6 +17,8 @@ class CatastroConfig:
     timeout_s: int = 60
     request_delay_s: float = 0.0  # pause after each real request: be polite at city scale
     workers: int = 1  # tiles fetched in parallel; each worker still pauses request_delay_s
+    retries: int = 3  # attempts per request before giving up
+    retry_wait_s: float = 1.0  # first wait after a failure; doubles each time
 
 
 @dataclass(frozen=True)

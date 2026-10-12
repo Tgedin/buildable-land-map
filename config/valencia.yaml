@@ -18,9 +18,11 @@ catastro:
   # and split a tile again if it comes back full.
   tile_size_m: 500
   max_features_per_request: 5000
-  timeout_s: 60
+  timeout_s: 120              # the building-use pass returns heavy responses
   request_delay_s: 0.3        # city scale: ~800 tiles x 2 passes, be polite to the service
-  workers: 4                  # tiles in parallel; every tile is cached, so a restart resumes
+  workers: 3                  # tiles in parallel; every tile is cached, so a restart resumes
+  retries: 6                  # a busy server times out: wait 3, 6, 12, 24, 48 s between tries
+  retry_wait_s: 3
 
 lidar:
   # PNOA LiDAR .laz tiles, downloaded manually from the CNIG download centre
