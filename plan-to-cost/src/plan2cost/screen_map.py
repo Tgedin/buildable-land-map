@@ -26,7 +26,7 @@ from plan2cost.feasibility import (
     free_facade_m,
     screen,
 )
-from plan2cost.proforma import residual_value
+from plan2cost.proforma import DEFAULTS, residual_value, sensitivity
 
 
 def _homes(plate: float, facade: float, floors: int, assumptions: Assumptions) -> dict:
@@ -135,6 +135,20 @@ def main(argv: list[str] | None = None) -> None:
         "assumptions": asdict(assumptions),
         "not_checked": list(NOT_CHECKED),
         "consent": [asdict(r) for r in REQUIREMENTS],
+        "sensitivity": {
+            "per_m2_built": {k: asdict(v) for k, v in (sensitivity() or {}).items()},
+            "inputs": {
+                x.name: {
+                    "unit": x.unit,
+                    "pessimistic": x.pessimistic,
+                    "base": x.base,
+                    "optimistic": x.optimistic,
+                    "status": x.status,
+                    "source": x.source,
+                }
+                for x in (*DEFAULTS.required, DEFAULTS.reinforcement_per_m2)
+            },
+        },
         "summary": summarize(per_parcel),
         "parcels": per_parcel,
     }

@@ -74,3 +74,44 @@ def test_net_to_gross_must_be_a_share():
         residual_value(100.0, 0.0)
     with pytest.raises(ValueError):
         residual_value(100.0, 1.2)
+
+
+def test_sensitivity_breakeven_is_where_the_residual_is_zero():
+    from plan2cost.proforma import sensitivity
+
+    sens = sensitivity(simple())["base"]  # net 2,000; profit 10%; cost 1,000
+    assert sens.residual_per_m2 == 800.0
+    # price at which 10% profit and 1,000 cost leave nothing: 1,000 / 0.9 net, x 1.1 VAT
+    assert sens.breakeven_sale_price == pytest.approx(1000 / 0.9 * 1.1, abs=1)
+    assert sens.breakeven_hard_cost == pytest.approx(2000 * 0.9, abs=1)
+    assert sens.cost_budget_per_m2 == 800.0
+
+
+def test_breakeven_values_really_zero_the_residual():
+    from plan2cost.proforma import sensitivity
+
+    a = simple()
+    sens = sensitivity(a)["base"]
+    at_price = replace(a, sale_price_per_m2=flat("price", sens.breakeven_sale_price))
+    at_cost = replace(a, hard_cost_per_m2=flat("hard", sens.breakeven_hard_cost))
+    assert abs(residual_value(100.0, 1.0, at_price).residual_per_m2["base"]) <= 1
+    assert abs(residual_value(100.0, 1.0, at_cost).residual_per_m2["base"]) <= 1
+
+
+def test_a_loss_has_no_cost_budget_and_costs_hurt_prices_help():
+    from plan2cost.proforma import sensitivity
+
+    sens = sensitivity()  # defaults: the pessimistic case loses money
+    assert sens["pessimistic"].residual_per_m2 < 0
+    assert sens["pessimistic"].cost_budget_per_m2 == 0.0  # never negative: no room for extras
+    e = sens["base"].effect_of_10pct
+    assert e["sale price"] > 0 and e["hard cost"] < 0 and e["required profit"] < 0
+
+
+def test_sensitivity_is_withheld_when_an_input_is_unknown():
+    from plan2cost.proforma import sensitivity
+
+    missing = replace(
+        DEFAULTS, hard_cost_per_m2=Assumption("hard", "x", None, 1.0, 1.0, ASSUMED, "")
+    )
+    assert sensitivity(missing) is None

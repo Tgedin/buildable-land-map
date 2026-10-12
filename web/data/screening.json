@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-12T15:05:00+00:00",
+ "generated_at": "2026-10-12T15:10:46+00:00",
  "kind": "screening",
  "meaning": "Homes that could be added on the extra floors the plan allows, limited by floor area and by free facade. A first filter, not a design and not a permit.",
  "assumptions": {
@@ -60,6 +60,99 @@
    "quote": "Los acuerdos no regulados expresamente en este art\u00edculo, que impliquen la aprobaci\u00f3n o modificaci\u00f3n de las reglas contenidas en el t\u00edtulo constitutivo de la propiedad horizontal o en los estatutos de la comunidad, requerir\u00e1n para su validez la unanimidad del total de los propietarios"
   }
  ],
+ "sensitivity": {
+  "per_m2_built": {
+   "pessimistic": {
+    "residual_per_m2": -478.0,
+    "breakeven_sale_price": 3658.0,
+    "breakeven_hard_cost": 1558.0,
+    "cost_budget_per_m2": 0.0,
+    "effect_of_10pct": {
+     "sale price": 218.0,
+     "VAT": -20.0,
+     "hard cost": -266.0,
+     "soft costs": -76.0,
+     "required profit": -55.0
+    }
+   },
+   "base": {
+    "residual_per_m2": 779.0,
+    "breakeven_sale_price": 2392.0,
+    "breakeven_hard_cost": 1990.0,
+    "cost_budget_per_m2": 779.0,
+    "effect_of_10pct": {
+     "sale price": 263.0,
+     "VAT": -24.0,
+     "hard cost": -185.0,
+     "soft costs": -45.0,
+     "required profit": -46.0
+    }
+   },
+   "optimistic": {
+    "residual_per_m2": 1626.0,
+    "breakeven_sale_price": 1767.0,
+    "breakeven_hard_cost": 2432.0,
+    "cost_budget_per_m2": 1626.0,
+    "effect_of_10pct": {
+     "sale price": 304.0,
+     "VAT": -27.0,
+     "hard cost": -141.0,
+     "soft costs": -28.0,
+     "required profit": -41.0
+    }
+   }
+  },
+  "inputs": {
+   "sale price": {
+    "unit": "EUR/built m2 incl. VAT",
+    "pessimistic": 3000.0,
+    "base": 3400.0,
+    "optimistic": 3800.0,
+    "status": "assumed",
+    "source": "Range around Idealista's Valencia city resale average (3,378 EUR/m2, May 2026). The new-build premium and the Ruzafa premium are not verified."
+   },
+   "VAT on new housing": {
+    "unit": "share",
+    "pessimistic": 0.1,
+    "base": 0.1,
+    "optimistic": 0.1,
+    "status": "sourced",
+    "source": "10% on new housing in Spain (research report, Construction business model economics)."
+   },
+   "hard cost": {
+    "unit": "EUR/built m2",
+    "pessimistic": 1900.0,
+    "base": 1400.0,
+    "optimistic": 1131.0,
+    "status": "assumed",
+    "source": "Optimistic = contractor price 1,131 EUR/m2 for the Valencian Community, 2026 (UPV/IVE report, advocacy author). The rooftop premium for access, crane and tie-in is assumed: no Spanish rooftop cost per m2 was found."
+   },
+   "soft costs": {
+    "unit": "share of hard cost",
+    "pessimistic": 0.4,
+    "base": 0.32,
+    "optimistic": 0.25,
+    "status": "assumed",
+    "source": "Base derived from the Valencia protected-housing cost stack (Feb 2025): fees, licences, taxes and financing are about 32% of construction cost. Range assumed."
+   },
+   "required profit": {
+    "unit": "share of net revenue",
+    "pessimistic": 0.2,
+    "base": 0.15,
+    "optimistic": 0.12,
+    "status": "assumed",
+    "source": "Listed Spanish developers show 22-27% gross and 6-8% net margins (2025), cyclical highs. A small project carries more risk per euro, so a profit share is assumed."
+   },
+   "structural reinforcement": {
+    "unit": "EUR/built m2",
+    "pessimistic": null,
+    "base": null,
+    "optimistic": null,
+    "status": "assumed",
+    "source": "No source found for Spanish reinforcement costs or the load margin of 1960s-80s buildings. Needs an engineer's survey per building."
+   }
+  }
+ },
  "summary": {
   "parcels_screened": 65,
   "parcels_with_homes_1bed": 47,

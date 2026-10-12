@@ -155,3 +155,48 @@ def residual_value(
         residual[s] = round(revenue * (1 - a.developer_margin.value(s)) - cost, 0)
     per_m2 = {s: round(v / built, 0) for s, v in residual.items()}
     return Proforma(round(built, 1), residual, per_m2, excluded)
+
+
+def _per_m2(price: float, vat: float, hard: float, soft: float, margin: float) -> float:
+    """Residual per built m²: net revenue after the required profit, minus cost."""
+    return price / (1 + vat) * (1 - margin) - hard * (1 + soft)
+
+
+@dataclass(frozen=True)
+class Sensitivity:
+    """What moves the residual, per built m². It is the same for every parcel.
+
+    The residual is proportional to built area, so whether it is positive depends only on the
+    sale price against the cost per m², not on the building. That is why this is one global
+    table and not a per-parcel one.
+    """
+
+    residual_per_m2: float
+    breakeven_sale_price: float  # EUR/built m² incl. VAT at which the residual is 0
+    breakeven_hard_cost: float  # EUR/built m² at which the residual is 0
+    cost_budget_per_m2: float  # extra cost (reinforcement, roof premium, payment to owners)
+    effect_of_10pct: dict[str, float]  # change in residual per m² if the input rises 10%
+
+
+def sensitivity(a: ProformaAssumptions = DEFAULTS) -> dict[str, Sensitivity] | None:
+    """By scenario, or None when a required input is unknown."""
+    if any(not x.known for x in a.required):
+        return None
+    out: dict[str, Sensitivity] = {}
+    for s in SCENARIOS:
+        p, v, h, sc, m = (x.value(s) for x in a.required)
+        base = _per_m2(p, v, h, sc, m)
+        names = ("sale price", "VAT", "hard cost", "soft costs", "required profit")
+        effect = {}
+        for i, name in enumerate(names):
+            args = [p, v, h, sc, m]
+            args[i] *= 1.10
+            effect[name] = round(_per_m2(*args) - base, 0)
+        out[s] = Sensitivity(
+            residual_per_m2=round(base, 0),
+            breakeven_sale_price=round(h * (1 + sc) * (1 + v) / (1 - m), 0),
+            breakeven_hard_cost=round(p / (1 + v) * (1 - m) / (1 + sc), 0),
+            cost_budget_per_m2=round(max(base, 0.0), 0),
+            effect_of_10pct=effect,
+        )
+    return out
