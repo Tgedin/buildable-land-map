@@ -74,3 +74,31 @@ def export_candidates(
     """
     chosen = parcels[parcels["refcat"].isin(refcats)]
     return export_web(chosen, summary, out_dir, label, precision)
+
+
+def export_parts(
+    parts: gpd.GeoDataFrame,
+    out_dir: Path,
+    refcats: set[str] | None = None,
+    precision: int = 6,
+) -> Path:
+    """Write parts.geojson: each building part with its own floors, for the 3D layer.
+
+    A parcel's outline extruded at its tallest height draws a small tower on a big plot as a
+    giant slab. Parts keep their own heights, and `main` marks the parts at the parcel's tallest
+    height: those are where an addition would go, so the candidate view colours only those.
+    `refcats` limits the export (a city only needs the parcels with a result).
+    """
+    out_dir.mkdir(parents=True, exist_ok=True)
+    p = parts[["refcat", "floors_above", "geometry"]].copy()
+    if refcats is not None:
+        p = p[p["refcat"].isin(refcats)]
+    tallest = p.groupby("refcat")["floors_above"].transform("max")
+    p["main"] = (p["floors_above"] == tallest) & p["floors_above"].notna()
+    p = p.rename(columns={"floors_above": "floors_part"})
+    web = p.to_crs(4326)
+    web["geometry"] = web.geometry.set_precision(10 ** (-precision))
+    web = web.replace({np.nan: None})
+    path = out_dir / "parts.geojson"
+    path.write_text(web.to_json(drop_id=True), encoding="utf-8")
+    return path

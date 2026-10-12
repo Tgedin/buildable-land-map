@@ -1,17 +1,20 @@
-/* Reading pages: shortlist, report, style guide. Printable. Tokens only (ADR 0007). */
+/* Reading pages: shortlist, report, style guide, method. Printable. Tokens only (ADR 0007).
+   The top bar spans the page; everything else sits in a centred reading column. */
 
-body.page { display: block; height: auto; max-width: 56rem; margin: 0 auto; padding: var(--size-5) var(--size-4) var(--size-9); }
-.page h1 { font-size: var(--font-size-4); margin-bottom: var(--size-1); }
-.page h2 { font-size: var(--text-lg); margin: var(--size-7) 0 var(--size-2); padding-bottom: var(--size-1); border-bottom: 1px solid var(--line); }
-.page p, .page li { font-size: var(--text-md); }
-.page table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); font-variant-numeric: tabular-nums; }
-.page th, .page td { text-align: right; padding: var(--size-2); border-bottom: 1px solid var(--line); }
-.page th:first-child, .page td:first-child { text-align: left; }
-.page th { color: var(--text-muted); font-weight: var(--weight-medium); font-size: var(--text-xs); }
+body.page { display: block; height: auto; }
+.wrap { max-width: 60rem; margin: 0 auto; padding: var(--size-6) var(--size-4) var(--size-9); }
+.actions-row { font-size: var(--text-sm); margin-top: var(--size-3); margin-bottom: 0; }
+.wrap h1 { font-size: var(--font-size-4); margin-bottom: var(--size-1); }
+.wrap > h2, .wrap main > h2 { font-size: var(--text-lg); margin: var(--size-7) 0 var(--size-2); padding-bottom: var(--size-1); border-bottom: 1px solid var(--line); }
+.wrap p, .wrap li { font-size: var(--text-md); }
+.wrap table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+.wrap td.fig { font-size: var(--text-xs); }
+.wrap th, .wrap td { text-align: right; padding: var(--size-2); border-bottom: 1px solid var(--line); }
+.wrap th:first-child, .wrap td:first-child { text-align: left; }
+.wrap th { color: var(--text-muted); font-weight: var(--weight-medium); font-size: var(--text-xs); }
 .warn { background: var(--caution-surface); border: 1px solid var(--caution-line); color: var(--caution-text); padding: var(--size-2) var(--size-3); border-radius: var(--radius-control); font-size: var(--text-sm); }
 blockquote { margin: var(--size-1) 0 var(--size-3); padding: var(--size-1) var(--size-3); border-left: 3px solid var(--line); color: var(--text-muted); font-size: var(--text-xs); }
 .tag { font-size: var(--text-xs); padding: 1px var(--size-2); border-radius: var(--radius-control); background: var(--line); color: var(--text); }
-nav.top { font-size: var(--text-sm); margin-bottom: var(--size-3); }
 #more { font: inherit; font-size: var(--text-sm); margin-top: var(--size-2); padding: var(--size-2) var(--size-4); border: 1px solid var(--line); background: var(--surface-card); border-radius: var(--radius-control); cursor: pointer; color: var(--text); }
 #more:hover { border-color: var(--text); }
-@media print { nav.top, .noprint { display: none; } body.page { padding: 0; } }
+@media print { .topbar, .noprint { display: none !important; } .wrap { padding: 0; max-width: none; } }

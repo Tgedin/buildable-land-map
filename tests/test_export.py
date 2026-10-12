@@ -33,3 +33,41 @@ def test_export_candidates_keeps_only_the_listed_parcels(tmp_path):
     assert {f["properties"]["refcat"] for f in gj["features"]} == keep
     # the summary still describes every parcel, not only the exported ones
     assert json.loads(sum_path.read_text())["n_parcels"] == len(parcels) > len(keep)
+
+
+def test_export_parts_keeps_each_parts_own_floors_and_marks_the_tallest():
+    import geopandas as gpd
+    from shapely.geometry import box
+
+    parts = gpd.GeoDataFrame(
+        {
+            "refcat": ["A", "A", "A", "B"],
+            "floors_above": [6, 6, 2, 3],
+            "geometry": [
+                box(0, 0, 10, 10),
+                box(10, 0, 20, 10),
+                box(20, 0, 30, 10),
+                box(50, 0, 60, 10),
+            ],
+        },
+        geometry="geometry",
+        crs="EPSG:25830",
+    )
+    import json
+    import tempfile
+    from pathlib import Path
+
+    with tempfile.TemporaryDirectory() as d:
+        path = export.export_parts(parts, Path(d))
+        feats = json.loads(path.read_text())["features"]
+        assert "NaN" not in path.read_text()
+        by = [
+            (f["properties"]["refcat"], f["properties"]["floors_part"], f["properties"]["main"])
+            for f in feats
+        ]
+        assert by == [("A", 6, True), ("A", 6, True), ("A", 2, False), ("B", 3, True)]
+
+        only_b = json.loads(export.export_parts(parts, Path(d), refcats={"B"}).read_text())[
+            "features"
+        ]
+        assert [f["properties"]["refcat"] for f in only_b] == ["B"]

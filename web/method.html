@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Method · Buildable Land</title>
+  <link rel="preload" href="vendor/geist/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="page.css" />
+</head>
+<body class="page">
+  <script src="format.js"></script>
+  <script>document.body.insertAdjacentHTML("afterbegin", topbar("method")); wireSearchToMap();</script>
+  <div class="wrap">
+    <h1>Method and limits</h1>
+    <p class="muted">What this tool does, how each number is made, and what it does not know. It is a screening: a first filter that tells you where to look, never a design, a valuation, a permit or legal advice.</p>
+
+    <h2>The question</h2>
+    <p>For a building in València: could homes be added on top, how many, what could that project pay for the air rights, and what stands in the way? The aim is cheaper, better housing, so the tool looks for room that already exists: under the city plan's height, or as a penthouse above the cornice.</p>
+
+    <h2>How a number is made</h2>
+    <ol>
+      <li><b>Buildings.</b> Catastro (INSPIRE) gives every building part with its floors and use. PNOA LiDAR gives measured heights as a cross-check (mean error against Catastro floors is about one floor).</li>
+      <li><b>The plan.</b> The city plan's alignments and zoning layers give the allowed height and the zone. Floors count the ground floor (norm art. 5.33). Protected buildings and public uses are excluded.</li>
+      <li><b>The routes.</b> <i>Up to the plan's height</i> adds the floors the plan still allows. <i>Penthouse</i> adds one floor above the cornice in the Ensanche zone, set back 4 m from street facades (art. 6.19.5), on buildings of 2 to 8 floors already at the plan's height. More than 2 added floors is labelled <i>redevelopment</i>: an old building rarely carries that, and it is not counted as a rooftop.</li>
+      <li><b>The homes.</b> A real, rule-checked dwelling (Decreto 80/2023, 17 rules, each quoting its clause) is the unit. The count is how many fit, limited by floor area and by free facade.</li>
+      <li><b>The money.</b> A pro-forma: net sale revenue minus building cost and required profit is the <i>residual</i>, the most the homes could pay owners for the right to build. It is shown for three scenarios because the inputs are judgements.</li>
+    </ol>
+
+    <h2>How far to trust a number</h2>
+    <p>Every figure that rests on an input carries its status. Anything unknown is left out and named, never counted as zero.</p>
+    <table class="mini-legend"><tbody>
+      <tr><td><span class="prov prov-verified">verified</span></td><td style="text-align:left">checked against a primary source (law text, official statistic)</td></tr>
+      <tr><td><span class="prov prov-sourced">sourced</span></td><td style="text-align:left">taken from a source we read, not verified at its origin</td></tr>
+      <tr><td><span class="prov prov-assumed">assumed</span></td><td style="text-align:left">our own estimate: no source found</td></tr>
+    </tbody></table>
+    <h3 style="margin-top:var(--size-5)">Inputs to the pro-forma</h3>
+    <div id="inputs"><p class="muted">Loading…</p></div>
+
+    <h2>What it does not check</h2>
+    <ul id="notchecked"></ul>
+    <p>Above all, <b>structural reinforcement is not in the numbers</b>: no source exists yet for the load margin of buildings from the 1960s to the 1980s, and it can decide the whole project. It needs an engineer's survey per building.</p>
+
+    <h2>Who must agree</h2>
+    <p>Adding floors needs the vote of three fifths of the owners holding three fifths of the quotas (Ley de Propiedad Horizontal, art. 17.4), the consent of the owners affected, a compensation, and administrative authorisation. <b>Whether it needs unanimity is not decided here</b>: arts. 5 and 17.6 can require it, depending on the building's title and on case law. A lawyer must answer.</p>
+    <div id="consent"></div>
+
+    <h2>Known weaknesses</h2>
+    <ul>
+      <li>A parcel is matched to the plan polygon covering most of it, not most of the <i>building</i>. A tall front building with a low rear court can be read as a low plan height; parcels with a plan height of 1 are excluded from the penthouse route.</li>
+      <li>The street side of a facade is read from the outer edge of the blocks, not from the plan's alignments, and parcels at the edge of the study area look like street fronts there.</li>
+      <li>The cap of 2 floors for a rooftop addition, the sale price, the building cost and the required profit are assumptions.</li>
+      <li>Plan data is the municipal layer as published; recent plan modifications may be missing.</li>
+    </ul>
+
+    <h2>Data and licences</h2>
+    <p>Catastro © Dirección General del Catastro. LiDAR © IGN (PNOA). City plan data © Ajuntament de València, CC BY 4.0. Legal texts: BOE (Ley 49/1960) and the València Normas Urbanísticas. Map: © OpenStreetMap contributors, OpenFreeMap and OpenMapTiles. Colour scales: Radix Colors (MIT); type: Geist (SIL OFL). The code and the decisions behind it are public in the repository's <code>docs/decisions</code>.</p>
+    <p class="muted">Design system and components: <a href="styleguide.html">style guide</a>.</p>
+  </div>
+
+  <script>
+    const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const val = (i, v) => (v == null ? "?" : i.unit.includes("share") ? `${Math.round(v * 100)}%` : fmt(v));
+    fetch(DATA + "screening.json").then((r) => r.json()).then((s) => {
+      document.getElementById("inputs").innerHTML = Object.entries(s.sensitivity.inputs).map(([name, i]) =>
+        `<div class="input"><div class="input-top"><b>${esc(name)}</b>${prov(i.status)}</div>` +
+        `<div class="fig input-vals">${val(i, i.pessimistic)} / ${val(i, i.base)} / ${val(i, i.optimistic)} <span class="muted">${esc(i.unit)}</span></div>` +
+        `<div class="note">${esc(i.source)}</div></div>`).join("");
+      document.getElementById("notchecked").innerHTML = s.not_checked.map((t) => `<li>${esc(t)}</li>`).join("");
+      document.getElementById("consent").innerHTML = s.consent.map((c) =>
+        `<details class="q"><summary><span><b>${esc(c.what)}</b><br>${esc(c.needed)}</span><span class="muted">${esc(c.clause)}</span></summary><blockquote>${esc(c.quote)}</blockquote></details>`).join("");
+    }).catch(() => (document.getElementById("inputs").textContent = "Run the screening to load the inputs."));
+  </script>
+</body>
+</html>

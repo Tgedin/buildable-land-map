@@ -84,7 +84,11 @@ def cmd_candidates(cfg: AreaConfig, args: argparse.Namespace) -> None:
     export.export_candidates(
         parcels, refcats, summary, out, cfg.label, cfg.export.coordinate_precision
     )
-    log.info("Exported %d of %d parcels -> %s", len(refcats), len(parcels), out)
+    src = _parts_lidar_path(cfg) if _parts_lidar_path(cfg).exists() else _parts_path(cfg)
+    export.export_parts(
+        gpd.read_parquet(src), out, refcats=refcats, precision=cfg.export.coordinate_precision
+    )
+    log.info("Exported %d of %d parcels (and their parts) -> %s", len(refcats), len(parcels), out)
 
 
 def cmd_lidar(cfg: AreaConfig, args: argparse.Namespace) -> None:
@@ -145,6 +149,7 @@ def _build(cfg: AreaConfig, parts: gpd.GeoDataFrame, synthetic_data: bool = Fals
         cfg.export.coordinate_precision,
         synthetic=synthetic_data,
     )
+    export.export_parts(parts, cfg.web_data_dir, precision=cfg.export.coordinate_precision)
     log.info("Summary: %s", json.dumps(summary))
     return summary
 

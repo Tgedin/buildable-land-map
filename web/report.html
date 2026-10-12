@@ -9,13 +9,13 @@
   <link rel="stylesheet" href="page.css" />
 </head>
 <body class="page">
-  <nav class="top"><a id="to-list" href="shortlist.html">← Shortlist</a> · <a id="to-map" href="index.html">Map</a> ·
-    <a href="#" onclick="window.print(); return false;">Print</a></nav>
-  <main id="report"><p class="muted">Loading…</p></main>
   <script src="format.js"></script>
+  <script>document.body.insertAdjacentHTML("afterbegin", topbar("table")); wireSearchToMap();</script>
+  <div class="wrap">
+  <p class="noprint actions-row"><a href="#" onclick="history.back(); return false;">← Back</a> · <a href="#" onclick="window.print(); return false;">Print this report</a></p>
+  <main id="report"><p class="muted">Loading…</p></main>
+  </div>
   <script>
-    document.getElementById("to-list").href = withArea("shortlist.html");
-    document.getElementById("to-map").href = withArea("index.html");
     const ref = new URLSearchParams(location.search).get("ref") ?? "";
     const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     const cls = (v) => (v === null || v === undefined ? "" : v < 0 ? "neg" : "pos");

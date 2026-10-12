@@ -9,7 +9,9 @@
   <link rel="stylesheet" href="page.css" />
 </head>
 <body class="page">
-  <nav class="top"><a id="to-map" href="index.html">← Map</a></nav>
+  <script src="format.js"></script>
+  <script>document.body.insertAdjacentHTML("afterbegin", topbar("table")); wireSearchToMap();</script>
+  <div class="wrap">
   <h1>Ranked shortlist</h1>
   <p id="intro" class="muted">Loading…</p>
   <div class="warn" id="warn" hidden></div>
@@ -22,10 +24,9 @@
   </table>
   <p class="muted" id="foot" hidden></p>
   <button id="more" type="button" hidden>Show more</button>
-  <script src="format.js"></script>
+  </div>
   <script>
     const $ = (id) => document.getElementById(id);
-    $("to-map").href = withArea("index.html");
     const cls = (v) => (v === null ? "" : v < 0 ? "neg" : "pos");
 
     Promise.all([
@@ -62,13 +63,13 @@
       function more() {
         for (const { ref, p } of rows.slice(shown, shown + PAGE)) {
           const pr = props[ref] ?? {};
-          const cell = (k) => `<td class="${cls(both(p, k))}">${both(p, k) === null ? "–" : kEur(both(p, k))}</td>`;
+          const cell = (k) => `<td class="fig ${cls(both(p, k))}">${both(p, k) === null ? "–" : kEur(both(p, k))}</td>`;
           const tr = document.createElement("tr");
           tr.innerHTML =
-            `<td><a href="${withArea("report.html?ref=" + ref)}">${ref}</a></td>` +
+            `<td class="fig"><a href="${withArea("report.html?ref=" + ref)}">${ref}</a></td>` +
             `<td>${p.kind === "redevelopment" ? '<span class="tag" title="Adds more floors than an existing structure usually carries (assumed cap: 2)">redevelopment</span>' : "rooftop"}</td>` +
-            `<td>${fmt(pr.floors)} (${fmt(pr.plan_floors)})</td>` +
-            `<td>${fmt(p.homes_2bed)} / ${fmt(p.attic?.homes_2bed ?? 0)}</td>` +
+            `<td class="fig">${fmt(pr.floors)} (${fmt(pr.plan_floors)})</td>` +
+            `<td class="fig">${fmt(p.homes_2bed)} / ${fmt(p.attic?.homes_2bed ?? 0)}</td>` +
             cell("pessimistic") + cell("base") + cell("optimistic") +
             `<td><a href="${withArea("index.html")}#rc=${ref}">map</a></td>`;
           body.appendChild(tr);

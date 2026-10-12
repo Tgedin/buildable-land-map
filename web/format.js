@@ -14,7 +14,8 @@ const DATA = AREA ? `data/${AREA}/` : "data/";
 const withArea = (href) => (AREA ? `${href}${href.includes("?") ? "&" : "?"}area=${AREA}` : href);
 
 const fmt = (n, unit = "") =>
-  n === null || n === undefined ? "–" : `${Math.round(n).toLocaleString("es-ES")}${unit}`;
+  n === null || n === undefined ? "–"
+    : `${Math.round(n).toLocaleString("es-ES", { useGrouping: "always" })}${unit}`;
 
 // Thousands of euros (millions from 1 M), with a real minus sign: −71k €, 14,7 M €.
 // es-ES does not group four-digit numbers, so "7040k" would read badly next to "14.692k".
@@ -78,8 +79,29 @@ function candidateClass(p) {
   return null;
 }
 
-// Totals for the rooftop candidates, the same on the map and on the shortlist: the floors route
-// only where it is a rooftop, plus every ático. Redevelopment is counted apart, never added in.
+// The routes a candidate row stands for: the floors route (up to the plan's height) only where it
+// is a rooftop, plus the ático. A redevelopment row stands for its floors route. Totals, list rows
+// and the inspector all use this, so they cannot disagree.
+function routesOf(p, cls = candidateClass(p)) {
+  const up = p.added_floors > 0 && p.homes_2bed > 0 ? p : null;
+  const at = p.attic?.homes_2bed > 0 ? p.attic : null;
+  if (cls === "redevelopment") return up ? [up] : [];
+  return [p.kind === "rooftop" ? up : null, at].filter(Boolean);
+}
+
+// {pessimistic, base, optimistic} summed over routes, or null when none has a number.
+function rangeOf(routes) {
+  const out = {};
+  for (const k of ["pessimistic", "base", "optimistic"]) {
+    const parts = routes.map((r) => r.residual_2bed?.eur?.[k]).filter((v) => v != null);
+    if (!parts.length) return null;
+    out[k] = parts.reduce((a, b) => a + b, 0);
+  }
+  return out;
+}
+
+// Totals for the rooftop candidates, the same on the list and the map. Redevelopment is counted
+// apart, never added in.
 function candidateTotals(screening) {
   const t = { parcels: 0, homes: 0, eur: { pessimistic: 0, base: 0, optimistic: 0 }, redev: 0 };
   for (const p of Object.values(screening.parcels)) {
@@ -87,13 +109,69 @@ function candidateTotals(screening) {
     if (cls === "redevelopment") t.redev++;
     if (cls !== "rooftop" && cls !== "attic") continue;
     t.parcels++;
-    const routes = [];
-    if (p.kind === "rooftop" && p.added_floors > 0 && p.homes_2bed > 0) routes.push(p);
-    if (p.attic?.homes_2bed > 0) routes.push(p.attic);
-    for (const r of routes) {
-      t.homes += r.homes_2bed;
-      for (const k of Object.keys(t.eur)) t.eur[k] += r.residual_2bed?.eur?.[k] ?? 0;
-    }
+    const routes = routesOf(p, cls);
+    for (const r of routes) t.homes += r.homes_2bed;
+    const range = rangeOf(routes);
+    if (range) for (const k of Object.keys(t.eur)) t.eur[k] += range[k];
   }
   return t;
+}
+
+// ---------------------------------------------------------------- shared interface pieces
+
+// Provenance: how far to trust a number (the claims ledger of ADR 0005, made visible). It is
+// shown next to every figure that rests on an input, so honesty is a feature of the screen.
+const PROV = {
+  verified: "Checked against a primary source",
+  sourced: "From a source we read, not verified at its origin",
+  assumed: "Our own estimate: no source found",
+};
+const prov = (status) => `<span class="prov prov-${status}" title="${PROV[status]}">${status}</span>`;
+
+// A range bar: pessimistic to optimistic on a scale shared by the rows being compared, a tick at
+// the base case, a line at zero. Red where the range loses money, green where it earns. Values
+// outside the scale are clipped to the edge, never wrapped.
+function rangeBar(r, lo, hi, w = 104, h = 14) {
+  if (!r) return `<span class="muted">–</span>`;
+  const x = (v) => Math.max(0, Math.min(w, ((v - lo) / (hi - lo)) * w));
+  const z = x(0), a = x(r.pessimistic), b = x(r.optimistic), m = x(r.base);
+  const neg = a < z ? `<rect x="${a}" y="4" width="${Math.min(b, z) - a}" height="6" rx="1" class="rb-neg"/>` : "";
+  const pos = b > z ? `<rect x="${Math.max(a, z)}" y="4" width="${b - Math.max(a, z)}" height="6" rx="1" class="rb-pos"/>` : "";
+  const label = `${kEur(r.pessimistic)} pessimistic, ${kEur(r.base)} base, ${kEur(r.optimistic)} optimistic`;
+  return `<svg class="rb" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="${label}">` +
+    `<line x1="0" x2="${w}" y1="${h / 2}" y2="${h / 2}" class="rb-track"/>${neg}${pos}` +
+    `<line x1="${z}" x2="${z}" y1="0" y2="${h}" class="rb-zero"/>` +
+    `<rect x="${m - 1}" y="1" width="2" height="${h - 2}" rx="1" class="rb-base"/></svg>`;
+}
+
+// The product mark: a building with a new floor on top.
+const LOGO = `<svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><rect x="3" y="9" width="14" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="5.5" y="3" width="9" height="4.5" rx="1" fill="var(--accent)"/></svg>`;
+
+// The top bar, the same on every page. `active` is the page being shown.
+function topbar(active, areaLabel = "") {
+  const link = (id, href, text) =>
+    `<a href="${withArea(href)}"${active === id ? ' aria-current="page"' : ""}>${text}</a>`;
+  return `<header class="topbar">
+    <a class="brand" href="${withArea("index.html")}">${LOGO}<span>Buildable Land</span><small>${areaLabel}</small></a>
+    <form class="search" role="search" id="search-form">
+      <input id="search" type="search" placeholder="Find a parcel by cadastral reference" aria-label="Find a parcel by cadastral reference" autocomplete="off" spellcheck="false" />
+      <kbd>/</kbd>
+    </form>
+    <nav class="topnav" aria-label="Pages">
+      ${link("map", "index.html", "Map")}
+      ${link("table", "shortlist.html", "Table")}
+      ${link("method", "method.html", "Method")}
+    </nav>
+  </header>`;
+}
+
+// On pages other than the map, the search box opens the map on that parcel.
+function wireSearchToMap() {
+  const form = document.getElementById("search-form");
+  if (!form) return;
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = document.getElementById("search").value.trim().toUpperCase();
+    if (/^[0-9A-Z]{7,20}$/.test(q)) location.href = `${withArea("index.html")}#rc=${q}`;
+  });
 }
