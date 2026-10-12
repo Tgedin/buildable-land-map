@@ -16,7 +16,7 @@ The neighbour heuristic (ADR 0003) still flags 280 of 932 Ruzafa parcels. It can
 
 ## The assumption (not verified)
 
-Allowed floors = `altura` + 1 (`ground_floor_offset` in config), i.e. `altura` counts floors above the ground floor. Evidence is only empirical: Catastro floors are usually `altura` + 1 or + 2. **The plan's rules text has not been read.** The result is sensitive to it (Ruzafa, non-protected, non-public parcels):
+Allowed floors = `altura` + 1 (`ground_floor_offset` in config), i.e. `altura` counts floors above the ground floor. Evidence is empirical (Catastro floors are usually `altura` + 1 or + 2) plus one indirect clue from the plan text: for the Ensanche zone, which covers Ruzafa, the cornice height is 4.80 m + 2.90 m per plan floor (art. 6.19.1). A 4.80 m base is roughly one tall ground floor, so `altura` counts floors above the ground floor, which supports an offset of 1. **Art. 5.33 (how floors are counted) has still not been read**, so this stays unverified. The result is sensitive to it (Ruzafa, non-protected, non-public parcels):
 
 | offset | parcels with plan gap | m² |
 |---|---|---|
