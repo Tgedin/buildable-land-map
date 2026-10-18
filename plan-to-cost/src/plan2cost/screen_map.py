@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 from dataclasses import asdict
 from datetime import UTC, datetime
 from pathlib import Path
@@ -29,6 +30,8 @@ from plan2cost.feasibility import (
     street_facade_m,
 )
 from plan2cost.proforma import DEFAULTS, residual_value, sensitivity
+
+log = logging.getLogger(__name__)
 
 
 def _homes(plate: float, facade: float, floors: int, assumptions: Assumptions) -> dict:
@@ -83,7 +86,11 @@ def run(
     cornice (art. 6.19.5), under the `attic` key. A parcel can have either or both.
     """
     tree = parcels.sindex
-    edge = public_edge(list(parcels.geometry))
+    # Whether a facade faces the street only depends on the parcels within a few metres of it, so
+    # each candidate builds its own small street edge from its neighbours. A global edge (the
+    # union of every parcel) is correct but does not scale: it took minutes for Ruzafa's size
+    # times 80, and each use of it was a buffer of the whole city.
+    reach = assumptions.attic_setback_m + 2 * assumptions.street_tol_m + 2.0
     out: dict[str, dict] = {}
     for _, row in parcels.iterrows():
         floors_route = row["gap_class"] == "plan_gap"
@@ -97,6 +104,7 @@ def run(
         basis = "main_part" if geom is not outline else "parcel_outline"
         idx = tree.query(geom.buffer(2 * assumptions.party_tol_m))
         near = [parcels.geometry.iloc[i] for i in idx if parcels["refcat"].iloc[i] != row["refcat"]]
+        edge = public_edge([parcels.geometry.iloc[i] for i in tree.query(geom.buffer(reach))])
         facade = free_facade_m(geom, near, assumptions)
         footprint = float(row["main_footprint_m2"])
         added = int(row["plan_gap_floors"]) if floors_route else 0
@@ -104,6 +112,9 @@ def run(
             "plate_m2": round(footprint, 1),
             "free_facade_m": round(facade, 1),
             "measured_on": basis,
+            "use": None
+            if row.get("current_use") != row.get("current_use")
+            else row.get("current_use"),
             "added_floors": added,
             # An existing structure rarely carries many extra floors; beyond the (assumed) cap
             # this is a redevelopment case, which the product is not about.
@@ -124,6 +135,8 @@ def run(
         else:
             result["attic"] = {"eligible": False, "reason": reason}
         out[row["refcat"]] = result
+        if len(out) % 2000 == 0:
+            log.info("  screened %d parcels", len(out))
     return out
 
 
@@ -146,6 +159,16 @@ def summarize(per_parcel: dict) -> dict:
     }
 
 
+def with_homes(per_parcel: dict) -> dict:
+    """Only the parcels where some route fits at least one home (a city-scale web file needs no
+    more: a parcel with nothing to show is not a result)."""
+
+    def fits(r: dict) -> bool:
+        return (r.get("homes_1bed") or 0) > 0 or (r.get("homes_2bed") or 0) > 0
+
+    return {k: v for k, v in per_parcel.items() if fits(v) or fits(v.get("attic", {}))}
+
+
 def main(argv: list[str] | None = None) -> None:
     import geopandas as gpd  # only this command needs it
 
@@ -156,12 +179,21 @@ def main(argv: list[str] | None = None) -> None:
         type=Path,
         help="parts_lidar.parquet (`blm heights`): measure the building, not the parcel",
     )
+    ap.add_argument(
+        "--only-with-homes",
+        action="store_true",
+        help="write only parcels where a route fits a home (the summary still counts them all)",
+    )
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
     assumptions = Assumptions()
     main_parts = main_part_geometries(gpd.read_parquet(a.parts)) if a.parts else None
     per_parcel = run(gpd.read_parquet(a.parcels), assumptions, main_parts)
+    summary = summarize(per_parcel)  # before pruning: it describes everything screened
+    if a.only_with_homes:
+        per_parcel = with_homes(per_parcel)
     payload = {
         "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "kind": "screening",
@@ -186,7 +218,7 @@ def main(argv: list[str] | None = None) -> None:
                 for x in (*DEFAULTS.required, DEFAULTS.reinforcement_per_m2)
             },
         },
-        "summary": summarize(per_parcel),
+        "summary": summary,
         "parcels": per_parcel,
     }
     a.out.write_text(json.dumps(payload, indent=1), encoding="utf-8")

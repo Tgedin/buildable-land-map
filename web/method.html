@@ -23,6 +23,7 @@
     <ol>
       <li><b>Buildings.</b> Catastro (INSPIRE) gives every building part with its floors and use. PNOA LiDAR gives measured heights as a cross-check (mean error against Catastro floors is about one floor).</li>
       <li><b>The plan.</b> The city plan's alignments and zoning layers give the allowed height and the zone. Floors count the ground floor (norm art. 5.33). Protected buildings and public uses are excluded.</li>
+      <li><b>The target.</b> Residential buildings only, by Catastro use: a community of owners that can vote on new floors. Industrial, retail and office parcels that would fit homes are listed apart and not counted, because the owners' vote does not apply and housing may not be allowed in their zone (not checked).</li>
       <li><b>The routes.</b> <i>Up to the plan's height</i> adds the floors the plan still allows. <i>Penthouse</i> adds one floor above the cornice in the Ensanche zone, set back 4 m from street facades (art. 6.19.5), on buildings of 2 to 8 floors already at the plan's height. More than 2 added floors is labelled <i>redevelopment</i>: an old building rarely carries that, and it is not counted as a rooftop.</li>
       <li><b>The homes.</b> A real, rule-checked dwelling (Decreto 80/2023, 17 rules, each quoting its clause) is the unit. The count is how many fit, limited by floor area and by free facade.</li>
       <li><b>The money.</b> A pro-forma: net sale revenue minus building cost and required profit is the <i>residual</i>, the most the homes could pay owners for the right to build. It is shown for three scenarios because the inputs are judgements.</li>
@@ -50,7 +51,7 @@
     <ul>
       <li>A parcel is matched to the plan polygon covering most of it, not most of the <i>building</i>. A tall front building with a low rear court can be read as a low plan height; parcels with a plan height of 1 are excluded from the penthouse route.</li>
       <li>The street side of a facade is read from the outer edge of the blocks, not from the plan's alignments, and parcels at the edge of the study area look like street fronts there.</li>
-      <li>The cap of 2 floors for a rooftop addition, the sale price, the building cost and the required profit are assumptions.</li>
+      <li>The cap of 2 floors for a rooftop addition, one stair core per 600 m² of floor plate, the sale price, the building cost and the required profit are assumptions.</li>
       <li>Plan data is the municipal layer as published; recent plan modifications may be missing.</li>
     </ul>
 

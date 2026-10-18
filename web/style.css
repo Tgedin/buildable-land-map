@@ -64,7 +64,7 @@ body.app { display: grid; grid-template-rows: 3rem minmax(0, 1fr); height: 100vh
 .kpis { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: var(--size-4); }
 .kpi b { display: block; font-family: var(--font-data); font-feature-settings: var(--figures); font-size: var(--text-stat); line-height: 1.15; font-weight: var(--weight-medium); letter-spacing: -0.03em; }
 .kpi small { display: block; color: var(--text-muted); font-size: var(--text-2xs); line-height: 1.3; margin-top: 2px; }
-.filters { display: flex; flex-wrap: nowrap; gap: var(--size-1); margin-top: var(--size-3); }
+.filters { display: flex; flex-wrap: wrap; gap: var(--size-1); margin-top: var(--size-3); }
 .chip-btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 2px var(--size-2); font-size: var(--text-xs); cursor: pointer; color: var(--text); }
 .chip-btn i { width: 0.5rem; height: 0.5rem; border-radius: 50%; }
 .chip-btn:hover { background: var(--surface-hover); }

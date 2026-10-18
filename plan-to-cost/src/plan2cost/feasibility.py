@@ -19,6 +19,7 @@ any of it can actually be built.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from functools import cache
 
@@ -51,7 +52,8 @@ class Assumptions:
     """Numbers that are assumed, not derived. Change them and the result changes."""
 
     net_to_gross: float = 0.85  # useful area / floor area; the plans have no wall thickness
-    core_m2: float = 18.0  # stair, landing and lift per floor
+    core_m2: float = 18.0  # stair, landing and lift per floor, per core
+    plate_per_core_m2: float = 600.0  # ASSUMED: one more core per this much floor plate (egress)
     party_tol_m: float = 0.35  # an edge this close to a neighbour is a party wall
     min_patio_m2: float = 30.0  # an inner hole smaller than this is a light well, not a facade
     attic_setback_m: float = 4.0  # PGOU art. 6.19.5: ático setback from street facades
@@ -227,7 +229,8 @@ def screen(
         if profile is None or added_floors <= 0:
             continue
         gross = profile.useful_m2 / a.net_to_gross
-        area_cap = max(0, int((plate_m2 - a.core_m2) // gross))
+        cores = max(1, math.ceil(plate_m2 / a.plate_per_core_m2))  # a big plate needs several
+        area_cap = max(0, int((plate_m2 - cores * a.core_m2) // gross))
         facade_cap = int(free_facade // profile.facade_needed_m)
         per_floor = min(area_cap, facade_cap)
         limit = "area" if area_cap < facade_cap else "facade" if facade_cap < area_cap else "both"

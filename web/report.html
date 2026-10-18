@@ -20,6 +20,7 @@
     const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     const cls = (v) => (v === null || v === undefined ? "" : v < 0 ? "neg" : "pos");
     const money = (v) => (v === null || v === undefined ? "–" : `<span class="${cls(v)}">${v < 0 ? "−" : ""}${fmt(Math.abs(v))} €</span>`);
+    const USE_LABEL = { "1_residential": "residential", "4_1_office": "office", "4_2_retail": "retail", "3_industrial": "industrial", "4_3_publicServices": "public services", "2_agriculture": "agriculture" };
     const LIMIT = { area: "limited by floor area", facade: "limited by free facade", both: "area and facade equal", none: "" };
 
     function routeTable(title, block, floorsText) {
@@ -81,10 +82,12 @@
           <tr><td>Floors today (Catastro)</td><td>${fmt(q.floors)}</td></tr>
           <tr><td>Plan height, ground floor included</td><td>${fmt(q.plan_floors)}</td></tr>
           <tr><td>Room under the plan</td><td>${q.plan_gap_floors == null ? "–" : fmt(q.plan_gap_floors) + " floors, " + fmt(q.plan_gap_m2) + " m²"}</td></tr>
+          <tr><td>Use (Catastro)</td><td>${esc(USE_LABEL[p.use] ?? "unknown")}</td></tr>
           <tr><td>Measured height (LiDAR)</td><td>${q.lidar_height_m == null ? "–" : fmt(q.lidar_height_m) + " m (" + esc(q.lidar_confidence) + " confidence)"}</td></tr>
         </tbody></table>
 
         <h2>2. Homes that could be added</h2>
+        ${p.use !== RESIDENTIAL ? `<div class="warn">Catastro use: ${esc(USE_LABEL[p.use] ?? "unknown")}. Not residential, so not counted as a rooftop candidate: a community of owners that votes on new floors may not exist, and housing may not be allowed in this zone (not checked).</div>` : ""}
         ${p.kind === "redevelopment" ? `<div class="warn">This parcel could add ${fmt(p.added_floors)} floors, more than an existing structure usually carries (assumed cap: 2). Treat it as redevelopment, not a rooftop addition.</div>` : ""}
         ${routeTable("Building up to the plan's height", p.added_floors > 0 ? p : null, floorsText)}
         ${routeTable("Penthouse (ático), PGOU art. 6.19.5", p.attic, atticText1)}

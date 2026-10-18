@@ -68,23 +68,30 @@ function residualRange(p) {
 
 const baseResidual = (p) => residualRange(p)?.base ?? null;
 
-// Which kind of result a screened parcel has, if any. Rooftop wins over ático, which wins over
-// redevelopment, because that is the order of how much the thesis cares.
+// Which kind of result a screened parcel has, if any. The product is about residential
+// buildings (a community of owners that can vote, ADR 0005), so a parcel whose Catastro use is not
+// residential, or is unknown, is "other": shown, never counted. Then rooftop wins over ático,
+// which wins over redevelopment, because that is the order of how much the thesis cares.
+const RESIDENTIAL = "1_residential";
+const CAND_ORDER = ["rooftop", "attic", "redevelopment", "other"]; // best first
 function candidateClass(p) {
   if (!p) return null;
   const up = p.added_floors > 0 && p.homes_2bed > 0;
+  const at = p.attic?.homes_2bed > 0;
+  if (!up && !at) return null;
+  if (p.use !== RESIDENTIAL) return "other";
   if (up && p.kind === "rooftop") return "rooftop";
-  if (p.attic?.homes_2bed > 0) return "attic";
-  if (up) return "redevelopment";
-  return null;
+  if (at) return "attic";
+  return "redevelopment";
 }
 
 // The routes a candidate row stands for: the floors route (up to the plan's height) only where it
-// is a rooftop, plus the ático. A redevelopment row stands for its floors route. Totals, list rows
-// and the inspector all use this, so they cannot disagree.
+// is a rooftop, plus the ático. A redevelopment row stands for its floors route, an "other use"
+// row for everything that fits. Totals, list rows and the inspector all use this.
 function routesOf(p, cls = candidateClass(p)) {
   const up = p.added_floors > 0 && p.homes_2bed > 0 ? p : null;
   const at = p.attic?.homes_2bed > 0 ? p.attic : null;
+  if (cls === "other") return [up, at].filter(Boolean);
   if (cls === "redevelopment") return up ? [up] : [];
   return [p.kind === "rooftop" ? up : null, at].filter(Boolean);
 }
@@ -103,10 +110,11 @@ function rangeOf(routes) {
 // Totals for the rooftop candidates, the same on the list and the map. Redevelopment is counted
 // apart, never added in.
 function candidateTotals(screening) {
-  const t = { parcels: 0, homes: 0, eur: { pessimistic: 0, base: 0, optimistic: 0 }, redev: 0 };
+  const t = { parcels: 0, homes: 0, eur: { pessimistic: 0, base: 0, optimistic: 0 }, redev: 0, other: 0 };
   for (const p of Object.values(screening.parcels)) {
     const cls = candidateClass(p);
     if (cls === "redevelopment") t.redev++;
+    if (cls === "other") t.other++;
     if (cls !== "rooftop" && cls !== "attic") continue;
     t.parcels++;
     const routes = routesOf(p, cls);

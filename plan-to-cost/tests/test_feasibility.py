@@ -165,3 +165,15 @@ def test_attic_setback_with_an_edge_only_applies_to_street_facades():
     # only the street facade set back: 10 x 11 m, the rear faces a yard and keeps its area
     street_only = attic_plate_m2(building, [left, right], 150.0, edge=edge)
     assert street_only == pytest.approx(110.0, abs=2.0)
+
+
+def test_a_big_floor_plate_needs_more_than_one_stair_core():
+    a = Assumptions(net_to_gross=0.85, core_m2=18.0, plate_per_core_m2=600.0)
+    one = screen(500.0, 400.0, 1, 2, a)  # one core: 500 m² plate
+    big = screen(3000.0, 4000.0, 1, 2, a)  # five cores
+    gross = big.profile.useful_m2 / a.net_to_gross
+    assert big.area_cap == int((3000.0 - 5 * 18.0) // gross)  # five cores taken out, not one
+    assert one.area_cap == int((500.0 - 18.0) // gross)
+    # the same plate with a single core would have fitted more homes: the assumption has a cost
+    single = Assumptions(net_to_gross=0.85, core_m2=18.0, plate_per_core_m2=1e9)
+    assert screen(3000.0, 4000.0, 1, 2, single).area_cap >= big.area_cap

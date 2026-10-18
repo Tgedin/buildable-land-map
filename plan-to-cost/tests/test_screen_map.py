@@ -170,3 +170,52 @@ def test_adding_more_floors_than_a_structure_can_carry_is_labelled_redevelopment
     out = screen_map.run(tall)
     assert out["FAR"]["kind"] == "redevelopment"
     assert screen_map.summarize(out)["parcels_redevelopment"] == 1
+
+
+def test_the_street_edge_is_local_so_distant_parcels_change_nothing():
+    """A candidate's result must not depend on parcels far away (it is what lets a city scale)."""
+    base = _ensanche_parcels()
+    far = [
+        {
+            "refcat": f"FAR{i}",
+            "geometry": box(5000 + i * 40, 0, 5030 + i * 40, 30),
+            "main_footprint_m2": 800.0,
+            "plan_gap_floors": 0.0,
+            "gap_class": "protected",
+            "zone": "ENS",
+            "plan_floors": 5.0,
+            "floors": 5.0,
+        }
+        for i in range(30)
+    ]
+    crowded = gpd.GeoDataFrame([*base.to_dict("records"), *far], geometry="geometry", crs=base.crs)
+    alone = screen_map.run(base)["LIMIT"]["attic"]
+    among = screen_map.run(crowded)["LIMIT"]["attic"]
+    assert among == alone
+
+
+def test_a_candidate_in_a_block_sees_its_own_street_front():
+    # a 20 x 30 m detached block: all four sides are street, so the whole free facade is street
+    block = _ensanche_parcels()
+    attic = screen_map.run(block)["LIMIT"]["attic"]
+    assert attic["street_facade_m"] == pytest.approx(attic["free_facade_m"], abs=2.0)
+
+
+def test_with_homes_keeps_only_parcels_where_a_route_fits_a_home():
+    results = {
+        "FLOORS": {"homes_1bed": 0, "homes_2bed": 2, "attic": {"eligible": False, "reason": "x"}},
+        "ATTIC": {"homes_1bed": 0, "homes_2bed": 0, "attic": {"homes_1bed": 1, "homes_2bed": 0}},
+        "NOTHING": {"homes_1bed": 0, "homes_2bed": 0, "attic": {"homes_1bed": 0, "homes_2bed": 0}},
+        "NOATTIC": {"homes_1bed": 0, "homes_2bed": 0, "attic": {"eligible": False, "reason": "x"}},
+    }
+    assert set(screen_map.with_homes(results)) == {"FLOORS", "ATTIC"}
+
+
+def test_the_catastro_use_travels_with_the_result_and_unknown_stays_none():
+    parcels = _parcels()
+    parcels["current_use"] = ["1_residential", "3_industrial", None, "1_residential"]
+    out = screen_map.run(parcels)
+    assert out["ROW1"]["use"] == "3_industrial"
+    assert out["FAR"]["use"] == "1_residential"
+    parcels.loc[parcels["refcat"] == "FAR", "current_use"] = None
+    assert screen_map.run(parcels)["FAR"]["use"] is None  # unknown is not residential

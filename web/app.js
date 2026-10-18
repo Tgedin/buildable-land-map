@@ -31,8 +31,8 @@ const CAND = {
   rooftop: { color: token("--data-rooftop"), label: "Rooftop addition", short: "Rooftop", long: "Rooftop addition (1–2 floors, up to the plan)" },
   attic: { color: token("--data-attic"), label: "Penthouse (ático)", short: "Ático", long: "Penthouse (ático) only" },
   redevelopment: { color: token("--data-redevelopment"), label: "Redevelopment", short: "Redevelop.", long: "Redevelopment (3+ floors: not a rooftop)" },
+  other: { color: token("--data-other"), label: "Other use", short: "Other use", long: "Industrial, retail, office or unknown use: shown, not counted" },
 };
-const CAND_ORDER = ["rooftop", "attic", "redevelopment"];
 const CAND_REST = token("--data-rest");
 const SELECTED = token("--data-selected");
 
@@ -52,7 +52,7 @@ let features = {}; // refcat -> feature
 let view = "street"; // "candidates" with a screening, "plan" with plan columns
 let selected = null;
 let tab = "summary";
-let enabled = new Set(CAND_ORDER); // kinds shown in the list and coloured on the map
+let enabled = new Set(["rooftop", "attic", "redevelopment"]); // shown by default; "other use" is opt-in
 let rows = []; // candidate rows, best first
 let shown = 0;
 
@@ -155,7 +155,9 @@ function renderList(reset = true) {
   if (shown < list.length)
     $("list").insertAdjacentHTML("beforeend", `<li class="list-more"><button class="btn" type="button">Show ${fmt(Math.min(PAGE, list.length - shown))} more of ${fmt(list.length - shown)}</button></li>`);
   if (!list.length) $("list").innerHTML = `<li class="row"><span></span><span class="muted">No parcels of these kinds.</span></li>`;
-  $("rail-foot").innerHTML = `Screening generated ${screening.generated_at.slice(0, 10)}. Catastro, PNOA LiDAR and the city plan (PGOU). A screening, not a design, valuation or permit. <a href="${withArea("method.html")}">Method and limits</a>.`;
+  const t = candidateTotals(screening);
+  $("rail-foot").innerHTML = `Residential buildings only. Listed apart and not counted: ${fmt(t.redev)} redevelopment (3+ floors) and ${fmt(t.other)} of other use. ` +
+    `Generated ${screening.generated_at.slice(0, 10)} from Catastro, PNOA LiDAR and the city plan. A screening, not a design, valuation or permit. <a href="${withArea("method.html")}">Method and limits</a>.`;
 }
 
 // ---------------------------------------------------------------- the inspector (right)
@@ -174,8 +176,12 @@ function verdictText(p, sp) {
     parts.push(`${fmt(sp.homes_2bed)} two-bed homes on ${fmt(sp.added_floors)} added floor${sp.added_floors > 1 ? "s" : ""}`);
   if (sp.attic?.homes_2bed > 0) parts.push(`${fmt(sp.attic.homes_2bed)} in a penthouse (ático)`);
   if (!parts.length) return "Screened, but no home fits: floor area or free facade is too small.";
-  const redev = candidateClass(sp) === "redevelopment"
-    ? " This adds more floors than an existing building usually carries: redevelopment, not a rooftop." : "";
+  const kind = candidateClass(sp);
+  const redev = kind === "redevelopment"
+    ? " This adds more floors than an existing building usually carries: redevelopment, not a rooftop."
+    : kind === "other"
+      ? ` Catastro use is ${(USES[sp.use] ?? "unknown").toLowerCase()}, not residential: not counted as a rooftop candidate.`
+      : "";
   return parts.join(" and ") + "." + redev;
 }
 
