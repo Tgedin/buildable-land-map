@@ -1,0 +1,33 @@
+{
+  "plan_by_class": {
+    "no_plan": 44616,
+    "at_limit": 18737,
+    "protected": 6543,
+    "plan_gap": 3783,
+    "public_use": 1523,
+    "open": 584
+  },
+  "total_plan_gap_m2": 1133563.0,
+  "n_parcels_with_plan_gap": 3783,
+  "n_parcels": 75786,
+  "n_parcels_with_gap": 16535,
+  "total_gap_m2": 6112772.0,
+  "total_existing_m2": 96168571.0,
+  "lidar_validation": {
+    "n": 127794,
+    "mae_floors": 0.636,
+    "bias_floors": 0.565,
+    "share_exact": 0.499,
+    "share_within_1": 0.917,
+    "median_m_per_floor": 3.55
+  },
+  "label": "Val\u00e8ncia (urban area)",
+  "synthetic": false,
+  "generated_at": "2026-10-18T10:45:04+00:00",
+  "bounds_wgs84": [
+    -0.427158,
+    39.419924,
+    -0.323168,
+    39.550769
+  ]
+}

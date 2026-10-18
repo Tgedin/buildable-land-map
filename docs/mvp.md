@@ -30,11 +30,11 @@ Current Ruzafa run (2026-10-12, after the floor-count and geometry corrections b
 
 | Route | Parcels that fit | Homes | Residual |
 |---|---|---|---|
-| Rooftop: 1-2 added floors up to the plan's height | 35 | 63 | -2.0 M / 3.2 M / 6.7 M EUR |
-| Redevelopment: more than 2 added floors (assumed cap) | 7 | 42 | -1.3 M / 2.2 M / 4.6 M EUR |
-| Penthouse (ático) | 33 of 140 eligible | 34 | -1.0 M / 1.7 M / 3.5 M EUR |
+| Rooftop: 1-2 added floors up to the plan's height | 30 | 50 | -1.5 M / 2.5 M / 5.3 M EUR |
+| Redevelopment: more than 2 added floors (assumed cap) | 6 | 27 | -0.9 M / 1.4 M / 3.0 M EUR |
+| Penthouse (ático) | 31 of 140 eligible | 31 | -0.9 M / 1.5 M / 3.2 M EUR |
 
-The rooftop thesis is the first and third rows: about 100 homes in Ruzafa (97 two-bed homes on 63 parcels, residual -3.0 M / 4.9 M / 10.2 M EUR) (the two routes overlap on some parcels, where the ático comes after the floors). The second row is a different business (an old low building cannot carry five new floors). The 2-floor cap is an assumption, not a finding.
+The rooftop thesis is the first and third rows: 81 two-bed homes on 57 parcels in Ruzafa, residual -2.5 M / 4.1 M / 8.5 M EUR (the two routes overlap on some parcels, where the ático comes after the floors). The second row is a different business (an old low building cannot carry five new floors). The 2-floor cap is an assumption, not a finding.
 
 No parcel is positive in all three scenarios. Read it as "viable only if prices hold and costs stay low", not as a market size. The ático setback is applied to street-facing facades only, read from the outer edge of the blocks (the plan's own alignments are not used); parcels at the edge of the study area look like street fronts there, a small bias.
 
@@ -43,6 +43,10 @@ No parcel is positive in all three scenarios. Read it as "viable only if prices 
 A third correction (2026-10-12) reads the plan and the zone on the parcel's tallest building part instead of the whole parcel, so a low rear court cannot outvote the front building: room under the plan went from 12,237 to 13,195 m² (65 to 70 parcels), protected parcels from 246 to 270, and Ensanche parcels read as plan height 1 from 110 to 47.
 
 The same plan (art. 6.19.5) allows a penthouse (*ático*) above the cornice, set back 4 m from street facades, in the Ensanche zone. That is the real rooftop route and is now screened (`plan2cost.feasibility.attic_*`): see the table above. Zone comes from the plan's Calificaciones layer (916 of 932 parcels are Ensanche).
+
+**Residential only (2026-10-18).** The numbers above count residential buildings by Catastro use; 6 other-use parcels in Ruzafa (retail, office, industrial) fit homes but are listed apart. The first whole-city run showed why: 28% of the parcels and 47% of the homes were industrial, retail or office.
+
+**Whole València (2026-10-18, ADR 0006).** 1,199 residential rooftop candidates, **2,529 two-bed homes**, residual **-79 M / 129 M / 269 M EUR** (pessimistic / base / optimistic, before structural reinforcement). A further 324 parcels would add 3+ floors (redevelopment) and 596 are not residential: both listed apart and not counted. 59% of the city's parcels have no usable plan height and are not screened. Still no parcel is positive in all three scenarios.
 
 ## How it is built (see ADR 0005)
 

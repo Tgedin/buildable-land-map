@@ -19,15 +19,18 @@ Two legal routes, using real rule-checked dwellings (Decreto 80/2023) as the uni
 
 | Route | Parcels | Two-bed homes |
 |---|---|---|
-| Add 1 or 2 floors up to the plan's height | 35 | 63 |
-| Penthouse above the cornice (norms art. 6.19.5), set back 4 m from the street | 33 | 34 |
+| Add 1 or 2 floors up to the plan's height | 30 | 50 |
+| Penthouse above the cornice (norms art. 6.19.5), set back 4 m from the street | 31 | 31 |
 
-Together: 63 parcels and about **97 two-bedroom homes**. A further 7 parcels could add three or more floors; an old building rarely carries that, so I call it redevelopment and do not count it. (The cap of two floors is my assumption.)
+Together: 57 residential parcels and about **81 two-bedroom homes**. A further 6 parcels could add three or more floors; an old building rarely carries that, so I call it redevelopment and do not count it. (The cap of two floors is my assumption.)
+
+## The whole city
+Run on the whole urban area of València (75,786 parcels), the same method finds **1,199 residential rooftop candidates and about 2,529 two-bedroom homes**, worth roughly 129 M € in the base case (−79 M € to 269 M €). Two things I would not have predicted. First, 28% of the parcels that "fit homes" were industrial, retail or office buildings: they carried 47% of the homes, and I now count residential buildings only, because there is no community of owners to vote there. Second, **59% of the city's parcels have no usable plan height**, because the plan's alignments layer covers only part of the city: those parcels are not screened and I do not guess.
 
 ## What it could pay
 Net sale revenue minus building cost and the developer's required profit leaves a *residual*: the most the homes could pay the owners for the right to build. Because the inputs are judgements, it is shown for three scenarios:
 
-**about 4.9 M € in the base case, from −3.0 M € (pessimistic) to 10.2 M € (optimistic)**, before structural reinforcement.
+**about 4.1 M € in the base case, from −2.5 M € (pessimistic) to 8.5 M € (optimistic)**, before structural reinforcement.
 
 Per m² of new floor, the base case leaves about 779 €. That reaches zero if the sale price falls about 30% (3,400 to 2,392 €/m²) or the hard cost rises about 42% (1,400 to 1,990 €/m²). **No parcel is positive in all three scenarios.** The prices, costs and profit are assumed and labelled as such: I did not run interviews or collect quotes, because the cost of a rooftop job varies too much between carpenters, buildings and months to be one number.
 
